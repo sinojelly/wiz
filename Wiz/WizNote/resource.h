@@ -195,6 +195,7 @@
 #define ID_TRAY_CLIPSCREENSHOT          32888
 #define ID_TRAY_MINIMIZE                32889
 #define ID_TRAY_COMPACTMODE             32890
+#define ID_NOTE_NEWTODOLIST             32891
 #define ID_NOTES_BEGIN                  33000
 #define ID_NOTES_END                    33050
 
@@ -203,7 +204,7 @@
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        228
-#define _APS_NEXT_COMMAND_VALUE         32891
+#define _APS_NEXT_COMMAND_VALUE         32892
 #define _APS_NEXT_CONTROL_VALUE         1023
 #define _APS_NEXT_SYMED_VALUE           101
 #endif

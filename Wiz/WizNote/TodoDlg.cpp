@@ -566,3 +566,38 @@ void CTodoDlg::Refresh()
 	//
 	LoadByTime(m_tTodoListDate);
 }
+
+LRESULT CTodoDlg::OnNewTodoList(WORD /*wNotifyCode*/, WORD /*wID*/, HWND /*hWndCtl*/, BOOL& /*bHandled*/)
+{
+	CComPtr<IWizCommonUI> spCommonUI = WizKMCreateCommonUI();	if (!spCommonUI)		return 0;
+	CComBSTR strTitle;	spCommonUI->InputBox(CComBSTR("New TodoList"), CComBSTR("Please input todolist title:"), CComBSTR("DefaultTodoList"), &strTitle);
+
+	CComPtr<IWizFolder> folder = m_pDatabase->GetRootFolder(FOLDER_MY_TODOLIST, TRUE);
+	if (!folder)
+	{
+		TOLOG(_T("Failed to create My TodoList folder!"));
+		return FALSE;
+	}
+
+	CComPtr<IDispatch> spNewDocumentDisp;
+	HRESULT hr = folder->CreateDocument2(strTitle, CComBSTR(L""), &spNewDocumentDisp);
+	if (FAILED(hr))
+	{
+		TOLOG(_T("Failed to create document object"));
+		return FALSE;
+	}
+	//
+	CComPtr<IWizDocument> spDocument = CComQIPtr<IWizDocument>(spNewDocumentDisp);
+	ATLASSERT(spDocument);
+	if (!spDocument)
+	{
+		TOLOG(_T("System error: Failed convert dispatch to IWizDocument"));
+		return FALSE;
+	}
+	//
+	spDocument->put_Type(CComBSTR(L"todolist_ex"));
+
+	m_todolists.push_back(spDocument);
+
+	return 0;
+}

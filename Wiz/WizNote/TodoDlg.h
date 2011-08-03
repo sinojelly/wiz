@@ -4,6 +4,9 @@
 
 #include "resource.h"       // main symbols
 
+#include <vector>
+using namespace std;
+
 #include <atlhost.h>
 
 #include "WizNoteSmallDlgBase.h"
@@ -41,12 +44,14 @@ BEGIN_MSG_MAP(CTodoDlg)
 	MESSAGE_HANDLER(WIZ_WM_UM_NOTIFY_PARENT_COMMAND, OnNotifyParentCommand)
 	COMMAND_HANDLER(IDC_BUTTON_PREV, BN_CLICKED, OnBnClickedButtonPrev)
 	COMMAND_HANDLER(IDC_BUTTON_NEXT, BN_CLICKED, OnBnClickedButtonNext)
+	COMMAND_ID_HANDLER(ID_NOTE_NEWTODOLIST, OnNewTodoList)
 	CHAIN_MSG_MAP(CWizNoteSmallDlgBase<CTodoDlg>)
 	CHAIN_MSG_MAP(CWizKMObjectMessageHandler<CTodoDlg>)
 	REFLECT_NOTIFICATIONS()
 END_MSG_MAP()
 private:
 	CComPtr<IWizDocument> m_spDocument;
+	vector<CComPtr<IWizDocument> > m_todolists;
 	//
 	BOOL CreateDocument();
 	//
@@ -98,6 +103,7 @@ public:
 	LRESULT OnNotifyParentCommand(UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*lParam*/, BOOL& /*bHandled*/);
 	LRESULT OnBnClickedButtonPrev(WORD /*wNotifyCode*/, WORD /*wID*/, HWND /*hWndCtl*/, BOOL& /*bHandled*/);
 	LRESULT OnBnClickedButtonNext(WORD /*wNotifyCode*/, WORD /*wID*/, HWND /*hWndCtl*/, BOOL& /*bHandled*/);
+	LRESULT OnNewTodoList(WORD /*wNotifyCode*/, WORD /*wID*/, HWND /*hWndCtl*/, BOOL& /*bHandled*/);
 };
 
 
