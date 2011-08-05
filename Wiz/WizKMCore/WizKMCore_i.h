@@ -4,7 +4,7 @@
 
 
  /* File created by MIDL compiler version 7.00.0500 */
-/* at Thu Jul 21 11:51:03 2011
+/* at Fri Aug 05 21:58:56 2011
  */
 /* Compiler settings for .\WizKMCore.idl:
     Oicf, W1, Zp8, env=Win32 (32b run)
@@ -1064,6 +1064,19 @@ EXTERN_C const IID IID_IWizDatabase;
             /* [in] */ LONG nCount,
             /* [retval][out] */ IDispatch **ppDocumentCollectionDisp) = 0;
         
+        virtual /* [helpstring][id] */ HRESULT STDMETHODCALLTYPE CreateTodo2Document( 
+            /* [in] */ BSTR bstrLocation,
+            /* [in] */ BSTR bstrTitle,
+            /* [retval][out] */ IDispatch **ppDocumentDisp) = 0;
+        
+        virtual /* [helpstring][id] */ HRESULT STDMETHODCALLTYPE MoveCompletedTodoItems( 
+            /* [in] */ IDispatch *pSrcTodoDocumentDisp,
+            /* [in] */ IDispatch *pDestTodoDocumentDisp) = 0;
+        
+        virtual /* [helpstring][id] */ HRESULT STDMETHODCALLTYPE GetTodo2Documents( 
+            /* [in] */ BSTR bstrLocation,
+            /* [retval][out] */ IDispatch **ppDocumentCollectionDisp) = 0;
+        
     };
     
 #else 	/* C style interface */
@@ -1675,6 +1688,22 @@ EXTERN_C const IID IID_IWizDatabase;
             /* [in] */ LONG nCount,
             /* [retval][out] */ IDispatch **ppDocumentCollectionDisp);
         
+        /* [helpstring][id] */ HRESULT ( STDMETHODCALLTYPE *CreateTodo2Document )( 
+            IWizDatabase * This,
+            /* [in] */ BSTR bstrLocation,
+            /* [in] */ BSTR bstrTitle,
+            /* [retval][out] */ IDispatch **ppDocumentDisp);
+        
+        /* [helpstring][id] */ HRESULT ( STDMETHODCALLTYPE *MoveCompletedTodoItems )( 
+            IWizDatabase * This,
+            /* [in] */ IDispatch *pSrcTodoDocumentDisp,
+            /* [in] */ IDispatch *pDestTodoDocumentDisp);
+        
+        /* [helpstring][id] */ HRESULT ( STDMETHODCALLTYPE *GetTodo2Documents )( 
+            IWizDatabase * This,
+            /* [in] */ BSTR bstrLocation,
+            /* [retval][out] */ IDispatch **ppDocumentCollectionDisp);
+        
         END_INTERFACE
     } IWizDatabaseVtbl;
 
@@ -1977,6 +2006,15 @@ EXTERN_C const IID IID_IWizDatabase;
 
 #define IWizDatabase_GetRecentDocuments2(This,nFlags,bstrDocumentType,nCount,ppDocumentCollectionDisp)	\
     ( (This)->lpVtbl -> GetRecentDocuments2(This,nFlags,bstrDocumentType,nCount,ppDocumentCollectionDisp) ) 
+
+#define IWizDatabase_CreateTodo2Document(This,bstrLocation,bstrTitle,ppDocumentDisp)	\
+    ( (This)->lpVtbl -> CreateTodo2Document(This,bstrLocation,bstrTitle,ppDocumentDisp) ) 
+
+#define IWizDatabase_MoveCompletedTodoItems(This,pSrcTodoDocumentDisp,pDestTodoDocumentDisp)	\
+    ( (This)->lpVtbl -> MoveCompletedTodoItems(This,pSrcTodoDocumentDisp,pDestTodoDocumentDisp) ) 
+
+#define IWizDatabase_GetTodo2Documents(This,bstrLocation,ppDocumentCollectionDisp)	\
+    ( (This)->lpVtbl -> GetTodo2Documents(This,bstrLocation,ppDocumentCollectionDisp) ) 
 
 #endif /* COBJMACROS */
 
