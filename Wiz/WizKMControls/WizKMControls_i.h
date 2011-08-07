@@ -4,7 +4,7 @@
 
 
  /* File created by MIDL compiler version 7.00.0500 */
-/* at Thu Jul 21 11:54:07 2011
+/* at Sun Aug 07 13:21:29 2011
  */
 /* Compiler settings for .\WizKMControls.idl:
     Oicf, W1, Zp8, env=Win32 (32b run)

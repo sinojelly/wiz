@@ -1091,39 +1091,6 @@ inline HWND WizKMGetCalendarWindowHandle()
 }
 
 
-
-#define WIZKM_NOTE_WINDOW		_T("WizNoteWindow")
-
-inline BOOL WizKMSetNoteWindowHandle(HWND hwnd)
-{
-	return WizKMWriteWindowHandleToReg(WIZKM_NOTE_WINDOW, hwnd);
-}
-
-inline HWND WizKMGetNoteWindowHandle()
-{
-	return WizKMReadWindowHandleFromReg(WIZKM_NOTE_WINDOW);
-}
-
-
-const UINT WIZKM_UM_IS_HOTKEY_REGISTERED = ::RegisterWindowMessage(_T("WIZKM_UM_IS_HOTKEY_REGISTERED"));
-
-inline BOOL WizKMIsKeyRegistered(LPCTSTR lpszWindowName)
-{
-	HWND hwnd = WizKMReadWindowHandleFromReg(lpszWindowName);
-	if (!hwnd)
-		return FALSE;
-	//
-	return (BOOL)SendMessage(hwnd, WIZKM_UM_IS_HOTKEY_REGISTERED, 0, 0);
-}
-inline BOOL WizKMIsExplorerHotKeyRegistered()
-{
-	return WizKMIsKeyRegistered(WIZKM_EXPLORER_WINDOW);
-}
-inline BOOL WizKMIsNoteHotKeyRegistered()
-{
-	return WizKMIsKeyRegistered(WIZKM_NOTE_WINDOW);
-}
-
 const UINT WIZKM_UM_PROCESS_COMMAND_LINE = ::RegisterWindowMessage(_T("WIZKM_UM_PROCESS_COMMAND_LINE"));
 
 inline void WizKMProcessCommandLine(HWND hwnd, LPCTSTR lpszCommandLine)

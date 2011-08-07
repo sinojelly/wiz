@@ -260,6 +260,28 @@ inline BOOL WizKMTodoDataMoveUncompletedTasks(CWizKMDatabase* pDatabase, WIZTODO
 	return bRet;
 }
 
+
+inline BOOL WizKMTodoDataMoveCompletedTasks(WIZTODODATAEX::CWizTodoDataExArray& arrayDataSrc, WIZTODODATAEX::CWizTodoDataExArray& arrayDataDest)
+{
+	BOOL bRet = FALSE;
+	//
+	size_t nCount = arrayDataSrc.size();
+	for (intptr_t i = nCount - 1; i >= 0; i--)
+	{
+		WIZTODODATAEX& dataSrc = arrayDataSrc[i];
+		if (dataSrc.eState != todoState100)
+			continue;
+		//
+		arrayDataDest.push_back(dataSrc);
+		//
+		arrayDataSrc.erase(arrayDataSrc.begin() + i);
+		//
+		bRet = TRUE;
+	}
+	//
+	return bRet;
+}
+
 inline BOOL WizKMAddUncompletedToTodoData(CWizKMDatabase* pDatabase, CComPtr<IWizDocument>& spDocument, const COleDateTime& t, WIZTODODATAEX::CWizTodoDataExArray& arrayData)
 {
 	if (spDocument)

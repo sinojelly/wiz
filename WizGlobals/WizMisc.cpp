@@ -7158,7 +7158,7 @@ BOOL CWizTranslationsStringTable::TranslateString(LPCTSTR lpszSrc, CString& strR
 	if (it == m_mapStrings.end())
 	{
 		strRet.Replace(_T("{p}"), WizGetProductName());
-		return FALSE;
+		return TRUE;
 	}
 	//
 	strRet = it->second;
@@ -7171,9 +7171,11 @@ BOOL CWizTranslationsStringTable::TranslateString(LPCTSTR lpszSrc, CString& strR
 		return TRUE;
 	//
 	strRet = lpszSrc;
+	strRet.Replace(_T("{p}"), WizGetProductName());
 	//
-	return FALSE;
+	return TRUE;
 }
+
 CString CWizTranslationsStringTable::TranslateString(LPCTSTR lpszSrc)
 {
 	CString strRet;

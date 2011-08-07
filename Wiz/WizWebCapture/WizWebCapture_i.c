@@ -6,7 +6,7 @@
 
 
  /* File created by MIDL compiler version 7.00.0500 */
-/* at Thu Jul 21 12:02:41 2011
+/* at Sun Aug 07 13:25:26 2011
  */
 /* Compiler settings for .\WizWebCapture.idl:
     Oicf, W1, Zp8, env=Win32 (32b run)

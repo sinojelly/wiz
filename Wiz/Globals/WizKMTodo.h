@@ -623,5 +623,47 @@ inline BOOL WizTodoItemCollectionToDataArray(IWizTodoItemCollection* pColl, WIZT
 	return TRUE;
 }
 
+
+inline CComPtr<IWizDocument> WizKMCreateTodo2Document(CWizKMDatabase* pDatabase, LPCTSTR lpszLocation, LPCTSTR lpszTitle)
+{
+	CComPtr<IDispatch> spNewDocumentDisp;
+	pDatabase->GetDatabase()->CreateTodo2Document(CComBSTR(lpszLocation), CComBSTR(lpszTitle), &spNewDocumentDisp);
+	CComPtr<IWizDocument> spDocument = CComQIPtr<IWizDocument>(spNewDocumentDisp);
+	ATLASSERT(spDocument);
+	if (!spDocument)
+	{
+		TOLOG(_T("System error: Failed convert dispatch to IWizDocument"));
+		return NULL;
+	}
+	//
+	spDocument->UpdateDocument3(CComBSTR("<p>&nbsp;</p>"), 0);
+	//
+	return spDocument;
+}
+
+
+inline CString WizKMTodoGetInboxLocation()
+{
+	return WizFormatString2(_T("/%1/%2/"), FOLDER_MY_TASKS, FOLDER_MY_TASKS_INBOX);
+}
+
+inline CString WizKMTodoGetCompletedLocation()
+{
+	return WizFormatString2(_T("/%1/%2/"), FOLDER_MY_TASKS, FOLDER_MY_TASKS_COMPLETED);
+}
+
+
+inline BOOL WizKMGetTodo2Documents(CWizKMDatabase* pDatabase, LPCTSTR lpszLocation, CWizDocumentArray& arrayDocument)
+{
+	CComPtr<IDispatch> spDocumentCollDisp;
+	pDatabase->GetDatabase()->GetTodo2Documents(CComBSTR(lpszLocation), &spDocumentCollDisp);
+	if (!spDocumentCollDisp)
+		return FALSE;
+	//
+	return ::WizCollectionDispatchToArray<IWizDocumentCollection, IWizDocument>(spDocumentCollDisp, arrayDocument);
+}
+
+
 #endif //_WIZKMTODO_H_
+
 

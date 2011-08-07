@@ -185,6 +185,8 @@ protected:
 	//
 	CMenu m_menu;
 	UINT m_nMenuID;
+	//
+	BOOL m_bIniting;
 public:
 	CWizSmallDlgBase()
 	{
@@ -199,6 +201,7 @@ public:
 		m_bInfoModified = FALSE;
 		//
 		m_nMenuID = 0;
+		m_bIniting = TRUE;
 	}
 	//
 
@@ -381,16 +384,6 @@ public:
 	}
 	virtual WIZSMALLDLGSTATE GetDlgState() const
 	{
-		HWND parent =GetAncestor(m_hWnd, GA_PARENT); //::GetParent(m_hWnd); 
-		HWND progman = ::FindWindow(_T("Progman"), NULL);
-		//if (::GetParent(m_hWnd) == ::FindWindow(_T("Progman"), NULL)) //ProgMan
-		/*
-		if (parent == progman)
-		{
-			return statePinDesk;
-		}
-		else 
-		*/
 		if (GetExStyle() & WS_EX_TOPMOST)
 		{
 			return stateTopMost;
@@ -500,11 +493,9 @@ public:
 			SetWindowPos(NULL, rcWindow, SWP_NOACTIVATE | SWP_NOZORDER | SWP_SHOWWINDOW);
 		}
 		//
-		if (!IsWindowVisible())
+		if (0 == (GetStyle() & WS_VISIBLE))
 		{
 			ShowWindow(SW_SHOW);
-			//
-			OnInfoModified();
 		}
 		//
 		BringWindowToTop();
@@ -541,6 +532,7 @@ public:
 		MESSAGE_HANDLER(WM_NCLBUTTONDBLCLK, OnNcLButtonDblClk)
 		MESSAGE_HANDLER(WM_CLOSE, OnClose)
 		MESSAGE_HANDLER(WIZ_WM_UM_CLIENT_SCROLL_CHANGED, OnClientScrollChanged)
+		MESSAGE_HANDLER(WM_WINDOWPOSCHANGED, OnWindowPosChanged)
 		CHAIN_MSG_MAP(CDoubleBufferImpl<T>)
 	END_MSG_MAP()
 	//
@@ -984,4 +976,26 @@ public:
 	{
 		m_bInfoModified = b;
 	}
+	//
+	LRESULT OnWindowPosChanged(UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM lParam, BOOL& bHandled)
+	{
+		// TODO: Add your message handler code here and/or call default
+		if (!m_bIniting)
+		{
+			WINDOWPOS* pPos = (WINDOWPOS *)lParam;
+			if (pPos)
+			{
+				if (0 == (pPos->flags & SWP_NOSIZE)
+					|| 0 == (pPos->flags & SWP_NOMOVE))
+				{
+					SavePos();
+				}
+			}
+		}
+		//
+		bHandled = FALSE;
+
+		return 0;
+	}
+
 };

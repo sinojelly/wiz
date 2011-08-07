@@ -319,3 +319,31 @@ inline BOOL WizKMBatchOverwriteDocuments(CWizKMDatabase* pDatabase, const CWizDo
 	return TRUE;
 }
 
+
+
+inline BOOL WizKMInputBox(UINT nDlgTitleID, UINT nDlgDescriptionID, LPCTSTR lpszInit, CString& ret)
+{
+	CComPtr<IWizCommonUI> spCommon = ::WizKMCreateCommonUI();
+	if (!spCommon)
+		return FALSE;
+	//
+	CString strDlgTitle = ::WizFormatString0(nDlgTitleID);
+	CString strDlgDescription = ::WizFormatString0(nDlgDescriptionID);
+	CString strInit = lpszInit;
+	//
+	CComBSTR bstrRet;
+	if (S_OK != spCommon->InputBox(CComBSTR(strDlgTitle), CComBSTR(strDlgDescription), CComBSTR(strInit), &bstrRet))
+		return 0;
+	//
+	ret = CString(bstrRet);
+	if (ret.IsEmpty())
+	{
+		ret = strInit;
+	}
+	return TRUE;
+}
+
+inline BOOL WizKMInputBox(UINT nDlgTitleID, UINT nDlgDescriptionID, UINT nInitID, CString& ret)
+{
+	return WizKMInputBox(nDlgTitleID, nDlgDescriptionID, WizFormatString0(nInitID), ret);
+}

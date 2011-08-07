@@ -97,13 +97,18 @@ struct WIZTODODATA
 #define WIZVIRTUALFOLDER_CREATED		_T("Recent Created Documents")
 #define WIZVIRTUALFOLDER_MODIFIED		_T("Recent Modified Documents")
 
-#define WIZKM_XMKRPC_DOCUMENT_PART_INFO		0x01
-#define WIZKM_XMKRPC_DOCUMENT_PART_DATA		0x02
-#define WIZKM_XMKRPC_DOCUMENT_PART_PARAM		0x04
+
+#define WIZKM_XMLRPC_OBJECT_PART_INFO		0x01
+#define WIZKM_XMLRPC_OBJECT_PART_DATA		0x02
+#define WIZKM_XMLRPC_OBJECT_PART_PARAM		0x04
+
+#define WIZKM_XMKRPC_DOCUMENT_PART_INFO			WIZKM_XMLRPC_OBJECT_PART_INFO
+#define WIZKM_XMKRPC_DOCUMENT_PART_DATA			WIZKM_XMLRPC_OBJECT_PART_DATA
+#define WIZKM_XMKRPC_DOCUMENT_PART_PARAM		WIZKM_XMLRPC_OBJECT_PART_PARAM
 
 
-#define WIZKM_XMKRPC_ATTACHMENT_PART_INFO		0x01
-#define WIZKM_XMKRPC_ATTACHMENT_PART_DATA		0x02
+#define WIZKM_XMKRPC_ATTACHMENT_PART_INFO		WIZKM_XMLRPC_OBJECT_PART_INFO
+#define WIZKM_XMKRPC_ATTACHMENT_PART_DATA		WIZKM_XMLRPC_OBJECT_PART_DATA
 
 struct WIZTAGDATA
 {
@@ -131,13 +136,8 @@ struct WIZTAGDATA
 			&& strParentGUID == data.strParentGUID;
 	}
 	//
-	CString GetObjectsFileName(LPCTSTR lpszDatabasePath) const
-	{
-		CString strDatabasePath(lpszDatabasePath);
-		WizPathAddBackslash(strDatabasePath);
-		//
-		return strDatabasePath + _T(".tags");
-	}
+	static CString VersionName() { return CString(_T("tag_version")); }
+	static CString ObjectName() { return CString(_T("tag")); }
 };
 
 struct WIZSTYLEDATA
@@ -174,13 +174,8 @@ struct WIZSTYLEDATA
 			&& nFlagIndex == data.nFlagIndex;
 	}
 	//
-	CString GetObjectsFileName(LPCTSTR lpszDatabasePath) const
-	{
-		CString strDatabasePath(lpszDatabasePath);
-		WizPathAddBackslash(strDatabasePath);
-		//
-		return strDatabasePath + _T(".styles");
-	}
+	static CString VersionName() { return CString(_T("style_version")); }
+	static CString ObjectName() { return CString(_T("style")); }
 };
 
 
@@ -233,15 +228,8 @@ struct WIZDOCUMENTDATA
 			&& strParamMD5 == data.strParamMD5;
 	}
 	//
-	CString GetObjectsFileName(LPCTSTR lpszDatabasePath) const
-	{
-		CString strDatabasePath(lpszDatabasePath);
-		WizPathRemoveBackslash(strDatabasePath);
-		//
-		CString strObjectsFileName = strDatabasePath + strLocation + _T(".documents");
-		strObjectsFileName.Replace('/', '\\');
-		return strObjectsFileName;
-	}
+	static CString VersionName() { return CString(_T("document_version")); }
+	static CString ObjectName() { return CString(_T("document")); }
 };
 
 struct WIZDOCUMENTPARAMDATA
@@ -331,6 +319,9 @@ struct WIZDELETEDGUIDDATA
 		ATLASSERT(strGUID == data.strGUID);
 		return TRUE;
 	}
+	//
+	static CString VersionName() { return CString(_T("deleted_guid_version")); }
+	static CString ObjectName() { return CString(_T("deleted_guid")); }
 };
 
 struct WIZDOCUMENTATTACHMENTDATA
@@ -361,6 +352,9 @@ struct WIZDOCUMENTATTACHMENTDATA
 		return strInfoMD5 == data.strInfoMD5
 			&& strDataMD5 == data.strDataMD5;
 	}
+	//
+	static CString VersionName() { return CString(_T("attachment_version")); }
+	static CString ObjectName() { return CString(_T("attachment")); }
 };
 
 
@@ -370,14 +364,6 @@ struct WIZMETADATA
 	CString strKey;
 	CString strValue;
 	COleDateTime tModified;
-	//
-	CString GetObjectsFileName(LPCTSTR lpszDatabasePath) const
-	{
-		CString strDatabasePath(lpszDatabasePath);
-		WizPathAddBackslash(strDatabasePath);
-		//
-		return strDatabasePath + _T(".metas");
-	}
 };
 
 

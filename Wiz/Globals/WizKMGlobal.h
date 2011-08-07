@@ -45,7 +45,7 @@ inline BOOL WizKMIsSysFolderName(LPCTSTR lpszName)
 	return 0 == _tcsicmp(lpszName, FOLDER_MY_NOTES)
 		|| 0 == _tcsicmp(lpszName, FOLDER_MY_JOURNALS)
 		|| 0 == _tcsicmp(lpszName, FOLDER_MY_EVENTS)
-		|| 0 == _tcsicmp(lpszName, FOLDER_MY_CONTACTS)
+		|| 0 == _tcsicmp(lpszName, FOLDER_MY_TASKS)
 		|| 0 == _tcsicmp(lpszName, FOLDER_DELETED_ITEMS)
 		;
 }
@@ -133,9 +133,10 @@ inline CString WizKMGetExplorerExeFileName()
 	return WizKMGetProductExeFileName();
 }
 
-inline BOOL WizKMNoteExists()
+
+inline BOOL WizKMTodoExists()
 {
-	static BOOL b = PathFileExists(WizGetAppPath() + _T("WizNote.exe"));
+	static BOOL b = PathFileExists(WizGetAppPath() + _T("WizTodo.exe"));
 	return b;
 }
 
@@ -155,29 +156,6 @@ inline BOOL WizKMEditorExists()
 	static BOOL b = PathFileExists(WizGetAppPath() + _T("WizHtmlEditor.exe"));
 	return b;
 }
-
-struct WIZKBINFO
-{
-	__int64 nStorageLimit;
-	__int64 nStorageUsage;
-	CString strStorageLimit;
-	CString strStorageUsage;
-	//
-	__int64 nTrafficLimit;
-	__int64 nTrafficUsage;
-	CString strTrafficLimit;
-	CString strTrafficUsage;
-
-	//
-	WIZKBINFO()
-	{
-		nStorageLimit = 0;
-		nStorageUsage = 0;
-		nTrafficLimit = 0;
-		nTrafficUsage = 0;
-	}
-};
-
 
 
 struct WIZOBJECTVERSION
