@@ -412,6 +412,30 @@ void CTodoDlg::Refresh()
 	Load();
 }
 
+void CTodoDlg::MoveCompletedTodoItems()
+{
+    CComQIPtr<IWizDocument> pCompleted;
+    CWizDocumentArray arrayDocument;
+
+    CString title; 
+    COleDateTime tNow = COleDateTime::GetCurrentTime();
+    title.Format(L"Tasks%4d%02d", tNow.GetYear(), tNow.GetMonth());
+
+    CString sql;
+    sql.Format(L"DOCUMENT_TITLE='%s'", title);
+    
+    HRESULT hr = m_pDatabase->GetDocumentsBySQL(CComBSTR(sql), arrayDocument);
+    if (FAILED(hr) || arrayDocument.empty())
+    {
+        pCompleted = WizKMCreateTodo2Document(m_pDatabase, WizKMTodoGetCompletedLocation(), CComBSTR(title));
+    }
+    else
+    {
+        pCompleted = arrayDocument[0];
+    }
+    m_pDatabase->GetDatabase()->MoveCompletedTodoItems(m_spDocument, pCompleted);
+}
+
 BOOL CTodoDlg::LoadData()
 {
 	if (!IsWindow())
@@ -419,6 +443,10 @@ BOOL CTodoDlg::LoadData()
 	//
 	{
 		CWizTreeCtrlStateLocker<CWizTodoTreeCtrl> locker(m_wndList);
+
+        //        
+		MoveCompletedTodoItems();
+        
 		//
 		m_wndList.DeleteAllItems();
 		//
