@@ -65,6 +65,7 @@ public:
 		COMMAND_ID_HANDLER(ID_TODOITEM_DELAYTOTOMORROW, OnDelayToTomorrow)
 		COMMAND_ID_HANDLER(ID_TODOITEM_DELAYTO, OnDelayTo)
 		COMMAND_RANGE_HANDLER(ID_TODOITEM_0, ID_TODOITEM_100, OnTodoItemState)
+		COMMAND_RANGE_HANDLER(ID_TODO_LIST_BEGIN, ID_TODO_LIST_END, OnTodoList)
 		MESSAGE_HANDLER(WM_UM_TODO_TREE_ADD_BLANK, OnAddBlank)
 		MESSAGE_HANDLER(WM_VSCROLL, OnVScroll)
 		MESSAGE_HANDLER(WM_MOUSEWHEEL, OnMouseWheel)
@@ -506,6 +507,11 @@ public:
 		return 0;
 	}
 
+	LRESULT OnTodoList(WORD /*wNotifyCode*/, WORD /*wID*/, HWND /*hWndCtl*/, BOOL& /*bHandled*/)
+	{
+		MessageBox(CString("test"));
+		return 0;
+	}
 	void SetItemTodoState(HTREEITEM hItem, WIZTODOSTATE eState, BOOL bNotify = FALSE)
 	{
 		if (!hItem)
@@ -934,6 +940,41 @@ public:
 			menuState.CheckMenuRadioItem(ID_TODOITEM_0, ID_TODOITEM_100, nStateMenuItemID, MF_BYCOMMAND);
 		}
 		//
+
+		static bool bFirstRun = true;
+		if (bFirstRun)
+		{
+			bFirstRun = false;
+			CMenuHandle moveToMenu; 
+			moveToMenu.CreatePopupMenu(); 
+
+			typedef std::map<UINT, CComPtr<IWizDocument> > CDocumentMenuIDMap;
+			CDocumentMenuIDMap m_mapDocumentMenuID;
+			m_mapDocumentMenuID.clear();
+
+			CWizDocumentArray arrayTodoList;
+			WizKMGetTodo2Documents(m_pDatabase, WizKMTodoGetInboxLocation(), arrayTodoList);
+			if (!arrayTodoList.empty())
+			{
+				//
+				UINT index = 0;
+				for (CWizDocumentArray::const_iterator it = arrayTodoList.begin();
+					it != arrayTodoList.end() && index < 20;
+					it++)
+				{
+					CComPtr<IWizDocument> spDocument = *it;
+					CString strTitle = CWizKMDatabase::GetDocumentTitle(spDocument);
+					UINT nID = ID_TODO_LIST_BEGIN + index;
+					moveToMenu.InsertMenu(index, MF_BYPOSITION | MF_STRING, nID,  strTitle);
+					//
+					index++;
+					//
+					m_mapDocumentMenuID[nID] = spDocument;
+				}
+			}
+
+			menu.InsertMenu(2, MF_BYPOSITION | MF_STRING, (HMENU)moveToMenu,  CString("Move To"));
+		}
 	}
 	//
 	virtual void DrawItemText(CDCHandle dcPaint, HTREEITEM hItem, CRect& rcItemText, LPCTSTR lpszText)
