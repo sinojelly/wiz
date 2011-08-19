@@ -72,15 +72,18 @@ LRESULT CWizTodoTreeCtrl::OnMoveTodoItem(WORD /*wNotifyCode*/, WORD wID, HWND /*
 	CComPtr<IWizDocument> spSrcDocument = m_pTodoDlg->GetDocument();
 
 	// 找到鼠标所指向的item
-	HTREEITEM hSelectItem = GetFirstCommandItem();	if (!hSelectItem)		return 0;
-	WIZTODODATA* pItemData = GetItemTodo(hSelectItem);
-	if (!pItemData)
+	HTREEITEM hSelectItem = GetFirstCommandItem();	if (!hSelectItem)		return 0;
+
+	WIZTODODATAEX itemData;
+	if (!ItemToData(hSelectItem, itemData))
+	{
 		return 0;
+	}
 
 	// 只更新Document即可，它会自动触发消息而使得界面更新
 	WIZTODODATAEX::CWizTodoDataExArray arrayDst;
 	WizDocumentGetTodoData(spDstDocument, arrayDst);
-	arrayDst.push_back(*pItemData);  
+	arrayDst.push_back(itemData);  
 	WizDocumentSetTodoData(spDstDocument, arrayDst);
 
 	// 要删除的必然在界面上，从界面删除即可
