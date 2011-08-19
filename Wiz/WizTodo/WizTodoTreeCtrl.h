@@ -5,6 +5,11 @@
 
 #include "TodoLinksDlg.h"
 
+
+typedef std::map<UINT, CComPtr<IWizDocument> > CDocumentMenuIDMap;
+
+class CTodoDlg;
+
 const UINT WM_UM_TODO_TREE_ADD_BLANK = ::RegisterWindowMessage(_T("CWizTodoTreeCtrl_AddBlank"));
 
 class CWizTodoTreeCtrl 
@@ -32,6 +37,9 @@ public:
 		//
 		m_hCursorDefault = ::LoadCursor(NULL, IDC_ARROW);
 		m_hCursorHand = ::LoadCursor(NULL, IDC_HAND);
+
+		m_bMoveToMenuExist = false;
+		m_pTodoDlg = NULL;
 	}
 protected:
 	CFont m_fontStrikeOut;
@@ -46,6 +54,12 @@ protected:
 	//
 	HCURSOR m_hCursorDefault;
 	HCURSOR m_hCursorHand;
+
+private:
+	bool m_bMoveToMenuExist;
+	CTodoDlg *m_pTodoDlg;
+	CDocumentMenuIDMap m_mapDocumentMenuID;
+
 public:
 	BEGIN_MSG_MAP(CWizTodoTreeCtrl)
 		COMMAND_ID_HANDLER(ID_PRIORITY_URGENTANDIMPORTANT, OnTodoItemUrgentAndImportant)
@@ -65,7 +79,7 @@ public:
 		COMMAND_ID_HANDLER(ID_TODOITEM_DELAYTOTOMORROW, OnDelayToTomorrow)
 		COMMAND_ID_HANDLER(ID_TODOITEM_DELAYTO, OnDelayTo)
 		COMMAND_RANGE_HANDLER(ID_TODOITEM_0, ID_TODOITEM_100, OnTodoItemState)
-		COMMAND_RANGE_HANDLER(ID_TODO_LIST_BEGIN, ID_TODO_LIST_END, OnTodoList)
+		COMMAND_RANGE_HANDLER(ID_TODO_LIST_BEGIN, ID_TODO_LIST_END, OnMoveTodoItem)
 		MESSAGE_HANDLER(WM_UM_TODO_TREE_ADD_BLANK, OnAddBlank)
 		MESSAGE_HANDLER(WM_VSCROLL, OnVScroll)
 		MESSAGE_HANDLER(WM_MOUSEWHEEL, OnMouseWheel)
@@ -507,11 +521,8 @@ public:
 		return 0;
 	}
 
-	LRESULT OnTodoList(WORD /*wNotifyCode*/, WORD /*wID*/, HWND /*hWndCtl*/, BOOL& /*bHandled*/)
-	{
-		MessageBox(CString("test"));
-		return 0;
-	}
+	LRESULT OnMoveTodoItem(WORD /*wNotifyCode*/, WORD /*wID*/, HWND /*hWndCtl*/, BOOL& /*bHandled*/);
+
 	void SetItemTodoState(HTREEITEM hItem, WIZTODOSTATE eState, BOOL bNotify = FALSE)
 	{
 		if (!hItem)
@@ -941,41 +952,12 @@ public:
 		}
 		//
 
-		static bool bFirstRun = true;
-		if (bFirstRun)
-		{
-			bFirstRun = false;
-			CMenuHandle moveToMenu; 
-			moveToMenu.CreatePopupMenu(); 
+		UpdateMoveToMenu(menu);
 
-			typedef std::map<UINT, CComPtr<IWizDocument> > CDocumentMenuIDMap;
-			CDocumentMenuIDMap m_mapDocumentMenuID;
-			m_mapDocumentMenuID.clear();
-
-			CWizDocumentArray arrayTodoList;
-			WizKMGetTodo2Documents(m_pDatabase, WizKMTodoGetInboxLocation(), arrayTodoList);
-			if (!arrayTodoList.empty())
-			{
-				//
-				UINT index = 0;
-				for (CWizDocumentArray::const_iterator it = arrayTodoList.begin();
-					it != arrayTodoList.end() && index < 20;
-					it++)
-				{
-					CComPtr<IWizDocument> spDocument = *it;
-					CString strTitle = CWizKMDatabase::GetDocumentTitle(spDocument);
-					UINT nID = ID_TODO_LIST_BEGIN + index;
-					moveToMenu.InsertMenu(index, MF_BYPOSITION | MF_STRING, nID,  strTitle);
-					//
-					index++;
-					//
-					m_mapDocumentMenuID[nID] = spDocument;
-				}
-			}
-
-			menu.InsertMenu(2, MF_BYPOSITION | MF_STRING, (HMENU)moveToMenu,  CString("Move To"));
-		}
 	}
+
+	void UpdateMoveToMenu( CMenuHandle &menu );
+
 	//
 	virtual void DrawItemText(CDCHandle dcPaint, HTREEITEM hItem, CRect& rcItemText, LPCTSTR lpszText)
 	{
@@ -1495,6 +1477,12 @@ public:
 	{
 		m_bModified = b;
 	}
+
+	void SetTodoDlg(CTodoDlg *p)
+	{
+		m_pTodoDlg = p;
+	}
+
 	void OnTodoLinkClicked(HTREEITEM hItem)
 	{
 		if (!hItem)

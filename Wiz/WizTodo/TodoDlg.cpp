@@ -31,6 +31,7 @@ LRESULT CTodoDlg::OnCreate(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandl
 	//
 	m_btnNew.Create(m_hWnd, NULL, NULL, 0, 0, IDC_BUTTON_NEW);
 	m_wndList.Create(m_hWnd, NULL, NULL, 0, 0, IDC_TREE_TODO);
+	m_wndList.SetTodoDlg(this);
 
 	WizTranslationsTranslateWindow(m_hWnd);
 	//
