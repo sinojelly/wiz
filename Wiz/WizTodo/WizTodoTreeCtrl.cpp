@@ -86,6 +86,7 @@ LRESULT CWizTodoTreeCtrl::OnMoveTodoItem(WORD /*wNotifyCode*/, WORD wID, HWND /*
 	// 要删除的必然在界面上，从界面删除即可
 	DeleteItem(hSelectItem);
 	m_bModified = true;
+	m_pTodoDlg->AutoSave();
 
 	return 0;
 }
