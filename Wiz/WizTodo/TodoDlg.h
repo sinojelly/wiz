@@ -42,6 +42,7 @@ BEGIN_MSG_MAP(CTodoDlg)
 	MESSAGE_HANDLER(WM_TIMER, OnTimer)
 	COMMAND_HANDLER(IDC_BUTTON_NEW, BN_CLICKED, OnBnClickedButtonNew)
 	COMMAND_ID_HANDLER(ID_TODO_CHANGETITLE, OnTodoChangetitle)
+	COMMAND_ID_HANDLER(ID_TODO_SETDEFAULT, OnTodoSetDefault)
 	CHAIN_MSG_MAP(CWizKMSmallDlgBase<CTodoDlg>)
 	CHAIN_MSG_MAP(CWizKMObjectMessageHandler<CTodoDlg>)
 	REFLECT_NOTIFICATIONS()
@@ -97,6 +98,7 @@ public:
 	LRESULT OnTimer(UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*lParam*/, BOOL& /*bHandled*/);
 	LRESULT OnBnClickedButtonNew(WORD /*wNotifyCode*/, WORD /*wID*/, HWND /*hWndCtl*/, BOOL& /*bHandled*/);
 	LRESULT OnTodoChangetitle(WORD /*wNotifyCode*/, WORD /*wID*/, HWND /*hWndCtl*/, BOOL& /*bHandled*/);
+	LRESULT OnTodoSetDefault(WORD /*wNotifyCode*/, WORD /*wID*/, HWND /*hWndCtl*/, BOOL& /*bHandled*/);
 	
 	void MoveCompletedTodoItems();
 };

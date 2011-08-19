@@ -164,6 +164,7 @@
 #define ID_TRAY_NEW_TODOLIST            32894
 #define ID_HIDDEN_NEWBLANKTODOLIST      32895
 #define ID_TODO_CHANGETITLE             32897
+#define ID_TODO_SETDEFAULT              32898
 #define ID_TODO_LINK_BEGIN              33000
 #define ID_TODO_LIST_BEGIN              34000
 #define ID_TODO_LIST_END                34020
@@ -173,7 +174,7 @@
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        229
-#define _APS_NEXT_COMMAND_VALUE         32898
+#define _APS_NEXT_COMMAND_VALUE         32899
 #define _APS_NEXT_CONTROL_VALUE         1023
 #define _APS_NEXT_SYMED_VALUE           101
 #endif

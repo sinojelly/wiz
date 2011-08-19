@@ -520,6 +520,44 @@ LRESULT CTodoDlg::OnTodoChangetitle(WORD /*wNotifyCode*/, WORD /*wID*/, HWND /*h
 	return 0;
 }
 
+LRESULT CTodoDlg::OnTodoSetDefault(WORD /*wNotifyCode*/, WORD /*wID*/, HWND /*hWndCtl*/, BOOL& /*bHandled*/)
+{
+	const CComBSTR defaultParamName = _T("DefaultTodoList");
+
+	if (!m_spDocument)
+	{
+		return 0;		
+	}
+
+	CWizDocumentArray arrayTodoList;
+	WizKMGetTodo2Documents(m_pDatabase, WizKMTodoGetInboxLocation(), arrayTodoList);
+
+	for (CWizDocumentArray::const_iterator it = arrayTodoList.begin();
+		it != arrayTodoList.end() ;
+		it++)
+	{
+		CComPtr<IWizDocument> spDocument = *it;
+
+		CComBSTR defaultValue;
+		defaultValue = CWizKMDatabase::GetDocumentParam(*it, defaultParamName);
+
+		if (defaultValue == _T("1"))
+		{
+			CWizKMDatabase::SetDocumentParam(*it, defaultParamName, _T("0"));
+			// TODO: 1. 如何删除Param?  2. 如何更新它对应的窗口标题？
+		}
+	}
+
+	CWizKMDatabase::SetDocumentParam(m_spDocument, defaultParamName, _T("1"));
+
+	/*CComBSTR title;
+	m_spDocument->get_Title(&title);
+	m_strInitTitle = CString(title) + _T("(default)");
+	Invalidate();*/
+
+	return 0;
+}
+
 void CTodoDlg::InitNewTodoList()
 {
 	m_wndList.GetBlankTodoItem(NULL, TRUE);
