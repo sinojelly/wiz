@@ -58,6 +58,13 @@ LRESULT CTodoDlg::OnCreate(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandl
 	return 1;  // Let the system set the focus
 }
 
+LRESULT CTodoDlg::OnDestroy(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
+{
+	WizKMObjectMessageUnregisterReceiver(objecttypeDocument, m_hWnd);
+
+	return 0;
+}
+
 CRect CTodoDlg::GetTitleRect()
 {
 	CRect rcNew;
@@ -162,8 +169,6 @@ void CTodoDlg::UpdateLayout()
 void CTodoDlg::Close()
 {
 	CWizKMSmallDlgBase<CTodoDlg>::Close();
-	//
-	WizKMObjectMessageUnregisterReceiver(objecttypeDocument, m_hWnd);
 	//
 	WizGetMainDlg()->PostMessage(UM_SAVE_TODOLISTS_STATUS, 0, 0);
 }
