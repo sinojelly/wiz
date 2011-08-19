@@ -418,8 +418,28 @@ void CTodoDlg::Refresh()
 	Load();
 }
 
+bool hasCompletedItem(IWizDocument *document)
+{
+	WIZTODODATAEX::CWizTodoDataExArray items;
+	WizDocumentGetTodoData(document, items);
+
+	std::vector<WIZTODODATAEX>::iterator it = items.begin();
+	for (; it != items.end(); ++it)
+	{
+		if ((*it).eState == todoState100)
+			return true;
+	}
+
+	return false;
+}
+
 void CTodoDlg::MoveCompletedTodoItems()
 {
+	if (!hasCompletedItem(m_spDocument))
+	{
+		return;
+	}
+
     CComQIPtr<IWizDocument> pCompleted;
     CWizDocumentArray arrayDocument;
 
