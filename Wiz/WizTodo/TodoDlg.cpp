@@ -92,7 +92,7 @@ CString CTodoDlg::GetTitle()
 		bool isDefault = CWizKMDatabase::GetDocumentParam(m_spDocument, _T("DefaultTodoList")) == _T("1") ? true : false;
 		if (isDefault)
 		{
-			title += "(default)";
+			title += WizFormatString0(IDS_DEFAULT_TODOLIST);
 		}
 
 		return title;

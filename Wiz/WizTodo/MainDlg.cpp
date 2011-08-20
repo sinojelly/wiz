@@ -389,7 +389,7 @@ void CMainDlg::OnTrayPrepareMenu(HMENU hMenu)
 			if (isDefault)
 			{
 				flags |= MF_DEFAULT;
-				strTitle += "(default)";
+				strTitle += WizFormatString0(IDS_DEFAULT_TODOLIST);
 			}
 			menu.InsertMenu(index, flags, nID,  strTitle);
 			//
