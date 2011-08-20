@@ -5,7 +5,7 @@ ResourceExtractor.exe "..\..\Wiz\WizHtmlEditor\WizHtmlEditor.rc" "..\..\Wiz\Prod
 
 ResourceExtractor.exe "..\..\Wiz\WizKMCalendar\WizKMCalendar.rc" "..\..\Wiz\Products\Debug\translations\Default\WizKMCalendar.ini"
 ResourceExtractor.exe "..\..\Wiz\WizKMControls\WizKMControls.rc" "..\..\Wiz\Products\Debug\translations\Default\WizKMControls.ini"
-ResourceExtractor.exe "..\..\Wiz\WizTodo\WizTodo.rc" "..\..\Wiz\Products\Debug\translations\Default\WizTodo.ini"
+ResourceExtractor.exe "..\..\Wiz\WizTasks\WizTodo.rc" "..\..\Wiz\Products\Debug\translations\Default\WizTodo.ini"
 
 ResourceExtractor.exe "..\..\Wiz\WizWebCapture\WizWebCapture.rc" "..\..\Wiz\Products\Debug\translations\Default\NPWizWebCapture.ini"
 ResourceExtractor.exe "..\..\Wiz\WizWebCaptureResourceToArticle\WizWebCaptureResourceToArticle.rc" "..\..\Wiz\Products\Debug\translations\Default\WizWebCaptureResourceToArticle.ini"
