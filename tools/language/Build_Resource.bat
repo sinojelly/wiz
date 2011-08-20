@@ -5,7 +5,7 @@ ResourceExtractor.exe "..\..\Wiz\WizHtmlEditor\WizHtmlEditor.rc" "..\..\Wiz\Prod
 
 ResourceExtractor.exe "..\..\Wiz\WizKMCalendar\WizKMCalendar.rc" "..\..\Wiz\Products\Debug\translations\Default\WizKMCalendar.ini"
 ResourceExtractor.exe "..\..\Wiz\WizKMControls\WizKMControls.rc" "..\..\Wiz\Products\Debug\translations\Default\WizKMControls.ini"
-ResourceExtractor.exe "..\..\Wiz\WizTasks\WizTodo.rc" "..\..\Wiz\Products\Debug\translations\Default\WizTodo.ini"
+ResourceExtractor.exe "..\..\Wiz\WizTasks\WizTasks.rc" "..\..\Wiz\Products\Debug\translations\Default\WizTasks.ini"
 
 ResourceExtractor.exe "..\..\Wiz\WizWebCapture\WizWebCapture.rc" "..\..\Wiz\Products\Debug\translations\Default\NPWizWebCapture.ini"
 ResourceExtractor.exe "..\..\Wiz\WizWebCaptureResourceToArticle\WizWebCaptureResourceToArticle.rc" "..\..\Wiz\Products\Debug\translations\Default\WizWebCaptureResourceToArticle.ini"
@@ -28,7 +28,7 @@ ResourceTranslator.exe "..\..\Wiz\products\Debug\translations\default\WizHtmlEdi
 
 ResourceTranslator.exe "..\..\Wiz\products\Debug\translations\default\WizKMCalendar.ini" "..\..\Wiz\Products\Debug\translations\1028\WizKMCalendar.ini"
 ResourceTranslator.exe "..\..\Wiz\products\Debug\translations\default\WizKMControls.ini" "..\..\Wiz\Products\Debug\translations\1028\WizKMControls.ini"
-ResourceTranslator.exe "..\..\Wiz\products\Debug\translations\default\WizTodo.ini" "..\..\Wiz\Products\Debug\translations\1028\WizTodo.ini"
+ResourceTranslator.exe "..\..\Wiz\products\Debug\translations\default\WizTasks.ini" "..\..\Wiz\Products\Debug\translations\1028\WizTasks.ini"
 
 ResourceTranslator.exe "..\..\Wiz\products\Debug\translations\default\NPWizWebCapture.ini" "..\..\Wiz\Products\Debug\translations\1028\NPWizWebCapture.ini"
 ResourceTranslator.exe "..\..\Wiz\products\Debug\translations\default\WizWebCaptureResourceToArticle.ini" "..\..\Wiz\Products\Debug\translations\1028\WizWebCaptureResourceToArticle.ini"
@@ -52,7 +52,7 @@ ResourceTranslator.exe "..\..\Wiz\products\Debug\translations\default\WizHtmlEdi
 
 ResourceTranslator.exe "..\..\Wiz\products\Debug\translations\default\WizKMCalendar.ini" "..\..\Wiz\Products\Debug\translations\2052\WizKMCalendar.ini"
 ResourceTranslator.exe "..\..\Wiz\products\Debug\translations\default\WizKMControls.ini" "..\..\Wiz\Products\Debug\translations\2052\WizKMControls.ini"
-ResourceTranslator.exe "..\..\Wiz\products\Debug\translations\default\WizTodo.ini" "..\..\Wiz\Products\Debug\translations\2052\WizTodo.ini"
+ResourceTranslator.exe "..\..\Wiz\products\Debug\translations\default\WizTasks.ini" "..\..\Wiz\Products\Debug\translations\2052\WizTasks.ini"
 
 ResourceTranslator.exe "..\..\Wiz\products\Debug\translations\default\NPWizWebCapture.ini" "..\..\Wiz\Products\Debug\translations\2052\NPWizWebCapture.ini"
 ResourceTranslator.exe "..\..\Wiz\products\Debug\translations\default\WizWebCaptureResourceToArticle.ini" "..\..\Wiz\Products\Debug\translations\2052\WizWebCaptureResourceToArticle.ini"

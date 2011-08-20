@@ -366,7 +366,7 @@ LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
 
 // Icon with lowest ID value placed first to ensure application icon
 // remains consistent on all systems.
-IDR_MAINFRAME           ICON                    "res\\WizTodo.ico"
+IDR_MAINFRAME           ICON                    "res\\WizTasks.ico"
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -379,7 +379,7 @@ CAPTION "About"
 FONT 8, "MS Sans Serif", 0, 0, 0x0
 BEGIN
     DEFPUSHBUTTON   "OK",IDOK,130,81,50,14
-    CTEXT           "WizTodo v1.0\n\n(c) Copyright 2009",IDC_STATIC,25,57,78,32
+    CTEXT           "WizTasks v1.0\n\n(c) Copyright 2011",IDC_STATIC,25,57,78,32
     ICON            IDR_MAINFRAME,IDC_STATIC,55,26,20,20
     GROUPBOX        "",IDC_STATIC,7,7,115,88
 END
@@ -463,10 +463,10 @@ BEGIN
     BEGIN
         BLOCK "040904b0"
         BEGIN
-            VALUE "FileDescription", "WizTodo"
+            VALUE "FileDescription", "WizTasks"
             VALUE "FileVersion", "1.0.1.0"
-            VALUE "InternalName", "WizTodo.exe"
-            VALUE "OriginalFilename", "WizTodo.exe"
+            VALUE "InternalName", "WizTasks.exe"
+            VALUE "OriginalFilename", "WizTasks.exe"
             VALUE "ProductName", "Wiz"
             VALUE "ProductVersion", "1.0.1.0"
         END
