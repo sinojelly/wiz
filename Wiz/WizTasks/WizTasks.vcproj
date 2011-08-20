@@ -2,9 +2,9 @@
 <VisualStudioProject
 	ProjectType="Visual C++"
 	Version="9.00"
-	Name="WizTodo"
+	Name="WizTasks"
 	ProjectGUID="{98B60CE7-32BF-4422-9CB0-3611983BF871}"
-	RootNamespace="WizTodo"
+	RootNamespace="WizTasks"
 	TargetFrameworkVersion="196613"
 	>
 	<Platforms>

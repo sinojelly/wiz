@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 10.00
 # Visual Studio 2008
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "WizTodo", "WizTodo.vcproj", "{98B60CE7-32BF-4422-9CB0-3611983BF871}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "WizTasks", "WizTasks.vcproj", "{98B60CE7-32BF-4422-9CB0-3611983BF871}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

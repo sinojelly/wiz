@@ -279,7 +279,7 @@ IDB_BITMAP_TODO_STATE   BITMAP                  "res\\todolist_state.bmp"
 STRINGTABLE 
 BEGIN
     IDS_UNTITLED_TODOLIST   "Todo list"
-    IDS_WIZTODO             "WizTodo"
+    IDS_WIZTODO             "WizTasks"
     IDS_FAILED_TO_OPEN_DATABASE "Failed to open database!"
 END
 

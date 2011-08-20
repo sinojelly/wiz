@@ -93,7 +93,7 @@ LRESULT CMainDlg::OnInitDialog(UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*lParam
 	//
 	m_databaseWindow.Register(m_db.GetDatabasePath(), m_hWnd, WIZKM_DATABASE_WINDOW_TODO);
 	//
-	SetWindowText(_T("WizTodo"));
+	SetWindowText(_T("WizTasks"));
 	//
 	// set icons
 	HICON hIcon = (HICON)::LoadImage(_Module.GetResourceInstance(), MAKEINTRESOURCE(IDR_MAINFRAME), 
@@ -683,7 +683,7 @@ void CMainDlg::RemindEvent(IWizEvent* pEvent)
 LRESULT CMainDlg::OnHelpManual(WORD /*wNotifyCode*/, WORD /*wID*/, HWND /*hWndCtl*/, BOOL& /*bHandled*/)
 {
 	// TODO: Add your command handler code here
-	WizKMWebSiteVisitHelp(_T("wiztodo"));
+	WizKMWebSiteVisitHelp(_T("wiztasks"));
 
 	return 0;
 }
