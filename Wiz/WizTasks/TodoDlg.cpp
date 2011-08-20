@@ -522,7 +522,7 @@ LRESULT CTodoDlg::OnTodoChangetitle(WORD /*wNotifyCode*/, WORD /*wID*/, HWND /*h
 {
 	// TODO: Add your command handler code here
 	CString strTitle;
-	if (!WizKMInputBox(IDS_CHANGE_TODOLIST_TITLE, IDS_TODOLIST_TITLE_DESCRIPTION, GetTitle(), strTitle))
+	if (!WizKMInputBox(IDS_CHANGE_TODOLIST_TITLE, IDS_TODOLIST_TITLE_DESCRIPTION, CWizKMDatabase::GetDocumentTitle(m_spDocument), strTitle))
 		return 0;
 	//
 	m_strInitTitle = strTitle;
