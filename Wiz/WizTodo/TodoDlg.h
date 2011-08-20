@@ -40,6 +40,7 @@ BEGIN_MSG_MAP(CTodoDlg)
 	MESSAGE_HANDLER(WM_CREATE, OnCreate)
 	MESSAGE_HANDLER(WM_DESTROY, OnDestroy)
 	MESSAGE_HANDLER(WM_TIMER, OnTimer)
+	MESSAGE_HANDLER(WIZ_WM_UM_NOTIFY_PARENT_COMMAND, OnNotifyParentCommand)
 	COMMAND_HANDLER(IDC_BUTTON_NEW, BN_CLICKED, OnBnClickedButtonNew)
 	COMMAND_ID_HANDLER(ID_TODO_CHANGETITLE, OnTodoChangetitle)
 	COMMAND_ID_HANDLER(ID_TODO_SETDEFAULT, OnTodoSetDefault)
@@ -96,6 +97,7 @@ public:
 	LRESULT OnCreate(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
 	LRESULT OnDestroy(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
 	LRESULT OnTimer(UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*lParam*/, BOOL& /*bHandled*/);
+	LRESULT OnNotifyParentCommand(UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*lParam*/, BOOL& /*bHandled*/);
 	LRESULT OnBnClickedButtonNew(WORD /*wNotifyCode*/, WORD /*wID*/, HWND /*hWndCtl*/, BOOL& /*bHandled*/);
 	LRESULT OnTodoChangetitle(WORD /*wNotifyCode*/, WORD /*wID*/, HWND /*hWndCtl*/, BOOL& /*bHandled*/);
 	LRESULT OnTodoSetDefault(WORD /*wNotifyCode*/, WORD /*wID*/, HWND /*hWndCtl*/, BOOL& /*bHandled*/);

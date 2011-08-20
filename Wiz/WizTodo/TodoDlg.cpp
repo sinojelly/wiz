@@ -88,7 +88,14 @@ CString CTodoDlg::GetTitle()
 {
 	if (m_spDocument)
 	{
-		return CWizKMDatabase::GetDocumentTitle(m_spDocument);
+		CString title = CWizKMDatabase::GetDocumentTitle(m_spDocument);
+		bool isDefault = CWizKMDatabase::GetDocumentParam(m_spDocument, _T("DefaultTodoList")) == _T("1") ? true : false;
+		if (isDefault)
+		{
+			title += "(default)";
+		}
+
+		return title;
 	}
 	else
 	{
@@ -475,8 +482,10 @@ BOOL CTodoDlg::LoadData()
         
 		//
 		m_wndList.DeleteAllItems();
+
 		//
 		SetWindowText(GetTitle());
+		
 		//
 		WIZTODODATAEX::CWizTodoDataExArray arrayData;
 		//
@@ -484,6 +493,14 @@ BOOL CTodoDlg::LoadData()
 		{
 			WizDocumentGetTodoData(m_spDocument, arrayData);
 		}
+
+		bool isDefault = CWizKMDatabase::GetDocumentParam(m_spDocument, _T("DefaultTodoList")) == _T("1") ? true : false;
+		if (isDefault)
+		{
+			COleDateTime tNow = COleDateTime::GetCurrentTime();
+			WizKMCalendarEventsAddToTodoData(m_pDatabase, tNow, arrayData);
+		}
+
 		//
 		m_wndList.SetAllData(arrayData);
 		//
@@ -526,7 +543,7 @@ LRESULT CTodoDlg::OnTodoSetDefault(WORD /*wNotifyCode*/, WORD /*wID*/, HWND /*hW
 
 	if (!m_spDocument)
 	{
-		return 0;		
+		SaveData();
 	}
 
 	CWizDocumentArray arrayTodoList;
@@ -550,11 +567,6 @@ LRESULT CTodoDlg::OnTodoSetDefault(WORD /*wNotifyCode*/, WORD /*wID*/, HWND /*hW
 
 	CWizKMDatabase::SetDocumentParam(m_spDocument, defaultParamName, _T("1"));
 
-	/*CComBSTR title;
-	m_spDocument->get_Title(&title);
-	m_strInitTitle = CString(title) + _T("(default)");
-	Invalidate();*/
-
 	return 0;
 }
 
@@ -563,3 +575,78 @@ void CTodoDlg::InitNewTodoList()
 	m_wndList.GetBlankTodoItem(NULL, TRUE);
 	m_wndList.SetModified(FALSE);
 }
+
+
+
+LRESULT CTodoDlg::OnNotifyParentCommand(UINT /*uMsg*/, WPARAM wParam, LPARAM lParam, BOOL& /*bHandled*/)
+{
+	LPCTSTR lpszCommand = (LPCTSTR)wParam;
+	try
+	{
+		if (lpszCommand)
+		{
+			if (0 == _tcsicmp(lpszCommand, _T("OnItemCheckStateChanged")))
+			{
+				WIZTODODATA* pData = (WIZTODODATA *)lParam;
+				if (pData
+					&& pData->eState == todoState100)
+				{
+					CComPtr<IWizEvent> spEvent = GetTodoEvent(pData);
+					if (spEvent)
+					{
+						if (WizKMGetPrivateBool(_T("Event"), _T("CompleteEventWhileTodoCompleted"), TRUE))
+						{
+							WizKMEventSetCompleted(spEvent);
+							//
+							//WizGetMainDlg()->PostMessage(UM_REFRESH_TODO_LIST, 0, 0);
+						}
+					}
+				}
+			}
+		}
+	}
+	catch (...)
+	{
+	}
+	return 0;
+}
+
+
+CComPtr<IWizEvent> CTodoDlg::GetTodoEvent(WIZTODODATA* pData)
+{
+	if (!pData)
+		return NULL;
+	//
+	if (pData->arrayLinkedDocumentGUID.size() != 1)
+		return NULL;
+	//
+	CComPtr<IWizDocument> spDocument = m_pDatabase->GetDocumentByGUID(pData->arrayLinkedDocumentGUID[0]);
+	if (!spDocument)
+		return NULL;
+	CString strType = CWizKMDatabase::GetDocumentType(spDocument);
+	if (0 != strType.CompareNoCase(_T("event")))
+		return NULL;
+	CComPtr<IDispatch> spEventDisp;
+	spDocument->get_Event(&spEventDisp);
+	CComQIPtr<IWizEvent> spEvent(spEventDisp);
+	if (!spEvent)
+		return NULL;
+	//
+	CComBSTR bstrRecurrence;
+	spEvent->get_Recurrence(&bstrRecurrence);
+	CString strRecurrence(bstrRecurrence);
+	if (!strRecurrence.IsEmpty())
+	{
+		COleDateTime tDate = WizGetCurrentTime();
+		CString strRecurrenceIndex;
+		strRecurrenceIndex.Format(_T("%04d%02d%02d"),
+			tDate.GetYear(),
+			tDate.GetMonth(),
+			tDate.GetDay());
+
+		spEvent->put_RecurrenceIndex(CComBSTR(strRecurrenceIndex));
+	}
+	//
+	return spEvent;
+}
+//

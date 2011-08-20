@@ -383,7 +383,15 @@ void CMainDlg::OnTrayPrepareMenu(HMENU hMenu)
 			CComPtr<IWizDocument> spDocument = *it;
 			CString strTitle = CWizKMDatabase::GetDocumentTitle(spDocument);
 			UINT nID = ID_TODO_LIST_BEGIN + index;
-			menu.InsertMenu(index, MF_BYPOSITION | MF_STRING, nID,  strTitle);
+
+			UINT flags = MF_BYPOSITION | MF_STRING;
+			bool isDefault = CWizKMDatabase::GetDocumentParam(spDocument, _T("DefaultTodoList")) == _T("1") ? true : false;
+			if (isDefault)
+			{
+				flags |= MF_DEFAULT;
+				strTitle += "(default)";
+			}
+			menu.InsertMenu(index, flags, nID,  strTitle);
 			//
 			index++;
 			//
