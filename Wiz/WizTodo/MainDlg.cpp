@@ -123,14 +123,38 @@ LRESULT CMainDlg::OnInitDialog(UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*lParam
 	ProcessCommandLine(m_strCommandLine);
 	//
 	LoadTodoListsStatus();
+
+	CWizDocumentArray arrayAllTodoList;
 	if (m_arrayTodoList.empty())
-	{
-		CWizDocumentArray arrayTodoList;
-		WizKMGetTodo2Documents(&m_db, WizKMTodoGetInboxLocation(), arrayTodoList);
-		if (arrayTodoList.empty())
+	{		
+		WizKMGetTodo2Documents(&m_db, WizKMTodoGetInboxLocation(), arrayAllTodoList);
+		if (arrayAllTodoList.empty())
 		{
-			PostMessage(WM_COMMAND, MAKEWPARAM(ID_HIDDEN_NEWBLANKTODOLIST, 0), 0);
+			CTodoDlg* pDlg = CreateNewTodoDlg(NULL, NULL);			pDlg->SaveData();
 		}
+	}
+
+	WizKMGetTodo2Documents(&m_db, WizKMTodoGetInboxLocation(), arrayAllTodoList);
+	bool hasDefault = false;
+	for (CWizDocumentArray::const_iterator it = arrayAllTodoList.begin();
+		it != arrayAllTodoList.end();
+		it++)
+	{
+		CComPtr<IWizDocument> spDocument = *it;
+		bool isDefault = CWizKMDatabase::GetDocumentParam(spDocument, _T("DefaultTodoList")) == _T("1") ? true : false;
+		if (isDefault)
+		{
+			if (hasDefault)
+			{
+				CWizKMDatabase::SetDocumentParam(spDocument, _T("DefaultTodoList"), LPCTSTR(_T("0")));
+			}
+			hasDefault = true;
+		}
+	}
+
+	if (!hasDefault)
+	{
+		CWizKMDatabase::SetDocumentParam(*arrayAllTodoList.begin(), _T("DefaultTodoList"), LPCTSTR(_T("1"))); 
 	}
 
 	//
@@ -388,10 +412,14 @@ void CMainDlg::OnTrayPrepareMenu(HMENU hMenu)
 			bool isDefault = CWizKMDatabase::GetDocumentParam(spDocument, _T("DefaultTodoList")) == _T("1") ? true : false;
 			if (isDefault)
 			{
-				flags |= MF_DEFAULT;
 				strTitle += WizFormatString0(IDS_DEFAULT_TODOLIST);
 			}
 			menu.InsertMenu(index, flags, nID,  strTitle);
+			if (isDefault)
+			{
+				SetMenuDefaultItem(menu, nID, FALSE);
+			}
+
 			//
 			index++;
 			//
