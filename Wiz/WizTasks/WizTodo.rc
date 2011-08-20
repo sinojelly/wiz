@@ -313,7 +313,7 @@ END
 
 STRINGTABLE 
 BEGIN
-    IDS_WIZTODO_IS_RUNNING  "{p} Todo is running."
+    IDS_WIZTODO_IS_RUNNING  "{p} Tasks is running."
     IDS_VIEW_SAVE_RESULT    "View Result"
     IDS_FAILED_TO_SAVE_TODOS "Failed to save Todo list"
     IDS_ADD_TASK            "<New Task>"
