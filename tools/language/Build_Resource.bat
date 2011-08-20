@@ -20,7 +20,7 @@ ResourceExtractor.exe "..\..\Wiz\WizReaderWM\WizReaderWM.rc" "..\..\Wiz\Products
 ResourceExtractor.exe "..\..\Wiz\WizReader\WizReader.rc" "..\..\Wiz\WizReader\res\1033.ini"
 ResourceExtractor.exe "..\..\Wiz\WizReaderWM\WizReaderWM.rc" "..\..\Wiz\WizReaderWM\res\1033.ini"
 
-;1028
+rem 1028
 ResourceTranslator.exe "..\..\Wiz\products\Debug\translations\default\Wiz.ini" "..\..\Wiz\Products\Debug\translations\1028\Wiz.ini"
 ResourceTranslator.exe "..\..\Wiz\products\Debug\translations\default\WizKMCore.ini" "..\..\Wiz\Products\Debug\translations\1028\WizKMCore.ini"
 ResourceTranslator.exe "..\..\Wiz\products\Debug\translations\default\WizTools.ini" "..\..\Wiz\Products\Debug\translations\1028\WizTools.ini"
@@ -44,7 +44,7 @@ ResourceTranslator.exe "..\..\Wiz\WizReader\res\1033.ini" "..\..\Wiz\WizReader\r
 ResourceTranslator.exe "..\..\Wiz\WizReaderWM\res\1033.ini" "..\..\Wiz\WizReaderWM\res\1028.ini"
 
 
-;2052
+rem 2052
 ResourceTranslator.exe "..\..\Wiz\products\Debug\translations\default\Wiz.ini" "..\..\Wiz\Products\Debug\translations\2052\Wiz.ini"
 ResourceTranslator.exe "..\..\Wiz\products\Debug\translations\default\WizKMCore.ini" "..\..\Wiz\Products\Debug\translations\2052\WizKMCore.ini"
 ResourceTranslator.exe "..\..\Wiz\products\Debug\translations\default\WizTools.ini" "..\..\Wiz\Products\Debug\translations\2052\WizTools.ini"
