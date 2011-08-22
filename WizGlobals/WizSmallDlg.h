@@ -8,9 +8,9 @@ enum WIZSMALLDLGSTATE
 {
 	stateNormal = 0,
 	stateTopMost = 1,
-	//statePinDesk = 2
+	statePinDesk = 2
 };
-#define WIZSMALLDLGSTATEMAX  stateTopMost
+#define WIZSMALLDLGSTATEMAX  statePinDesk
 
 
 
@@ -187,6 +187,7 @@ protected:
 	UINT m_nMenuID;
 	//
 	BOOL m_bIniting;
+    bool m_bPinDesk;
 public:
 	CWizSmallDlgBase()
 	{
@@ -202,6 +203,8 @@ public:
 		//
 		m_nMenuID = 0;
 		m_bIniting = TRUE;
+
+		m_bPinDesk = false;
 	}
 	//
 
@@ -348,32 +351,13 @@ public:
 		//
 		if (stateTopMost == state)
 		{
+			m_bPinDesk = false;
 			::SetParent(m_hWnd, NULL);
 			SetWindowPos(HWND_TOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE);
 		}
-		/*
-		else if (statePinDesk == state)
-		{
-			::SetWindowLong(m_hWnd, GWL_STYLE, (::GetWindowLong(m_hWnd, GWL_STYLE) &~ WS_POPUP) | WS_CHILD);
-
-			HWND hwndProgMan = ::FindWindow(_T("ProgMan"), NULL);
-			::ShowWindow(hwndProgMan, SW_SHOW);
-			::BringWindowToTop(hwndProgMan);
-			WizFlashWindow(hwndProgMan);
-
-			::SetParent(m_hWnd, hwndProgMan);
-			//
-			HWND hwndNewParent = ::GetParent(m_hWnd);
-			ATLASSERT(hwndNewParent == hwndProgMan);
-			//
-			SetWindowPos(HWND_NOTOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE);
-			//
-			BringWindowToTopEx();
-			//
-		}
-		*/
 		else
 		{
+			m_bPinDesk = (statePinDesk == state);
 			::SetParent(m_hWnd, NULL);
 			SetWindowPos(HWND_NOTOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE);
 		}
@@ -384,6 +368,11 @@ public:
 	}
 	virtual WIZSMALLDLGSTATE GetDlgState() const
 	{
+		if (m_bPinDesk)
+		{
+			return statePinDesk;
+		}
+
 		if (GetExStyle() & WS_EX_TOPMOST)
 		{
 			return stateTopMost;

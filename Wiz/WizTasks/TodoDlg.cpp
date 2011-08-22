@@ -357,11 +357,9 @@ void CTodoDlg::UpdateLockButtonIcon()
 	case stateTopMost:
 		nIcon = IDI_ICON_LOCK_BUTTON;
 		break;
-	/*
 	case statePinDesk:
 		nIcon = IDI_ICON_PIN_DESK_BUTTON;
 		break;
-		*/
 	};
 	//
 	m_btnLock.SetIcon(nIcon);

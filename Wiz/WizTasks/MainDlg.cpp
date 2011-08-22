@@ -24,7 +24,6 @@
 
 #include "../../WizGlobals/WizPropertySheetEx.h"
 
-
 #include <algorithm>
 
 
@@ -131,6 +130,7 @@ LRESULT CMainDlg::OnInitDialog(UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*lParam
 		if (arrayAllTodoList.empty())
 		{
 			CTodoDlg* pDlg = CreateNewTodoDlg(NULL, NULL);			pDlg->SaveData();
+			//m_arrayTodoList.push_back(pDlg); // TODO: ??? jelly
 		}
 	}
 
@@ -158,6 +158,8 @@ LRESULT CMainDlg::OnInitDialog(UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*lParam
 	}
 
 	//
+	WizRegisterShowDesktopEvents(m_hWnd);
+
 	return TRUE;
 }
 
@@ -174,6 +176,9 @@ LRESULT CMainDlg::OnDestroy(UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*lParam*/,
 	DestroyAllTodoLists();
 	DestroyAllRemindEvent();
 	//
+
+	WizDestroyShowDesktopEventsWindow();
+
 	return 0;
 }
 
@@ -957,3 +962,13 @@ void CMainDlg::OnPowerSuspend()
 {
 	m_bSuspend = TRUE;
 }
+
+LRESULT CMainDlg::OnShowDesktop(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled){	for (CTodoDlgArray::const_iterator it = m_arrayTodoList.begin();
+		it != m_arrayTodoList.end() ;
+		it++)
+	{
+		CTodoDlg *pDlg = *it;
+		if ((pDlg->GetDlgState() == statePinDesk) && ((pDlg->GetStyle() & WS_VISIBLE) != 0))		{
+			pDlg->ShowWindow(SW_SHOW);
+		}
+	}	return 0;}

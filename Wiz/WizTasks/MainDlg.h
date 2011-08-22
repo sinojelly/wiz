@@ -4,6 +4,8 @@
 
 #pragma once
 
+#include "WizShowDesktop.h"
+
 #include "../Globals/WizKMCalendarEvents.h"
 
 #include "../../WizGlobals/WizTrayIconImpl.h"
@@ -125,6 +127,7 @@ public:
 		MESSAGE_HANDLER(UM_SAVE_TODOLISTS_STATUS, OnSaveTodoListsStatus)
 		MESSAGE_HANDLER(WIZ_UM_CLOSE_WINDOW_FOR_AUTO_UPDATE, OnCloseWindowForAutoUpdate)
 		MESSAGE_HANDLER(WM_POWERBROADCAST, OnPowerBroadcast)
+		MESSAGE_HANDLER(WIZ_UM_SHOW_DESKTOP_EVENTS, OnShowDesktop)
 		COMMAND_ID_HANDLER(IDOK, OnOK)
 		COMMAND_ID_HANDLER(IDCANCEL, OnCancel)
 		COMMAND_ID_HANDLER(ID_TRAY_NEW_TODOLIST, OnTrayNewTodoList)
@@ -172,6 +175,7 @@ public:
 	LRESULT OnTraySync(WORD /*wNotifyCode*/, WORD /*wID*/, HWND /*hWndCtl*/, BOOL& /*bHandled*/);
 	LRESULT OnCloseWindowForAutoUpdate(UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*lParam*/, BOOL& /*bHandled*/);
 	LRESULT OnHiddenNewblanktodolist(WORD /*wNotifyCode*/, WORD /*wID*/, HWND /*hWndCtl*/, BOOL& /*bHandled*/);
+	LRESULT OnShowDesktop(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
 };
 
 
