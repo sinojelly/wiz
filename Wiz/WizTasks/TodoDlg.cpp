@@ -452,7 +452,9 @@ void CTodoDlg::MoveCompletedTodoItems()
 
     CString title; 
     COleDateTime tNow = COleDateTime::GetCurrentTime();
-    title.Format(L"Tasks%4d%02d", tNow.GetYear(), tNow.GetMonth());
+	CString monthString;
+	monthString.Format(_T("%4d%02d"), tNow.GetYear(), tNow.GetMonth());
+    title.Format(_T("%s%s"), WizFormatString0(IDS_TASKS), monthString);
 
     CString sql;
     sql.Format(L"DOCUMENT_TITLE='%s'", title);
@@ -461,6 +463,9 @@ void CTodoDlg::MoveCompletedTodoItems()
     if (FAILED(hr) || arrayDocument.empty())
     {
         pCompleted = WizKMCreateTodo2Document(m_pDatabase, WizKMTodoGetCompletedLocation(), CComBSTR(title));
+		//CWizKMDatabase::SetDocumentParam(pCompleted, "TasksCompleted", monthString);  
+		// jelly: 先不用这种方案。用户如果改名，估计希望后续任务不再存储到该列表。
+		// DOCUMENT_GUID in (select DOCUMENT_GUID from WIZ_DOCUMENT_PARAM where PARAM_NAME='TASKSCOMPLETED' and PARAM_VALUE='201108')
     }
     else
     {

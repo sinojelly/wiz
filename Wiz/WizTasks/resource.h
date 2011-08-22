@@ -1,6 +1,6 @@
 //{{NO_DEPENDENCIES}}
 // Microsoft Visual C++ generated include file.
-// Used by WizTodo.rc
+// Used by WizTasks.rc
 //
 #define IDD_ABOUTBOX                    100
 #define IDR_MAINFRAME                   128
@@ -50,6 +50,7 @@
 #define IDS_FAILED_TO_REGISTER_HOTKEY   313
 #define IDS_DEFAULT_TODOLIST            314
 #define IDS_TAGS_NAME                   315
+#define IDS_TASKS                       315
 #define IDS_FAILED_TO_CREATE_FOLDER     316
 #define IDS_COLLECTION_MODE_SAVE_TO_MY_DRAFTS 317
 #define IDS_OPEN_WIZEXPLORER            318
