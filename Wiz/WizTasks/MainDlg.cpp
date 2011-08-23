@@ -972,3 +972,28 @@ LRESULT CMainDlg::OnShowDesktop(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& b
 			pDlg->ShowWindow(SW_SHOW);
 		}
 	}	return 0;}
+
+LRESULT CMainDlg::OnTrayShowCompletedTodoLists(WORD /*wNotifyCode*/, WORD /*wID*/, HWND /*hWndCtl*/, BOOL& /*bHandled*/)
+{
+#if 0
+	// TODO: 代码应该不对，运行就会把已完成任务给清空了
+
+	SetForegroundWindow(m_hWnd);
+
+	CWizDocumentArray arrayTodoList;
+	WizKMGetTodo2Documents(&m_db, WizKMTodoGetCompletedLocation(), arrayTodoList);
+	if (!arrayTodoList.empty())
+	{
+		UINT index = 0;
+		for (CWizDocumentArray::const_iterator it = arrayTodoList.begin();
+			it != arrayTodoList.end() && index < 20;
+			it++)
+		{
+			CComPtr<IWizDocument> spDocument = *it;
+			ShowTodoList(spDocument);
+		}
+	}
+	SaveTodoListsStatus();
+#endif
+	return 0;
+}

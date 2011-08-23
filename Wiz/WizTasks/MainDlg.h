@@ -141,6 +141,7 @@ public:
 		COMMAND_RANGE_HANDLER(ID_TODO_LIST_BEGIN, ID_TODO_LIST_END, OnTodoList)
 		REFLECT_NOTIFICATIONS()
 		COMMAND_ID_HANDLER(ID_HIDDEN_NEWBLANKTODOLIST, OnHiddenNewblanktodolist)
+		COMMAND_ID_HANDLER(ID_TRAY_SHOWCOMPLETEDTODOLIST, OnTrayShowCompletedTodoLists)
 		CHAIN_MSG_MAP(CWizKMSyncSimpleMessageBase)
 		CHAIN_MSG_MAP( CWizTrayIconImpl<CMainDlg>)
 	END_MSG_MAP()
@@ -176,6 +177,7 @@ public:
 	LRESULT OnCloseWindowForAutoUpdate(UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*lParam*/, BOOL& /*bHandled*/);
 	LRESULT OnHiddenNewblanktodolist(WORD /*wNotifyCode*/, WORD /*wID*/, HWND /*hWndCtl*/, BOOL& /*bHandled*/);
 	LRESULT OnShowDesktop(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
+	LRESULT OnTrayShowCompletedTodoLists(WORD /*wNotifyCode*/, WORD /*wID*/, HWND /*hWndCtl*/, BOOL& /*bHandled*/);
 };
 
 

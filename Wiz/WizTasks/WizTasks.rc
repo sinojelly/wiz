@@ -121,6 +121,7 @@ BEGIN
     BEGIN
         MENUITEM "New todo list",               ID_TRAY_NEW_TODOLIST
         MENUITEM "Show all todo lists",         ID_TRAY_SHOW_ALL_TODOLISTS
+        MENUITEM "Show completed todo lists",   ID_TRAY_SHOWCOMPLETEDTODOLIST
         MENUITEM SEPARATOR
         MENUITEM "Sync",                        ID_TRAY_SYNC
         MENUITEM SEPARATOR
@@ -299,6 +300,7 @@ BEGIN
     IDS_TASKS               "Tasks"
     IDS_FAILED_TO_CREATE_FOLDER "Failed to create folder: %1"
     IDS_COLLECTION_MODE_SAVE_TO_MY_DRAFTS "Text has been saved in my drafts."
+    IDS_MOVE_TO             "Move to"
     IDS_REGISTER_HOTKEY_FAILED "Failed to register hot key:\n%1"
 END
 

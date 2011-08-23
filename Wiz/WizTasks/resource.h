@@ -54,6 +54,7 @@
 #define IDS_FAILED_TO_CREATE_FOLDER     316
 #define IDS_COLLECTION_MODE_SAVE_TO_MY_DRAFTS 317
 #define IDS_OPEN_WIZEXPLORER            318
+#define IDS_MOVE_TO                     318
 #define IDS_REGISTER_HOTKEY_FAILED      319
 #define IDS_WIZTODO_IS_RUNNING          320
 #define IDS_VIEW_SAVE_RESULT            321
@@ -167,6 +168,7 @@
 #define ID_HIDDEN_NEWBLANKTODOLIST      32895
 #define ID_TODO_CHANGETITLE             32897
 #define ID_TODO_SETDEFAULT              32898
+#define ID_TRAY_SHOWCOMPLETEDTODOLIST   32899
 #define ID_TODO_LINK_BEGIN              33000
 #define ID_TODO_LIST_BEGIN              34000
 #define ID_TODO_LIST_END                34020
@@ -176,7 +178,7 @@
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        229
-#define _APS_NEXT_COMMAND_VALUE         32899
+#define _APS_NEXT_COMMAND_VALUE         32900
 #define _APS_NEXT_CONTROL_VALUE         1023
 #define _APS_NEXT_SYMED_VALUE           101
 #endif

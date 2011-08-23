@@ -55,8 +55,8 @@ void CWizTodoTreeCtrl::UpdateMoveToMenu( CMenuHandle &menu )
 			m_mapDocumentMenuID[nID] = spDocument;
 		}
 	}
-
-	menu.InsertMenu(MOVE_TO_MENU_POS, MF_BYPOSITION | MF_STRING, (HMENU)moveToMenu,  CString("Move To"));
+	
+	menu.InsertMenu(MOVE_TO_MENU_POS, MF_BYPOSITION | MF_STRING, (HMENU)moveToMenu,  WizFormatString0(IDS_MOVE_TO));
 }
 
 LRESULT CWizTodoTreeCtrl::OnMoveTodoItem(WORD /*wNotifyCode*/, WORD wID, HWND /*hWndCtl*/, BOOL& /*bHandled*/)
