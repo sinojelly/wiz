@@ -103,7 +103,7 @@ public:
 			m_showDesktop = showDesktopDetected;
 			if (m_hwndEvents) 
 			{
-				::SendMessage(m_hwndEvents, WIZ_UM_SHOW_DESKTOP_EVENTS, 0, 0);
+				::SendMessage(m_hwndEvents, WIZ_UM_SHOW_DESKTOP_EVENTS, (WPARAM)showDesktopDetected, 0);
 			}
 		}
 		//

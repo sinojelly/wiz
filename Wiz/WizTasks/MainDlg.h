@@ -98,6 +98,9 @@ private:
 	//
 	void SaveTodoListsStatus();
 	void LoadTodoListsStatus();
+	//
+	void CheckEmptyTodoList();
+	void CheckDefaultTodoList();
 private:
 	static CMainDlg* m_spMainDlg;
 public:

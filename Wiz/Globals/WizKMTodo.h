@@ -664,6 +664,19 @@ inline BOOL WizKMGetTodo2Documents(CWizKMDatabase* pDatabase, LPCTSTR lpszLocati
 }
 
 
+const LPCTSTR WIZKM_COMPLETED_TODOLIST_PARAM = _T("CompletedTodoList");
+//
+inline BOOL WizKMIsCompletedTodoList(IWizDocument* pDoc)
+{
+	CString strValue = CWizKMDatabase::GetDocumentParam(pDoc, WIZKM_COMPLETED_TODOLIST_PARAM);
+	return strValue == _T("1");
+}
+inline void WizKMSetCompletedTodoList(IWizDocument* pDoc, BOOL b)
+{
+	CWizKMDatabase::SetDocumentParam(pDoc, WIZKM_COMPLETED_TODOLIST_PARAM, b ? _T("1") : _T("0"));
+}
+
+
 #endif //_WIZKMTODO_H_
 
 

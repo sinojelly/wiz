@@ -112,51 +112,20 @@ LRESULT CMainDlg::OnInitDialog(UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*lParam
 	//
 	ResetEvents();
 	//
-	SetTimer(ID_TIMER_EVENT_REMINDER, 1000 * 10);	///*每隔10秒检查一次*/
-	SetTimer(ID_TIMER_CHECK_WINDOW_POS, 1000 * 3);	///*每隔3秒检查一次窗口*/
+	SetTimer(ID_TIMER_EVENT_REMINDER, 1000 * 10);	///每隔10秒检查一次////
+	SetTimer(ID_TIMER_CHECK_WINDOW_POS, 1000 * 3);	///每隔3秒检查一次窗口////
 	//
 	m_dwLastSyncTickCount = GetTickCount() - int((m_nSyncMinutes - 0.5) * 1000 * 60);
 	//
 	RegisterAllHotkeys();
 	//
 	ProcessCommandLine(m_strCommandLine);
-	//
+	/////加载上次关闭的时候，显示在桌面的任务列表////
 	LoadTodoListsStatus();
-
-	CWizDocumentArray arrayAllTodoList;
-	if (m_arrayTodoList.empty())
-	{		
-		WizKMGetTodo2Documents(&m_db, WizKMTodoGetInboxLocation(), arrayAllTodoList);
-		if (arrayAllTodoList.empty())
-		{
-			CTodoDlg* pDlg = CreateNewTodoDlg(NULL, NULL);			pDlg->SaveData();
-			//m_arrayTodoList.push_back(pDlg); // TODO: ??? jelly
-		}
-	}
-
-	WizKMGetTodo2Documents(&m_db, WizKMTodoGetInboxLocation(), arrayAllTodoList);
-	bool hasDefault = false;
-	for (CWizDocumentArray::const_iterator it = arrayAllTodoList.begin();
-		it != arrayAllTodoList.end();
-		it++)
-	{
-		CComPtr<IWizDocument> spDocument = *it;
-		bool isDefault = CWizKMDatabase::GetDocumentParam(spDocument, _T("DefaultTodoList")) == _T("1") ? true : false;
-		if (isDefault)
-		{
-			if (hasDefault)
-			{
-				CWizKMDatabase::SetDocumentParam(spDocument, _T("DefaultTodoList"), LPCTSTR(_T("0")));
-			}
-			hasDefault = true;
-		}
-	}
-
-	if (!hasDefault)
-	{
-		CWizKMDatabase::SetDocumentParam(*arrayAllTodoList.begin(), _T("DefaultTodoList"), LPCTSTR(_T("1"))); 
-	}
-
+	/////检查是否没有任何任务列表/////
+	CheckEmptyTodoList();
+	/////检查是否有默认的任务列表/////
+	CheckDefaultTodoList();
 	//
 	WizRegisterShowDesktopEvents(m_hWnd);
 
@@ -234,6 +203,54 @@ void CMainDlg::DestroyAllTodoLists()
 	}
 }
 
+void CMainDlg::CheckEmptyTodoList()
+{
+	/////如果已经显示了任务列表，那么肯定有任务列表了////
+	if (m_arrayTodoList.empty())
+		return;
+
+	CWizDocumentArray arrayAllTodoList;
+	//
+	WizKMGetTodo2Documents(&m_db, WizKMTodoGetInboxLocation(), arrayAllTodoList);
+	if (!arrayAllTodoList.empty())
+		return;
+	//
+	CTodoDlg* pDlg = CreateNewTodoDlg(NULL, NULL);
+	/////强制保存，自动生成一个任务列表/////
+	pDlg->SaveData();
+}
+
+void CMainDlg::CheckDefaultTodoList()
+{
+	CWizDocumentArray arrayAllTodoList;
+	//
+	WizKMGetTodo2Documents(&m_db, WizKMTodoGetInboxLocation(), arrayAllTodoList);
+	ATLASSERT(!arrayAllTodoList.empty());
+	//
+	bool hasDefault = false;
+	for (CWizDocumentArray::const_iterator it = arrayAllTodoList.begin();
+		it != arrayAllTodoList.end();
+		it++)
+	{
+		CComPtr<IWizDocument> spDocument = *it;
+		bool isDefault = CWizKMDatabase::GetDocumentParam(spDocument, _T("DefaultTodoList")) == _T("1") ? true : false;
+		if (isDefault)
+		{
+			if (hasDefault)
+			{
+				/////正常情况下不应该出现/////
+				ATLASSERT(FALSE);
+				CWizKMDatabase::SetDocumentParam(spDocument, _T("DefaultTodoList"), LPCTSTR(_T("0")));
+			}
+			hasDefault = true;
+		}
+	}
+
+	if (!hasDefault)
+	{
+		CWizKMDatabase::SetDocumentParam(*arrayAllTodoList.begin(), _T("DefaultTodoList"), LPCTSTR(_T("1"))); 
+	}
+}
 
 void CMainDlg::ShowTodoList(IWizDocument* pDocument)
 {
@@ -963,20 +980,35 @@ void CMainDlg::OnPowerSuspend()
 	m_bSuspend = TRUE;
 }
 
-LRESULT CMainDlg::OnShowDesktop(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled){	for (CTodoDlgArray::const_iterator it = m_arrayTodoList.begin();
+LRESULT CMainDlg::OnShowDesktop(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
+{
+	bool bShowDesktop = wParam ? true : false;
+	//
+	for (CTodoDlgArray::const_iterator it = m_arrayTodoList.begin();
 		it != m_arrayTodoList.end() ;
 		it++)
 	{
 		CTodoDlg *pDlg = *it;
-		if ((pDlg->GetDlgState() == statePinDesk) && ((pDlg->GetStyle() & WS_VISIBLE) != 0))		{
-			pDlg->ShowWindow(SW_SHOW);
+		if ((pDlg->GetDlgState() == statePinDesk) && ((pDlg->GetStyle() & WS_VISIBLE) != 0))
+		{
+			if (bShowDesktop)
+			{
+				pDlg->SetWindowPos(HWND_TOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | /*SWP_NOACTIVATE | */SWP_NOSENDCHANGING);
+				::SetForegroundWindow(pDlg->m_hWnd);
+			}
+			else
+			{
+				pDlg->SetWindowPos(HWND_BOTTOM, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE | SWP_NOSENDCHANGING);
+			}
 		}
-	}	return 0;}
+	}
+	return 0;
+}
 
 LRESULT CMainDlg::OnTrayShowCompletedTodoLists(WORD /*wNotifyCode*/, WORD /*wID*/, HWND /*hWndCtl*/, BOOL& /*bHandled*/)
 {
-#if 0
-	// TODO: 代码应该不对，运行就会把已完成任务给清空了
+	//// 代码应该不对，运行就会把已完成任务给清空了////
+	////之前的代码不对，是因为没有判断一个任务列表是否是已经完成的，结果导致重复收集已完成任务////
 
 	SetForegroundWindow(m_hWnd);
 
@@ -994,6 +1026,6 @@ LRESULT CMainDlg::OnTrayShowCompletedTodoLists(WORD /*wNotifyCode*/, WORD /*wID*
 		}
 	}
 	SaveTodoListsStatus();
-#endif
+
 	return 0;
 }

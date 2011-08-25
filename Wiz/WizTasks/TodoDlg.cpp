@@ -390,6 +390,9 @@ BOOL CTodoDlg::SetDocument(IWizDocument* pDocument)
 	//
 	m_spDocument = pDocument;
 	//
+	////SetDocument只会调用一次，Load回调用多次（例如刷新），因此收集操作放在这里，每次启动程序的时候收集////
+	MoveCompletedTodoItems();
+    //  
 	BOOL bRet = Load();
 	//
 	m_bIniting = FALSE;
@@ -440,12 +443,16 @@ bool hasCompletedItem(IWizDocument *document)
 
 void CTodoDlg::MoveCompletedTodoItems()
 {
+	////不要收集已完成的任务列表////
+	if (WizKMIsCompletedTodoList(m_spDocument))
+		return;
+	//
 	if (!hasCompletedItem(m_spDocument))
 	{
 		return;
 	}
 
-    CComQIPtr<IWizDocument> pCompleted;
+    CComQIPtr<IWizDocument> spCompleted;
     CWizDocumentArray arrayDocument;
 
     CString title; 
@@ -460,16 +467,26 @@ void CTodoDlg::MoveCompletedTodoItems()
     HRESULT hr = m_pDatabase->GetDocumentsBySQL(CComBSTR(sql), arrayDocument);
     if (FAILED(hr) || arrayDocument.empty())
     {
-        pCompleted = WizKMCreateTodo2Document(m_pDatabase, WizKMTodoGetCompletedLocation(), CComBSTR(title));
+        spCompleted = WizKMCreateTodo2Document(m_pDatabase, WizKMTodoGetCompletedLocation(), CComBSTR(title));
+		ATLASSERT(spCompleted);
+		if (!spCompleted)
+			return;
+		//
+		
+		////需要设置为已完成的任务列表////
+		//
+		WizKMSetCompletedTodoList(spCompleted, TRUE);
+		//
 		//CWizKMDatabase::SetDocumentParam(pCompleted, "TasksCompleted", monthString);  
 		// jelly: 先不用这种方案。用户如果改名，估计希望后续任务不再存储到该列表。
 		// DOCUMENT_GUID in (select DOCUMENT_GUID from WIZ_DOCUMENT_PARAM where PARAM_NAME='TASKSCOMPLETED' and PARAM_VALUE='201108')
     }
     else
     {
-        pCompleted = arrayDocument[0];
+        spCompleted = arrayDocument[0];
     }
-    m_pDatabase->GetDatabase()->MoveCompletedTodoItems(m_spDocument, pCompleted);
+	//
+    m_pDatabase->GetDatabase()->MoveCompletedTodoItems(m_spDocument, spCompleted);
 }
 
 BOOL CTodoDlg::LoadData()
@@ -479,10 +496,6 @@ BOOL CTodoDlg::LoadData()
 	//
 	{
 		CWizTreeCtrlStateLocker<CWizTodoTreeCtrl> locker(m_wndList);
-
-        //        
-		MoveCompletedTodoItems();
-        
 		//
 		m_wndList.DeleteAllItems();
 
@@ -640,7 +653,8 @@ CComPtr<IWizEvent> CTodoDlg::GetTodoEvent(WIZTODODATA* pData)
 	CString strRecurrence(bstrRecurrence);
 	if (!strRecurrence.IsEmpty())
 	{
-		COleDateTime tDate = WizGetCurrentTime();
+		COleDateTime tDate = WizGetCurrentTime();
+
 		CString strRecurrenceIndex;
 		strRecurrenceIndex.Format(_T("%04d%02d%02d"),
 			tDate.GetYear(),
