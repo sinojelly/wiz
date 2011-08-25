@@ -27,6 +27,7 @@ void CWizTodoTreeCtrl::UpdateMoveToMenu( WIZTODOSTATE state, CMenuHandle &menu )
 
 	CString location = (state == todoState100) ? WizKMTodoGetCompletedLocation() : WizKMTodoGetInboxLocation();
 
+	UINT flag = MF_BYPOSITION | MF_STRING;
 	CWizDocumentArray arrayTodoList;
 	WizKMGetTodo2Documents(m_pDatabase, location, arrayTodoList);
 	if (!arrayTodoList.empty())
@@ -56,9 +57,14 @@ void CWizTodoTreeCtrl::UpdateMoveToMenu( WIZTODOSTATE state, CMenuHandle &menu )
 			//
 			m_mapDocumentMenuID[nID] = spDocument;
 		}
+
+		if (index <= 0)
+		{
+			flag |= MF_DISABLED | MF_GRAYED;
+		}
 	}
 	
-	menu.InsertMenu(MOVE_TO_MENU_POS, MF_BYPOSITION | MF_STRING, (HMENU)moveToMenu,  WizFormatString0(IDS_MOVE_TO));
+	menu.InsertMenu(MOVE_TO_MENU_POS, flag, (HMENU)moveToMenu,  WizFormatString0(IDS_MOVE_TO));
 }
 
 LRESULT CWizTodoTreeCtrl::OnMoveTodoItem(WORD /*wNotifyCode*/, WORD wID, HWND /*hWndCtl*/, BOOL& /*bHandled*/)

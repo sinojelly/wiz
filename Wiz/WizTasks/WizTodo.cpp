@@ -15,9 +15,9 @@ CAppModule _Module;
 
 int Run(LPTSTR lpstrCmdLine, int nCmdShow = SW_SHOWDEFAULT)
 {
-	if (!CWizSingletonApp::InitApp(_T("WizTodoApp")))
+	if (!CWizSingletonApp::InitApp(_T("WizTasksApp")))
 	{
-		if (HWND hwnd = ::FindWindow(NULL, _T("WizTodo")))
+		if (HWND hwnd = ::FindWindow(NULL, _T("WizTasks")))
 		{
 			SetForegroundWindow(hwnd);
 			//
