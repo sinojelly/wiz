@@ -952,11 +952,11 @@ public:
 		}
 		//
 
-		UpdateMoveToMenu(menu);
+		UpdateMoveToMenu(eState, menu);
 
 	}
 
-	void UpdateMoveToMenu( CMenuHandle &menu );
+	void UpdateMoveToMenu(WIZTODOSTATE state, CMenuHandle &menu );
 
 	//
 	virtual void DrawItemText(CDCHandle dcPaint, HTREEITEM hItem, CRect& rcItemText, LPCTSTR lpszText)

@@ -462,7 +462,7 @@ void CTodoDlg::MoveCompletedTodoItems()
     title.Format(_T("%s%s"), WizFormatString0(IDS_TASKS), monthString);
 
     CString sql;
-    sql.Format(L"DOCUMENT_TITLE='%s'", title);
+    sql.Format(_T("DOCUMENT_TITLE='%s'"), title);
     
     HRESULT hr = m_pDatabase->GetDocumentsBySQL(CComBSTR(sql), arrayDocument);
     if (FAILED(hr) || arrayDocument.empty())

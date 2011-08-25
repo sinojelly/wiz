@@ -11,7 +11,7 @@
 #include "TodoDlg.h"
 
 
-void CWizTodoTreeCtrl::UpdateMoveToMenu( CMenuHandle &menu ) 
+void CWizTodoTreeCtrl::UpdateMoveToMenu( WIZTODOSTATE state, CMenuHandle &menu ) 
 {
 	const int MOVE_TO_MENU_POS = 2;
 	if (m_bMoveToMenuExist)
@@ -25,8 +25,10 @@ void CWizTodoTreeCtrl::UpdateMoveToMenu( CMenuHandle &menu )
 
 	m_mapDocumentMenuID.clear();
 
+	CString location = (state == todoState100) ? WizKMTodoGetCompletedLocation() : WizKMTodoGetInboxLocation();
+
 	CWizDocumentArray arrayTodoList;
-	WizKMGetTodo2Documents(m_pDatabase, WizKMTodoGetInboxLocation(), arrayTodoList);
+	WizKMGetTodo2Documents(m_pDatabase, location, arrayTodoList);
 	if (!arrayTodoList.empty())
 	{
 		//
