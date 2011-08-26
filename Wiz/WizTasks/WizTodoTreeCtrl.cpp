@@ -36,26 +36,29 @@ void CWizTodoTreeCtrl::UpdateMoveToMenu( WIZTODOSTATE state, CMenuHandle &menu )
 		CComPtr<IWizDocument> spDlgDocument = m_pTodoDlg->GetDocument();
 
 		UINT index = 0;
-		for (CWizDocumentArray::const_iterator it = arrayTodoList.begin();
-			it != arrayTodoList.end() && index < 20;
-			it++)
+		if (spDlgDocument != NULL)
 		{
-			CComPtr<IWizDocument> spDocument = *it;
-
-			CString strGUID1 = CWizKMDatabase::GetObjectGUID<IWizDocument>(spDocument);			CString strGUID2 = CWizKMDatabase::GetObjectGUID<IWizDocument>(spDlgDocument);
-
-			if (strGUID1 == strGUID2)
+			for (CWizDocumentArray::const_iterator it = arrayTodoList.begin();
+				it != arrayTodoList.end() && index < 20;
+				it++)
 			{
-				continue;
-			}
+				CComPtr<IWizDocument> spDocument = *it;
 
-			CString strTitle = CWizKMDatabase::GetDocumentTitle(spDocument);
-			UINT nID = ID_TODO_LIST_BEGIN + index;
-			moveToMenu.InsertMenu(index, MF_BYPOSITION | MF_STRING, nID,  strTitle);
-			//
-			index++;
-			//
-			m_mapDocumentMenuID[nID] = spDocument;
+				CString strGUID1 = CWizKMDatabase::GetObjectGUID<IWizDocument>(spDocument);				CString strGUID2 = CWizKMDatabase::GetObjectGUID<IWizDocument>(spDlgDocument);
+
+				if (strGUID1 == strGUID2)
+				{
+					continue;
+				}
+
+				CString strTitle = CWizKMDatabase::GetDocumentTitle(spDocument);
+				UINT nID = ID_TODO_LIST_BEGIN + index;
+				moveToMenu.InsertMenu(index, MF_BYPOSITION | MF_STRING, nID,  strTitle);
+				//
+				index++;
+				//
+				m_mapDocumentMenuID[nID] = spDocument;
+			}
 		}
 
 		if (index <= 0)
