@@ -11,11 +11,12 @@
 #include "../../WizGlobals/WizTrayIconImpl.h"
 
 #include <set>
+#include <list>
 
 class CTodoDlg;
 class CRemindEventDlg;
 
-typedef std::vector<CTodoDlg*> CTodoDlgArray;
+typedef std::list<CTodoDlg*> CTodoDlgArray;
 typedef std::vector<CRemindEventDlg*> CRemindEventDlgArray;
 typedef std::set<CString> CReminderEventGUISSet;
 typedef std::map<UINT, CComPtr<IWizDocument> > CDocumentMenuIDMap;
