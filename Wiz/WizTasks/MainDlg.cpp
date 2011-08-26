@@ -206,7 +206,7 @@ void CMainDlg::DestroyAllTodoLists()
 void CMainDlg::CheckEmptyTodoList()
 {
 	/////如果已经显示了任务列表，那么肯定有任务列表了////
-	if (m_arrayTodoList.empty())
+	if (!m_arrayTodoList.empty())
 		return;
 
 	CWizDocumentArray arrayAllTodoList;
