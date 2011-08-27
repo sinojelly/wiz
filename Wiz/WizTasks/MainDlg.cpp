@@ -128,7 +128,8 @@ LRESULT CMainDlg::OnInitDialog(UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*lParam
 	CheckDefaultTodoList();
 	//
 	WizRegisterShowDesktopEvents(m_hWnd);
-
+	//
+	//
 	return TRUE;
 }
 
@@ -160,6 +161,7 @@ LRESULT CMainDlg::OnQueryEndSession(UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*l
 
 void CMainDlg::DestroyAllRemindEvent()
 {
+	/*
 	for (CRemindEventDlgArray::const_iterator it = m_arrayRemindEvent.begin();
 		it != m_arrayRemindEvent.end();
 		it++)
@@ -174,10 +176,12 @@ void CMainDlg::DestroyAllRemindEvent()
 	}
 	//
 	m_arrayRemindEvent.clear();
+	*/
 }
 
 void CMainDlg::DestroyAllTodoLists()
 {
+	/*
 	try
 	{
 		for (CTodoDlgArray::const_iterator it = m_arrayTodoList.begin();
@@ -201,6 +205,7 @@ void CMainDlg::DestroyAllTodoLists()
 	catch (...)
 	{
 	}
+	*/
 }
 
 void CMainDlg::CheckEmptyTodoList()
@@ -341,6 +346,8 @@ void CMainDlg::LoadTodoListsStatus()
 	if (!GetVisibleTodoLists(arrayGUID))
 		return;
 	//
+	CString strTodoInboxLocation = WizKMTodoGetInboxLocation();
+	//
 	for (CWizStdStringArray::const_iterator it = arrayGUID.begin();
 		it != arrayGUID.end();
 		it++)
@@ -349,6 +356,11 @@ void CMainDlg::LoadTodoListsStatus()
 		CComPtr<IWizDocument> spDocument = m_db.GetDocumentByGUID(strGUID);
 		if (!spDocument)
 			continue;
+		//
+		CString strLocation = CWizKMDatabase::GetDocumentLocation(spDocument);
+		if (0 != strTodoInboxLocation.CompareNoCase(strLocation))
+			continue;
+		
 		//
 		ShowTodoList(spDocument);
 	}
@@ -850,6 +862,7 @@ LRESULT CMainDlg::OnHiddenNewblanktodolist(WORD /*wNotifyCode*/, WORD /*wID*/, H
 	//
 	CreateNewTodoDlg(NULL, _T(""));
 
+
 	return 0;
 }
 
@@ -857,6 +870,8 @@ LRESULT CMainDlg::OnHiddenNewblanktodolist(WORD /*wNotifyCode*/, WORD /*wID*/, H
 LRESULT CMainDlg::OnTrayNewTodoList(WORD /*wNotifyCode*/, WORD /*wID*/, HWND /*hWndCtl*/, BOOL& /*bHandled*/)
 {
 	SetForegroundWindow(m_hWnd);
+	//
+	
 	//
 	CString strTitle;
 	if (!WizKMInputBox(IDS_NEW_TODOLIST, IDS_TODOLIST_TITLE_DESCRIPTION, IDS_NEW_TODOLIST_TITLE, strTitle))
