@@ -508,13 +508,12 @@ BOOL CTodoDlg::LoadData()
 		if (m_spDocument)
 		{
 			WizDocumentGetTodoData(m_spDocument, arrayData);
-		}
-
-		bool isDefault = CWizKMDatabase::GetDocumentParam(m_spDocument, _T("DefaultTodoList")) == _T("1") ? true : false;
-		if (isDefault)
-		{
-			COleDateTime tNow = COleDateTime::GetCurrentTime();
-			WizKMCalendarEventsAddToTodoData(m_pDatabase, tNow, arrayData);
+			bool isDefault = CWizKMDatabase::GetDocumentParam(m_spDocument, _T("DefaultTodoList")) == _T("1") ? true : false;
+			if (isDefault)
+			{
+				COleDateTime tNow = COleDateTime::GetCurrentTime();
+				WizKMCalendarEventsAddToTodoData(m_pDatabase, tNow, arrayData);
+			}
 		}
 
 		//
