@@ -274,6 +274,19 @@ public:
 			pT->ShowWindow(SW_HIDE);
 		}
 	}
+	//
+	BOOL IsMinimized()
+	{
+		if (m_hMainWnd)
+		{
+			return (::GetWindowLong(m_hMainWnd, GWL_STYLE) & WS_VISIBLE) ? FALSE : TRUE;
+		}
+		else
+		{
+			T* pT = static_cast<T*>(this);
+			return (::GetWindowLong(pT->m_hWnd, GWL_STYLE) & WS_VISIBLE) ? FALSE : TRUE;
+		}
+	}
 
 	// Allow the menu items to be enabled/checked/etc.
 	virtual void OnTrayPrepareMenu(HMENU hMenu)

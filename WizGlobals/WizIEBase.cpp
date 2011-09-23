@@ -522,6 +522,8 @@ BOOL WizHTMLDocumentGetPlainText(IHTMLDocument2* pDoc, CString& strText)
 	CComPtr<IHTMLElement> spBody;
 	if (FAILED(pDoc->get_body(&spBody)))
 		return FALSE;
+	if (!spBody)
+		return FALSE;
 	CComBSTR bstrText;
 	if (FAILED(spBody->get_innerText(&bstrText)))
 		return FALSE;

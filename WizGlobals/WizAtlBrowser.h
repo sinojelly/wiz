@@ -6,6 +6,7 @@
 #include <ExDispid.h>
 #include <ComDef.h>
 #include <mshtml.h>
+#include <atlsafe.h>
 
 #include "WizAtlHostEx.h"
 
@@ -1881,6 +1882,32 @@ public:
 			return;
 		//
 		Navigate(m_strLocalURL);
+	}
+};
+
+
+
+class CWizHtmlBrowser
+	: public CWizAtlBrowser
+{
+public:
+	CWizHtmlBrowser(LPCTSTR lpszHtml)
+		: m_strHtml(lpszHtml)
+	{
+	}
+private:
+	CString m_strHtml;
+public:
+	virtual void OnDocumentCompleteEx(BOOL bError)
+	{
+		CComPtr<IHTMLDocument2> spDoc = GetDoc2();
+		if (spDoc)
+		{
+			CComSafeArray<VARIANT> varray(1);
+			varray.SetAt(0, CComVariant(CComBSTR(m_strHtml)));
+			//
+			spDoc->write(varray);
+		}
 	}
 };
 

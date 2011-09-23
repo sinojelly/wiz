@@ -13,7 +13,7 @@
 #undef APSTUDIO_READONLY_SYMBOLS
 
 /////////////////////////////////////////////////////////////////////////////
-// 中文(中华人民共和国) resources
+// Chinese (P.R.C.) resources
 
 #if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_CHS)
 #ifdef _WIN32
@@ -201,6 +201,14 @@ BEGIN
             MENUITEM "80%",                         ID_OPACITY_80
             MENUITEM "100%",                        ID_OPACITY_100
         END
+        POPUP "Dock"
+        BEGIN
+            MENUITEM "&Left\tCtrl+Alt+Left",        32900
+            MENUITEM "&Right\tCtrl+Alt+Right",      32901
+            MENUITEM "&None\tCtrl+Alt+Down",        32902
+            MENUITEM SEPARATOR
+            MENUITEM "&Auto hide",                  32903
+        END
         MENUITEM SEPARATOR
         MENUITEM "Close",                       ID_SMALL_WINDOW_CLOSE
     END
@@ -349,12 +357,12 @@ BEGIN
     ID_TRAY_NEW_TODOLIST    "New todo list"
 END
 
-#endif    // 中文(中华人民共和国) resources
+#endif    // Chinese (P.R.C.) resources
 /////////////////////////////////////////////////////////////////////////////
 
 
 /////////////////////////////////////////////////////////////////////////////
-// 英语(美国) resources
+// English (U.S.) resources
 
 #if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENU)
 #ifdef _WIN32
@@ -480,7 +488,7 @@ BEGIN
     END
 END
 
-#endif    // 英语(美国) resources
+#endif    // English (U.S.) resources
 /////////////////////////////////////////////////////////////////////////////
 
 

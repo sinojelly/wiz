@@ -180,7 +180,7 @@ inline BOOL WizDataArrayToTodoItemCollection(const WIZTODODATAEX::CWizTodoDataEx
 			TOLOG(_T("Failed to save todo data to IWizTodoItem"));
 			return FALSE;
 		}
-		
+
 		pColl->Add(spTodo);
 	}
 	return TRUE;
@@ -297,7 +297,7 @@ inline BOOL WizTodoDataArrayToHtmlText(const WIZTODODATAEX::CWizTodoDataExArray&
 			break;
 		}
 		//
-		CString strImageFileName = WizKMGetSkinsPath() + strImageName;
+		CString strImageFileName = ::WizKMGetFileNameInSkin(strImageName);
 		//
 		CString strLine = WizFormatString2(_T("<li><img border=\"0\" src=\"%1\" />%2</li>\r\n"),
 			strImageFileName,
@@ -318,15 +318,15 @@ inline BOOL WizTodoDataArrayToHtmlText(const WIZTODODATAEX::CWizTodoDataExArray&
 {
 	strText = WizFormatString2(
 		_T("\
-<html>\r\n\
-<head>\r\n\
-<meta http-equiv=content-type content=\"text/html; charset=unicode\">\r\n\
-<title>%1</title>\r\n\
-<link rel=\"File-List\" type=\"WizTodoList\" href=\"%2\" />\r\n\
-</head>\r\n\
-<body>\r\n"),
-		lpszTitle,
-		lpszXmlFileName);
+		   <html>\r\n\
+		   <head>\r\n\
+		   <meta http-equiv=content-type content=\"text/html; charset=unicode\">\r\n\
+		   <title>%1</title>\r\n\
+		   <link rel=\"File-List\" type=\"WizTodoList\" href=\"%2\" />\r\n\
+		   </head>\r\n\
+		   <body>\r\n"),
+		   lpszTitle,
+		   lpszXmlFileName);
 	//
 	CString strCSSFileName = WizGetAppPath() + _T("files\\todolist.css");
 	CString strCSSText;

@@ -4,7 +4,7 @@
 
 
  /* File created by MIDL compiler version 7.00.0500 */
-/* at Sun Aug 07 13:18:24 2011
+/* at Wed Sep 21 12:24:39 2011
  */
 /* Compiler settings for .\WizKMCore.idl:
     Oicf, W1, Zp8, env=Win32 (32b run)
@@ -1077,6 +1077,27 @@ EXTERN_C const IID IID_IWizDatabase;
             /* [in] */ BSTR bstrLocation,
             /* [retval][out] */ IDispatch **ppDocumentCollectionDisp) = 0;
         
+        virtual /* [helpstring][id] */ HRESULT STDMETHODCALLTYPE DocumentsFromTagsInFolder( 
+            /* [in] */ IDispatch *pFolderDisp,
+            /* [in] */ IDispatch *pTagsCollDisp,
+            /* [retval][out] */ IDispatch **ppDocumentCollectionDisp) = 0;
+        
+        virtual /* [helpstring][id] */ HRESULT STDMETHODCALLTYPE DocumentsFromStyleInFolder( 
+            /* [in] */ IDispatch *pFolderDisp,
+            /* [in] */ IDispatch *pStyleDisp,
+            /* [retval][out] */ IDispatch **ppDocumentCollectionDisp) = 0;
+        
+        virtual /* [helpstring][id] */ HRESULT STDMETHODCALLTYPE DocumentsFromSQL2( 
+            /* [in] */ BSTR bstrSQLWhere,
+            /* [in] */ BSTR bstrOptions,
+            /* [retval][out] */ IDispatch **ppDocumentCollectionDisp) = 0;
+        
+        virtual /* [helpstring][id][propget] */ HRESULT STDMETHODCALLTYPE get_AllLocations( 
+            /* [retval][out] */ VARIANT *pVal) = 0;
+        
+        virtual /* [helpstring][id][propget] */ HRESULT STDMETHODCALLTYPE get_IsCustomSorted( 
+            /* [retval][out] */ VARIANT_BOOL *pVal) = 0;
+        
     };
     
 #else 	/* C style interface */
@@ -1704,6 +1725,32 @@ EXTERN_C const IID IID_IWizDatabase;
             /* [in] */ BSTR bstrLocation,
             /* [retval][out] */ IDispatch **ppDocumentCollectionDisp);
         
+        /* [helpstring][id] */ HRESULT ( STDMETHODCALLTYPE *DocumentsFromTagsInFolder )( 
+            IWizDatabase * This,
+            /* [in] */ IDispatch *pFolderDisp,
+            /* [in] */ IDispatch *pTagsCollDisp,
+            /* [retval][out] */ IDispatch **ppDocumentCollectionDisp);
+        
+        /* [helpstring][id] */ HRESULT ( STDMETHODCALLTYPE *DocumentsFromStyleInFolder )( 
+            IWizDatabase * This,
+            /* [in] */ IDispatch *pFolderDisp,
+            /* [in] */ IDispatch *pStyleDisp,
+            /* [retval][out] */ IDispatch **ppDocumentCollectionDisp);
+        
+        /* [helpstring][id] */ HRESULT ( STDMETHODCALLTYPE *DocumentsFromSQL2 )( 
+            IWizDatabase * This,
+            /* [in] */ BSTR bstrSQLWhere,
+            /* [in] */ BSTR bstrOptions,
+            /* [retval][out] */ IDispatch **ppDocumentCollectionDisp);
+        
+        /* [helpstring][id][propget] */ HRESULT ( STDMETHODCALLTYPE *get_AllLocations )( 
+            IWizDatabase * This,
+            /* [retval][out] */ VARIANT *pVal);
+        
+        /* [helpstring][id][propget] */ HRESULT ( STDMETHODCALLTYPE *get_IsCustomSorted )( 
+            IWizDatabase * This,
+            /* [retval][out] */ VARIANT_BOOL *pVal);
+        
         END_INTERFACE
     } IWizDatabaseVtbl;
 
@@ -2016,6 +2063,21 @@ EXTERN_C const IID IID_IWizDatabase;
 #define IWizDatabase_GetTodo2Documents(This,bstrLocation,ppDocumentCollectionDisp)	\
     ( (This)->lpVtbl -> GetTodo2Documents(This,bstrLocation,ppDocumentCollectionDisp) ) 
 
+#define IWizDatabase_DocumentsFromTagsInFolder(This,pFolderDisp,pTagsCollDisp,ppDocumentCollectionDisp)	\
+    ( (This)->lpVtbl -> DocumentsFromTagsInFolder(This,pFolderDisp,pTagsCollDisp,ppDocumentCollectionDisp) ) 
+
+#define IWizDatabase_DocumentsFromStyleInFolder(This,pFolderDisp,pStyleDisp,ppDocumentCollectionDisp)	\
+    ( (This)->lpVtbl -> DocumentsFromStyleInFolder(This,pFolderDisp,pStyleDisp,ppDocumentCollectionDisp) ) 
+
+#define IWizDatabase_DocumentsFromSQL2(This,bstrSQLWhere,bstrOptions,ppDocumentCollectionDisp)	\
+    ( (This)->lpVtbl -> DocumentsFromSQL2(This,bstrSQLWhere,bstrOptions,ppDocumentCollectionDisp) ) 
+
+#define IWizDatabase_get_AllLocations(This,pVal)	\
+    ( (This)->lpVtbl -> get_AllLocations(This,pVal) ) 
+
+#define IWizDatabase_get_IsCustomSorted(This,pVal)	\
+    ( (This)->lpVtbl -> get_IsCustomSorted(This,pVal) ) 
+
 #endif /* COBJMACROS */
 
 
@@ -2252,6 +2314,9 @@ EXTERN_C const IID IID_IWizTag;
             /* [in] */ IDispatch *pFolderDisp,
             /* [retval][out] */ VARIANT_BOOL *pvbRet) = 0;
         
+        virtual /* [helpstring][id][propget] */ HRESULT STDMETHODCALLTYPE get_DisplayName( 
+            /* [retval][out] */ BSTR *pVal) = 0;
+        
     };
     
 #else 	/* C style interface */
@@ -2377,6 +2442,10 @@ EXTERN_C const IID IID_IWizTag;
             /* [in] */ IDispatch *pFolderDisp,
             /* [retval][out] */ VARIANT_BOOL *pvbRet);
         
+        /* [helpstring][id][propget] */ HRESULT ( STDMETHODCALLTYPE *get_DisplayName )( 
+            IWizTag * This,
+            /* [retval][out] */ BSTR *pVal);
+        
         END_INTERFACE
     } IWizTagVtbl;
 
@@ -2469,6 +2538,9 @@ EXTERN_C const IID IID_IWizTag;
 
 #define IWizTag_IsIn(This,pFolderDisp,pvbRet)	\
     ( (This)->lpVtbl -> IsIn(This,pFolderDisp,pvbRet) ) 
+
+#define IWizTag_get_DisplayName(This,pVal)	\
+    ( (This)->lpVtbl -> get_DisplayName(This,pVal) ) 
 
 #endif /* COBJMACROS */
 
@@ -2953,6 +3025,24 @@ EXTERN_C const IID IID_IWizDocument;
         virtual /* [helpstring][id] */ HRESULT STDMETHODCALLTYPE AutoEncrypt( 
             /* [in] */ VARIANT_BOOL vbDecrypt) = 0;
         
+        virtual /* [helpstring][id][propget] */ HRESULT STDMETHODCALLTYPE get_Flags( 
+            /* [retval][out] */ LONG *pVal) = 0;
+        
+        virtual /* [helpstring][id][propput] */ HRESULT STDMETHODCALLTYPE put_Flags( 
+            /* [in] */ LONG newVal) = 0;
+        
+        virtual /* [helpstring][id][propget] */ HRESULT STDMETHODCALLTYPE get_AlwaysOnTop( 
+            /* [retval][out] */ VARIANT_BOOL *pVal) = 0;
+        
+        virtual /* [helpstring][id][propput] */ HRESULT STDMETHODCALLTYPE put_AlwaysOnTop( 
+            /* [in] */ VARIANT_BOOL newVal) = 0;
+        
+        virtual /* [helpstring][id][propget] */ HRESULT STDMETHODCALLTYPE get_Rate( 
+            /* [retval][out] */ LONG *pVal) = 0;
+        
+        virtual /* [helpstring][id][propput] */ HRESULT STDMETHODCALLTYPE put_Rate( 
+            /* [in] */ LONG newVal) = 0;
+        
     };
     
 #else 	/* C style interface */
@@ -3402,6 +3492,30 @@ EXTERN_C const IID IID_IWizDocument;
             IWizDocument * This,
             /* [in] */ VARIANT_BOOL vbDecrypt);
         
+        /* [helpstring][id][propget] */ HRESULT ( STDMETHODCALLTYPE *get_Flags )( 
+            IWizDocument * This,
+            /* [retval][out] */ LONG *pVal);
+        
+        /* [helpstring][id][propput] */ HRESULT ( STDMETHODCALLTYPE *put_Flags )( 
+            IWizDocument * This,
+            /* [in] */ LONG newVal);
+        
+        /* [helpstring][id][propget] */ HRESULT ( STDMETHODCALLTYPE *get_AlwaysOnTop )( 
+            IWizDocument * This,
+            /* [retval][out] */ VARIANT_BOOL *pVal);
+        
+        /* [helpstring][id][propput] */ HRESULT ( STDMETHODCALLTYPE *put_AlwaysOnTop )( 
+            IWizDocument * This,
+            /* [in] */ VARIANT_BOOL newVal);
+        
+        /* [helpstring][id][propget] */ HRESULT ( STDMETHODCALLTYPE *get_Rate )( 
+            IWizDocument * This,
+            /* [retval][out] */ LONG *pVal);
+        
+        /* [helpstring][id][propput] */ HRESULT ( STDMETHODCALLTYPE *put_Rate )( 
+            IWizDocument * This,
+            /* [in] */ LONG newVal);
+        
         END_INTERFACE
     } IWizDocumentVtbl;
 
@@ -3725,6 +3839,24 @@ EXTERN_C const IID IID_IWizDocument;
 
 #define IWizDocument_AutoEncrypt(This,vbDecrypt)	\
     ( (This)->lpVtbl -> AutoEncrypt(This,vbDecrypt) ) 
+
+#define IWizDocument_get_Flags(This,pVal)	\
+    ( (This)->lpVtbl -> get_Flags(This,pVal) ) 
+
+#define IWizDocument_put_Flags(This,newVal)	\
+    ( (This)->lpVtbl -> put_Flags(This,newVal) ) 
+
+#define IWizDocument_get_AlwaysOnTop(This,pVal)	\
+    ( (This)->lpVtbl -> get_AlwaysOnTop(This,pVal) ) 
+
+#define IWizDocument_put_AlwaysOnTop(This,newVal)	\
+    ( (This)->lpVtbl -> put_AlwaysOnTop(This,newVal) ) 
+
+#define IWizDocument_get_Rate(This,pVal)	\
+    ( (This)->lpVtbl -> get_Rate(This,pVal) ) 
+
+#define IWizDocument_put_Rate(This,newVal)	\
+    ( (This)->lpVtbl -> put_Rate(This,newVal) ) 
 
 #endif /* COBJMACROS */
 
@@ -4458,6 +4590,18 @@ EXTERN_C const IID IID_IWizFolder;
         virtual /* [helpstring][id][propput] */ HRESULT STDMETHODCALLTYPE put_Encrypt( 
             /* [in] */ VARIANT_BOOL newVal) = 0;
         
+        virtual /* [helpstring][id][propget] */ HRESULT STDMETHODCALLTYPE get_IsEmpty( 
+            /* [retval][out] */ VARIANT_BOOL *pVal) = 0;
+        
+        virtual /* [helpstring][id][propget] */ HRESULT STDMETHODCALLTYPE get_SortPos( 
+            /* [retval][out] */ LONGLONG *pVal) = 0;
+        
+        virtual /* [helpstring][id][propput] */ HRESULT STDMETHODCALLTYPE put_SortPos( 
+            /* [in] */ LONGLONG newVal) = 0;
+        
+        virtual /* [helpstring][id][propget] */ HRESULT STDMETHODCALLTYPE get_IsCustomSorted( 
+            /* [retval][out] */ VARIANT_BOOL *pVal) = 0;
+        
     };
     
 #else 	/* C style interface */
@@ -4643,6 +4787,22 @@ EXTERN_C const IID IID_IWizFolder;
             IWizFolder * This,
             /* [in] */ VARIANT_BOOL newVal);
         
+        /* [helpstring][id][propget] */ HRESULT ( STDMETHODCALLTYPE *get_IsEmpty )( 
+            IWizFolder * This,
+            /* [retval][out] */ VARIANT_BOOL *pVal);
+        
+        /* [helpstring][id][propget] */ HRESULT ( STDMETHODCALLTYPE *get_SortPos )( 
+            IWizFolder * This,
+            /* [retval][out] */ LONGLONG *pVal);
+        
+        /* [helpstring][id][propput] */ HRESULT ( STDMETHODCALLTYPE *put_SortPos )( 
+            IWizFolder * This,
+            /* [in] */ LONGLONG newVal);
+        
+        /* [helpstring][id][propget] */ HRESULT ( STDMETHODCALLTYPE *get_IsCustomSorted )( 
+            IWizFolder * This,
+            /* [retval][out] */ VARIANT_BOOL *pVal);
+        
         END_INTERFACE
     } IWizFolderVtbl;
 
@@ -4771,6 +4931,18 @@ EXTERN_C const IID IID_IWizFolder;
 
 #define IWizFolder_put_Encrypt(This,newVal)	\
     ( (This)->lpVtbl -> put_Encrypt(This,newVal) ) 
+
+#define IWizFolder_get_IsEmpty(This,pVal)	\
+    ( (This)->lpVtbl -> get_IsEmpty(This,pVal) ) 
+
+#define IWizFolder_get_SortPos(This,pVal)	\
+    ( (This)->lpVtbl -> get_SortPos(This,pVal) ) 
+
+#define IWizFolder_put_SortPos(This,newVal)	\
+    ( (This)->lpVtbl -> put_SortPos(This,newVal) ) 
+
+#define IWizFolder_get_IsCustomSorted(This,pVal)	\
+    ( (This)->lpVtbl -> get_IsCustomSorted(This,pVal) ) 
 
 #endif /* COBJMACROS */
 
@@ -6008,6 +6180,8 @@ EXTERN_C const IID IID_IWizSettings;
         virtual /* [helpstring][id] */ HRESULT STDMETHODCALLTYPE ClearSection( 
             /* [in] */ BSTR bstrSection) = 0;
         
+        virtual /* [helpstring][id] */ HRESULT STDMETHODCALLTYPE Save( void) = 0;
+        
     };
     
 #else 	/* C style interface */
@@ -6113,6 +6287,9 @@ EXTERN_C const IID IID_IWizSettings;
             IWizSettings * This,
             /* [in] */ BSTR bstrSection);
         
+        /* [helpstring][id] */ HRESULT ( STDMETHODCALLTYPE *Save )( 
+            IWizSettings * This);
+        
         END_INTERFACE
     } IWizSettingsVtbl;
 
@@ -6181,6 +6358,9 @@ EXTERN_C const IID IID_IWizSettings;
 
 #define IWizSettings_ClearSection(This,bstrSection)	\
     ( (This)->lpVtbl -> ClearSection(This,bstrSection) ) 
+
+#define IWizSettings_Save(This)	\
+    ( (This)->lpVtbl -> Save(This) ) 
 
 #endif /* COBJMACROS */
 
@@ -8358,7 +8538,8 @@ enum WizInitDocumentFlags
 enum WizDocumentGetTextFlags
     {	wizDocumentGetTextIncludeTitle	= 0x1,
 	wizDocumentGetTextIncludeAllFrames	= 0x2,
-	wizDocumentGetTextNoPromptPassword	= 0x4
+	wizDocumentGetTextNoPromptPassword	= 0x4,
+	wizDocumentGetTextSummaryOnly	= 0x8
     } ;
 
 enum WizSearchDocumentsFlags
@@ -8404,6 +8585,10 @@ enum WizDocumentPrtoect
     {	wizDocumentProtectNone	= 0,
 	wizDocumentProtectRSA	= 1,
 	wizDocumentProtectAES	= 2
+    } ;
+
+enum WizDocumentFlags
+    {	wizDocumentAlwaysOnTop	= 0x1
     } ;
 
 EXTERN_C const IID LIBID_WizKMCoreLib;

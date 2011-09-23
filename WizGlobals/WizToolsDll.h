@@ -97,6 +97,7 @@ public:
 		m_pfunSetLogFileName = NULL;
 		m_pfunSetTempPath = NULL;
 		m_pfunSetSettingsFileName = NULL;
+		m_pfunSetSkin = NULL;
 		m_pfunDocument2Html = NULL;
 		m_pfunDocument2Mht = NULL;
 		m_pfunDocument2Zip = NULL;
@@ -174,6 +175,7 @@ public:
 			m_pfunSetLogFileName = (Type_WizToolsSetLogFileName *)GetProcAddress(m_hModule, "WizToolsSetLogFileName");
 			m_pfunSetTempPath = (Type_WizToolsSetTempPath*)GetProcAddress(m_hModule, "WizToolsSetTempPath");
 			m_pfunSetSettingsFileName = (Type_WizToolsSetSettingsFileName*)GetProcAddress(m_hModule, "WizToolsSetSettingsFileName");
+			m_pfunSetSkin = (Type_WizToolsSetSkin*)GetProcAddress(m_hModule, "WizToolsSetSkin");
 			m_pfunDocument2Html = (Type_WizToolsDocument2Html *)GetProcAddress(m_hModule, "WizToolsDocument2Html");
 			m_pfunDocument2Mht = (Type_WizToolsDocument2Mht *)GetProcAddress(m_hModule, "WizToolsDocument2Mht");
 			m_pfunDocument2Zip = (Type_WizToolsDocument2Zip *)GetProcAddress(m_hModule, "WizToolsDocument2Zip");
@@ -265,6 +267,7 @@ public:
 	typedef STDMETHODIMP Type_WizToolsSetLogFileName(LPCWSTR lpszLogFileName);
 	typedef STDMETHODIMP Type_WizToolsSetTempPath(LPCWSTR lpszTempPath);
 	typedef STDMETHODIMP Type_WizToolsSetSettingsFileName(LPCWSTR lpszFileName);
+	typedef STDMETHODIMP Type_WizToolsSetSkin(LPCWSTR lpszFileName);
 	typedef STDMETHODIMP Type_WizToolsSetSecuteText(LPCWSTR lpszText);
 	typedef STDMETHODIMP Type_WizToolsDocument2Html(IDispatch* pIHTMLDocument2Disp, LPCWSTR lpszHtmlFileName, LONG nHtmlSaverFlags, LPCWSTR lpszExtParams);
 	typedef STDMETHODIMP Type_WizToolsDocument2Mht(IDispatch* pIHTMLDocument2Disp, LPCWSTR lpszMhtFileName, LONG nHtmlSaverFlags, LPCWSTR lpszExtParams);
@@ -332,6 +335,7 @@ protected:
 	Type_WizToolsSetLogFileName* m_pfunSetLogFileName;
 	Type_WizToolsSetTempPath* m_pfunSetTempPath;
 	Type_WizToolsSetSettingsFileName* m_pfunSetSettingsFileName;
+	Type_WizToolsSetSkin* m_pfunSetSkin;
 	Type_WizToolsDocument2Html* m_pfunDocument2Html;
 	Type_WizToolsDocument2Mht* m_pfunDocument2Mht;
 	Type_WizToolsDocument2Zip* m_pfunDocument2Zip;
@@ -416,6 +420,14 @@ public:
 		//
 		return m_pfunSetSettingsFileName(lpszFileName);
 	}
+	HRESULT SetSkin(LPCWSTR lpszFileName)
+	{
+		if (!m_pfunSetSkin)
+			return E_FAIL;
+		//
+		return m_pfunSetSkin(lpszFileName);
+	}
+	//
 	HRESULT Document2Html(IDispatch* pIHTMLDocument2Disp, LPCWSTR lpszHtmlFileName, LONG nHtmlSaverFlags, LPCWSTR lpszExtParams)
 	{
 		if (!m_pfunDocument2Html)

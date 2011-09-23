@@ -25,6 +25,80 @@ COLORREF g_crNotCurrentMonthTextColor = WizColorDarker(g_crLineColor, 0.7f);
 
 #define MONTH_VIEW_ROW_COUNT	6
 
+
+
+
+void WizGradientFill(HDC hDC, const RECT& rcItem, COLORREF cr1, COLORREF cr2, BOOL bHor)
+{
+	GRADIENT_RECT grdRect = { 0, 1 };
+	TRIVERTEX triVertext[ 2 ] = {
+									rcItem.left,
+									rcItem.top,
+									GetRValue( cr1) << 8,
+									GetGValue( cr1) << 8,
+									GetBValue( cr1) << 8,
+									0x0000,			
+									rcItem.right,
+									rcItem.bottom,
+									GetRValue( cr2) << 8,
+									GetGValue( cr2) << 8,
+									GetBValue( cr2) << 8,
+									0x0000
+								};
+	
+	CDCHandle dc(hDC);
+	dc.GradientFill( triVertext, 2, &grdRect, 1, bHor ? GRADIENT_FILL_RECT_H : GRADIENT_FILL_RECT_V);
+}
+
+
+void WizDrawItemBackgroundBox(HDC hDC, const RECT& rcItem, COLORREF rgbBackground, COLORREF rgbOuter, COLORREF rgbInner, COLORREF rgbTop, COLORREF rgbBottom)
+{
+	CDCHandle dc(hDC);
+	//
+	CWizDCSaver saver(dc);
+	//	
+	//
+	// draw selected background and border
+	CRect rcSelect( rcItem );
+		
+	CPen penBorder;
+	penBorder.CreatePen( PS_SOLID, 1, rgbOuter);
+	CBrush bshInterior;
+	bshInterior.CreateSolidBrush( rgbBackground );
+		
+	dc.SelectPen( penBorder );
+	dc.SelectBrush( bshInterior );
+		
+	dc.RoundRect( rcSelect, CPoint( 5, 5 ) );
+	rcSelect.DeflateRect( 1, 1 );
+		
+	CPen penInnerBorder;
+	penInnerBorder.CreatePen( PS_SOLID, 1, rgbInner);
+	dc.SelectPen( penInnerBorder );
+		
+	dc.RoundRect( rcSelect, CPoint( 2, 2 ) );
+	rcSelect.DeflateRect( 1, 1 );
+		
+	GRADIENT_RECT grdRect = { 0, 1 };
+	TRIVERTEX triVertext[ 2 ] = {
+									rcSelect.left,
+									rcSelect.top,
+									GetRValue( rgbTop) << 8,
+									GetGValue( rgbTop) << 8,
+									GetBValue( rgbTop) << 8,
+									0x0000,			
+									rcSelect.right,
+									rcSelect.bottom,
+									GetRValue( rgbBottom) << 8,
+									GetGValue( rgbBottom) << 8,
+									GetBValue( rgbBottom) << 8,
+									0x0000
+								};
+	
+	dc.GradientFill( triVertext, 2, &grdRect, 1, GRADIENT_FILL_RECT_V );
+}
+
+
 CWizCalendarView::CWizCalendarView()
 {
 	m_pProvider = NULL;

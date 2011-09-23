@@ -113,8 +113,10 @@ BOOL WizTranslationsTranslatePropertySheet(HWND hWnd);
 BOOL WizTranslationsTranslateMenu(HMENU hMenu);
 
 int WizMenuCommandToIndex(HMENU hMenu, UINT nCommand);
-int WizMenuGetSubMenuIndex(HMENU hMenu, UINT nSubMenuNimber);
+int WizMenuGetSubMenuIndex(HMENU hMenu, UINT nSubMenuNumber);
+HMENU WizMenuGetSubMenuByNumber(HMENU hMenu, UINT nSubMenuNumber);
 void WizMenuRemoveMultiSeparator(HMENU hMenu);
+void WizMenuRemoveExtraSeparator(HMENU hMenu);
 BOOL WizMenuIsSeparator(HMENU hMenu, int nIndex);
 
 
@@ -528,12 +530,14 @@ private:
 public:
 	void Clear() { m_arrayText.clear(); }
 	int GetIntDef(LPCTSTR lpszSection, LPCTSTR lpszValueName, int nDefValue) const;
+	__int64 GetInt64Def(LPCTSTR lpszSection, LPCTSTR lpszValueName, __int64 nDefValue) const;
 	double GetDoubleDef(LPCTSTR lpszSection, LPCTSTR lpszValueName, double nDefValue) const;
 	BOOL GetBoolDef(LPCTSTR lpszSection, LPCTSTR lpszValueName, BOOL bDefValue) const;
 	CString GetStringDef(LPCTSTR lpszSection, LPCTSTR lpszValueName, LPCTSTR lpszDefValue = NULL) const;
 	void SetString(LPCTSTR lpszSection, LPCTSTR lpszValueName, LPCTSTR lpszValue);
 	void SetInt(LPCTSTR lpszSection, LPCTSTR lpszValueName, int nVal);
 	void SetBool(LPCTSTR lpszSection, LPCTSTR lpszValueName, BOOL bVal);
+	CString GetLocalString(LPCTSTR lpszSection, LPCTSTR lpszStringName, LPCTSTR lpszDef);
 	CString GetLocalString(LPCTSTR lpszSection, LPCTSTR lpszStringName);
 	CString GetLocalString(LPCTSTR lpszStringName);
 	void GetSectionNames(CWizStdStringArray& arraySectionName);
@@ -542,6 +546,7 @@ public:
 	//
 	void AppendArray(LPCTSTR lpszSection, const CWizStdStringArray& arrayData);
 	//
+	BOOL SectionExists(LPCTSTR lpszSection);
 	BOOL ValueExists(LPCTSTR lpszSection, LPCTSTR lpszValueName);
 };
 
@@ -571,21 +576,25 @@ BOOL WizBase64EncodeFile(LPCTSTR lpszFileName, CStringA& strText);
 const UINT WIZ_UM_CLOSE_WINDOW_FOR_AUTO_UPDATE	= ::RegisterWindowMessage(_T("WIZ_UM_CLOSE_WINDOW_FOR_AUTO_UPDATE"));
 
 
+#define WIZ_SETTINGS_MANUAL_SAVE		0x01
 
 interface IWizSettingsBase
 {
 public:
 	virtual ~IWizSettingsBase();
 public:
+	virtual BOOL Save() = 0;
 	virtual BOOL GetValue(LPCTSTR lpszSection, LPCTSTR lpszKey, CString& strValue) = 0;
-	virtual BOOL SetValue(LPCTSTR lpszSection, LPCTSTR lpszKey, LPCTSTR lpszValue) = 0;
+	virtual BOOL SetValue(LPCTSTR lpszSection, LPCTSTR lpszKey, LPCTSTR lpszValue, UINT nFlags) = 0;
 public:
 	CString GetStr(LPCTSTR lpszSection, LPCTSTR lpszKey, LPCTSTR lpszDef = NULL);
 	int GetInt(LPCTSTR lpszSection, LPCTSTR lpszKey, int nDef = 0);
 	BOOL GetBool(LPCTSTR lpszSection, LPCTSTR lpszKey, BOOL bDef = FALSE);
-	BOOL SetStr(LPCTSTR lpszSection, LPCTSTR lpszKey, LPCTSTR lpsz);
-	BOOL SetInt(LPCTSTR lpszSection, LPCTSTR lpszKey, int n);
-	BOOL SetBool(LPCTSTR lpszSection, LPCTSTR lpszKey, BOOL b);
+	//
+	BOOL SetStr(LPCTSTR lpszSection, LPCTSTR lpszKey, LPCTSTR lpsz, UINT nFlags);
+	BOOL SetInt(LPCTSTR lpszSection, LPCTSTR lpszKey, int n, UINT nFlags);
+	BOOL SetBool(LPCTSTR lpszSection, LPCTSTR lpszKey, BOOL b, UINT nFlags);
+	//
 	virtual BOOL ClearSection(LPCTSTR lpszSection);
 	virtual BOOL GetStringArray(LPCTSTR lpszSection, CWizStdStringArray& arrayText);
 	virtual BOOL SetStringArray(LPCTSTR lpszSection, const CWizStdStringArray& arrayText);
@@ -594,8 +603,9 @@ public:
 class CWizEmptySettings : public IWizSettingsBase
 {
 public:
+	virtual BOOL Save();
 	virtual BOOL GetValue(LPCTSTR lpszSection, LPCTSTR lpszKey, CString& strValue);
-	virtual BOOL SetValue(LPCTSTR lpszSection, LPCTSTR lpszKey, LPCTSTR lpszValue);
+	virtual BOOL SetValue(LPCTSTR lpszSection, LPCTSTR lpszKey, LPCTSTR lpszValue, UINT nFlags);
 };
 
 #ifdef __ATLCTRLS_H__
@@ -1002,7 +1012,13 @@ void WizWriteLog(LPCTSTR lpszFileName, UINT nMsgID, LPCTSTR lpszParam1, LPCTSTR 
 
 HRESULT WizCallDispatchDefaultMethod(VARIANT& v);
 HRESULT WizCallDispatchDefaultMethod1(VARIANT& v, VARIANT& vParam1);
-HRESULT WizCallDispatchDefaultMethod2(VARIANT& v, VARIANT& vParam1, VARIANT& vParam2);
+HRESULT WizCallDispatchDefaultMethod1(VARIANT& v, VARIANT& vParam1, VARIANT& vParam2);
+//
+HRESULT WizCallDispatchDefaultMethod(VARIANT& v, CComVariant& vRet);
+HRESULT WizCallDispatchDefaultMethod1(VARIANT& v, VARIANT& vParam1, CComVariant& vRet);
+HRESULT WizCallDispatchDefaultMethod2(VARIANT& v, VARIANT& vParam1, VARIANT& vParam2, CComVariant& vRet);
+HRESULT WizCallDispatchDefaultMethod3(VARIANT& v, VARIANT& vParam1, VARIANT& vParam2, VARIANT& vParam3, CComVariant& vRet);
+HRESULT WizCallDispatchDefaultMethod4(VARIANT& v, VARIANT& vParam1, VARIANT& vParam2, VARIANT& vParam3, VARIANT& vParam4, CComVariant& vRet);
 
 
 #if _WIN32_WINNT >= 0x0501
@@ -1276,6 +1292,7 @@ BOOL WizAutoCompressPngFile(LPCTSTR lpszFileName);
 
 
 BOOL WizClipboardGetFilesByHDrop(HDROP hDrop, CWizStdStringArray& arrayFile);
+HDROP WizClipboardFilesToHDrop(const CWizStdStringArray& arrayFile);
 
 struct WIZCLIPBOARDINFO
 {
@@ -1309,7 +1326,7 @@ inline UINT CF_RTF_FORMAT()
 
 
 void WizCheckWindowTopMost(HWND hwnd);
-HWND WizGetPopupWindow(HWND hwnd);
+BOOL WizIsOwnerWindow(HWND hwndParent, HWND hwndChild);
 
 
 
@@ -1383,6 +1400,35 @@ inline BOOL WizCollectionDispatchToArray(IDispatch* pDisp, std::vector<CComPtr<T
 }
 
 template <class TCollectionInterface, class TElementInterface>
+inline BOOL WizArrayToCollection(const std::vector<CComPtr<TElementInterface> >& arrayRet, CLSID clsid, TCollectionInterface** ppColl, LPCTSTR lpszDllName)
+{
+	CComPtr<TCollectionInterface> spColl = ::WizCreateObjectAppPath<TCollectionInterface>(lpszDllName, clsid);
+	if (!spColl)
+	{
+		TOLOG(_T("Failed to create collection object!"));
+		return FALSE;
+	}
+	//
+	HRESULT hr = E_FAIL;
+	//
+	for (std::vector<CComPtr<TElementInterface> >::const_iterator it = arrayRet.begin(); it != arrayRet.end(); it++)
+	{
+		CComPtr<TElementInterface> spElem = *it;
+		//
+		hr = spColl->Add(spElem);
+		if (FAILED(hr))
+		{
+			TOLOG(_T("Failed to add element to collection!"));
+			return FALSE;
+		}
+	}
+	//
+	//
+	hr = spColl.QueryInterface(ppColl);
+	return SUCCEEDED(hr);
+}
+
+template <class TCollectionInterface, class TElementInterface>
 inline BOOL WizArrayToCollectionDispatch(const std::vector<CComPtr<TElementInterface> >& arrayRet, CLSID clsid, IDispatch** ppDisp, LPCTSTR lpszDllName)
 {
 	CComPtr<TCollectionInterface> spColl = ::WizCreateObjectAppPath<TCollectionInterface>(lpszDllName, clsid);
@@ -1410,7 +1456,6 @@ inline BOOL WizArrayToCollectionDispatch(const std::vector<CComPtr<TElementInter
 	hr = spColl.QueryInterface(ppDisp);
 	return SUCCEEDED(hr);
 }
-
 
 template <class TObject>
 inline TObject* WizDispatchToObject(IDispatch* pDisp)
@@ -1610,4 +1655,14 @@ public:
 
 CString WizTextGetFirstLine(LPCTSTR lpszText);
 void WizDeleteFiles(const CWizStdStringArray& arrayFiles);
+
+
+BOOL WizGetUIFont(CString& strFontName, int& nFontSize);
+CString WizGetUIFontName();
+int WizGetUIFontHeight();
+int WizFontHeightToCharFormatHeight(int nFontHeight);
+
+#ifdef _RICHEDIT_
+void WizInitRichEditFont(HWND hwndRichEdit);
+#endif
 

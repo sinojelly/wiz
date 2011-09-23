@@ -21,6 +21,10 @@ public:
 		COMMAND_ID_HANDLER(ID_OPACITY_40, OnOpacity40)
 		COMMAND_ID_HANDLER(ID_OPACITY_20, OnOpacity20)
 		COMMAND_ID_HANDLER(ID_SMALL_WINDOW_CLOSE, OnSmallWindowClose)
+		COMMAND_ID_HANDLER(ID_DOCK_RIGHT, OnDockRight)
+		COMMAND_ID_HANDLER(ID_DOCK_LEFT, OnDockLeft)
+		COMMAND_ID_HANDLER(ID_DOCK_NONE, OnDockNone)
+		COMMAND_ID_HANDLER(ID_DOCK_AUTOHIDE, OnDockAutoHide)
 		CHAIN_MSG_MAP(CWizKMSmallDlgBase_BaseClass)
 	END_MSG_MAP()
 
@@ -122,6 +126,10 @@ public:
 		//
 		SetIcon(LoadIcon(_Module.GetResourceInstance(), MAKEINTRESOURCE(IDR_MAINFRAME)), TRUE);
 		SetIcon(LoadIcon(_Module.GetResourceInstance(), MAKEINTRESOURCE(IDR_MAINFRAME)), FALSE);
+		//
+		bool bAutoHide = WizKMGetSettings().GetBool(_T("SmallDlg"), _T("WindowAutoHide"), FALSE) ? true : false;
+		//
+		InitAppBar(APPBAR_DOCKING_ALL, bAutoHide, false);
 	}
 	//
 	virtual BOOL GetShowTaskbarButton()
@@ -131,6 +139,56 @@ public:
 	LRESULT OnSmallWindowClose(WORD /*wNotifyCode*/, WORD /*wID*/, HWND /*hWndCtl*/, BOOL& /*bHandled*/)
 	{
 		Close();
+		return 0;
+	}
+
+	void Dock(UINT nFlags)
+	{
+		if (APPBAR_DOCKING_NONE == nFlags)
+		{
+			if (IsAutoHide())
+			{
+				SetWindowPos(HWND_NOTOPMOST, &rcDefault, SWP_NOSIZE | SWP_NOMOVE);
+			}
+		}
+		else
+		{
+			if (IsAutoHide())
+			{
+				SetWindowPos(HWND_TOPMOST, &rcDefault, SWP_NOSIZE | SWP_NOMOVE);
+			}
+		}
+		//
+		DockAppBar(nFlags);
+	}
+	//
+	LRESULT OnDockRight(WORD /*wNotifyCode*/, WORD /*wID*/, HWND /*hWndCtl*/, BOOL& /*bHandled*/)
+	{
+		Dock(APPBAR_DOCKING_RIGHT);
+		//
+		return 0;
+	}
+	LRESULT OnDockLeft(WORD /*wNotifyCode*/, WORD /*wID*/, HWND /*hWndCtl*/, BOOL& /*bHandled*/)
+	{
+		Dock(APPBAR_DOCKING_LEFT);
+		//
+		return 0;
+	}
+	LRESULT OnDockNone(WORD /*wNotifyCode*/, WORD /*wID*/, HWND /*hWndCtl*/, BOOL& /*bHandled*/)
+	{
+		Dock(APPBAR_DOCKING_NONE);
+		//
+		return 0;
+	}
+	LRESULT OnDockAutoHide(WORD /*wNotifyCode*/, WORD /*wID*/, HWND /*hWndCtl*/, BOOL& /*bHandled*/)
+	{
+		BOOL bAutoHide = !IsAutoHide();
+		//
+		SetWindowPos(bAutoHide ? HWND_TOPMOST : HWND_NOTOPMOST, &rcDefault, SWP_NOSIZE | SWP_NOMOVE);
+		//
+		SetAutoHide(bAutoHide ? true : false);
+		//
+		WizKMGetSettings().SetBool(_T("SmallDlg"), _T("WindowAutoHide"), bAutoHide, 0);
 		return 0;
 	}
 };

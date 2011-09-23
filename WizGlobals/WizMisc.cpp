@@ -35,6 +35,8 @@
 #pragma comment(lib, "Version.lib")
 #pragma comment(lib, "Msxml2.lib")
 
+
+
 CString IWizGlobal::GetSettingsFileName()
 {
 	return CString();
@@ -4170,12 +4172,30 @@ int CWizIniFileEx::GetIntDef(LPCTSTR lpszSection, LPCTSTR lpszValueName, int nDe
 	//
 	return nVal;
 }
+__int64 CWizIniFileEx::GetInt64Def(LPCTSTR lpszSection, LPCTSTR lpszValueName, __int64 nDefValue) const
+{
+	CString strValue = GetStringDef(lpszSection, lpszValueName);
+	//
+	__int64 nVal = _ttoi64(strValue);
+	//
+	if (WizInt64ToStr(nVal) != strValue)
+		return nDefValue;
+	//
+	return nVal;
+}
 
 double CWizIniFileEx::GetDoubleDef(LPCTSTR lpszSection, LPCTSTR lpszValueName, double nDefValue) const
 {
 	CString strValue = GetStringDef(lpszSection, lpszValueName);
 	//
 	return atof(CStringA(strValue));
+}
+
+BOOL CWizIniFileEx::SectionExists(LPCTSTR lpszSection)
+{
+	CWizStdStringArray arraySectionName;
+	GetSectionNames(arraySectionName);
+	return -1 != ::WizFindInArrayNoCase(arraySectionName, lpszSection);
 }
 
 BOOL CWizIniFileEx::ValueExists(LPCTSTR lpszSection, LPCTSTR lpszValueName)
@@ -5393,7 +5413,7 @@ void CWizIniFileEx::SetBool(LPCTSTR lpszSection, LPCTSTR lpszValueName, BOOL bVa
 	SetString(lpszSection, lpszValueName, bVal ? _T("1") : _T("0"));
 }
 //
-CString CWizIniFileEx::GetLocalString(LPCTSTR lpszSection, LPCTSTR lpszStringName)
+CString CWizIniFileEx::GetLocalString(LPCTSTR lpszSection, LPCTSTR lpszStringName, LPCTSTR lpszDef)
 {
 	static LCID lcid = WizTranslationsGetCurrentMappedLCID();
 	static CString strStringLastName = CString(_T("_")) + WizIntToStr(lcid);
@@ -5402,7 +5422,12 @@ CString CWizIniFileEx::GetLocalString(LPCTSTR lpszSection, LPCTSTR lpszStringNam
 	if (!strValue.IsEmpty())
 		return strValue;
 	//
-	return GetStringDef(lpszSection, lpszStringName, lpszStringName);
+	return GetStringDef(lpszSection, lpszStringName, lpszDef);
+}
+
+CString CWizIniFileEx::GetLocalString(LPCTSTR lpszSection, LPCTSTR lpszStringName)
+{
+	return GetLocalString(lpszSection, lpszStringName, lpszStringName);
 }
 CString CWizIniFileEx::GetLocalString(LPCTSTR lpszStringName)
 {
@@ -5443,17 +5468,17 @@ BOOL IWizSettingsBase::GetBool(LPCTSTR lpszSection, LPCTSTR lpszKey, BOOL bDef)
 	//
 	return _ttoi(str) ? TRUE : FALSE;
 }
-BOOL IWizSettingsBase::SetStr(LPCTSTR lpszSection, LPCTSTR lpszKey, LPCTSTR lpsz)
+BOOL IWizSettingsBase::SetStr(LPCTSTR lpszSection, LPCTSTR lpszKey, LPCTSTR lpsz, UINT nFlags)
 {
-	return SetValue(lpszSection, lpszKey, lpsz);
+	return SetValue(lpszSection, lpszKey, lpsz, nFlags);
 }
-BOOL IWizSettingsBase::SetInt(LPCTSTR lpszSection, LPCTSTR lpszKey, int n)
+BOOL IWizSettingsBase::SetInt(LPCTSTR lpszSection, LPCTSTR lpszKey, int n, UINT nFlags)
 {
-	return SetValue(lpszSection, lpszKey, WizIntToStr(n));
+	return SetValue(lpszSection, lpszKey, WizIntToStr(n), nFlags);
 }
-BOOL IWizSettingsBase::SetBool(LPCTSTR lpszSection, LPCTSTR lpszKey, BOOL b)
+BOOL IWizSettingsBase::SetBool(LPCTSTR lpszSection, LPCTSTR lpszKey, BOOL b, UINT nFlags)
 {
-	return SetValue(lpszSection, lpszKey, b ? _T("1") : _T("0"));
+	return SetValue(lpszSection, lpszKey, b ? _T("1") : _T("0"), nFlags);
 }
 //
 BOOL IWizSettingsBase::ClearSection(LPCTSTR lpszSection)
@@ -5486,7 +5511,6 @@ BOOL IWizSettingsBase::SetStringArray(LPCTSTR lpszSection, const CWizStdStringAr
 {
 	ClearSection(lpszSection);
 	//
-	//
 	int nIndex = 0;
 	for (CWizStdStringArray::const_iterator it = arrayText.begin();
 		it != arrayText.end();
@@ -5494,7 +5518,7 @@ BOOL IWizSettingsBase::SetStringArray(LPCTSTR lpszSection, const CWizStdStringAr
 	{
 		CString strKey = CString(_T("Item") + WizIntToStr(nIndex));
 		//
-		if (!SetValue(lpszSection, strKey, *it))
+		if (!SetValue(lpszSection, strKey, *it, WIZ_SETTINGS_MANUAL_SAVE))
 		{
 			TOLOG(_T("Failed to set value into WizKMSettings"));
 			return FALSE;
@@ -5503,6 +5527,8 @@ BOOL IWizSettingsBase::SetStringArray(LPCTSTR lpszSection, const CWizStdStringAr
 		nIndex++;
 	}
 	//
+	Save();
+	//
 	return TRUE;
 }
 
@@ -5510,7 +5536,7 @@ BOOL CWizEmptySettings::GetValue(LPCTSTR lpszSection, LPCTSTR lpszKey, CString& 
 {
 	return FALSE;
 }
-BOOL CWizEmptySettings::SetValue(LPCTSTR lpszSection, LPCTSTR lpszKey, LPCTSTR lpszValue)
+BOOL CWizEmptySettings::SetValue(LPCTSTR lpszSection, LPCTSTR lpszKey, LPCTSTR lpszValue, UINT nFlags)
 {
 	return FALSE;
 }
@@ -6942,7 +6968,7 @@ int WizMenuCommandToIndex(HMENU hMenu, UINT nCommand)
 	return -1;
 }
 
-int WizMenuGetSubMenuIndex(HMENU hMenu, UINT nSubMenuNimber)
+int WizMenuGetSubMenuIndex(HMENU hMenu, UINT nSubMenuNumber)
 {
 	UINT nIndex = 0;
 	int nMenuItemCount = GetMenuItemCount(hMenu);
@@ -6950,7 +6976,7 @@ int WizMenuGetSubMenuIndex(HMENU hMenu, UINT nSubMenuNimber)
 	{
 		if (GetSubMenu(hMenu, i))
 		{
-			if (nIndex == nSubMenuNimber)
+			if (nIndex == nSubMenuNumber)
 				return i;
 			//
 			nIndex++;
@@ -6959,6 +6985,15 @@ int WizMenuGetSubMenuIndex(HMENU hMenu, UINT nSubMenuNimber)
 	//
 	return -1;
 }
+HMENU WizMenuGetSubMenuByNumber(HMENU hMenu, UINT nSubMenuNumber)
+{
+	int nIndex = WizMenuGetSubMenuIndex(hMenu, nSubMenuNumber);
+	if (-1 == nIndex)
+		return NULL;
+	//
+	return ::GetSubMenu(hMenu, nIndex);
+}
+
 BOOL WizMenuIsSeparator(HMENU hMenu, int nIndex)
 {
 	MENUITEMINFO miOld;
@@ -6989,6 +7024,39 @@ void WizMenuRemoveMultiSeparator(HMENU hMenu)
 	}
 }
 
+void WizMenuRemoveExtraSeparator(HMENU hMenu)
+{
+	while (1)
+	{
+		int nMenuItemCount = GetMenuItemCount(hMenu);
+		if (0 == nMenuItemCount)
+			return;
+		//
+		if (WizMenuIsSeparator(hMenu, 0))
+		{
+			DeleteMenu(hMenu, 0, MF_BYPOSITION);
+			continue;
+		}
+		//
+		break;
+	}
+	//
+
+	while (1)
+	{
+		int nMenuItemCount = GetMenuItemCount(hMenu);
+		if (0 == nMenuItemCount)
+			return;
+		//
+		if (WizMenuIsSeparator(hMenu, nMenuItemCount - 1))
+		{
+			DeleteMenu(hMenu, nMenuItemCount - 1, MF_BYPOSITION);
+			continue;
+		}
+		//
+		break;
+	}
+}
 
 UINT WizGetCodePageFromLCID(LCID lcid)
 {
@@ -9970,6 +10038,12 @@ void WizWriteLog(LPCTSTR lpszFileName, LPCTSTR lpszMessage)
 			fseek(fp, 0, SEEK_END);
 		}
 		//
+		TCHAR szExeFileName[1024] = {0};
+		GetModuleFileName(NULL, szExeFileName, 1024);
+		//
+		CStringW strAppFileName = ::WizExtractFileName(WizGetLongFileName(szExeFileName)) + _T(" ");
+		fwrite(strAppFileName, wcslen(strAppFileName) * sizeof(WCHAR), 1, fp);
+		//
 		CStringW strTime = CStringW(WizDateTimeToLocalStringLongDate(COleDateTime::GetCurrentTime()));
 		//
 		WCHAR szTimeBuffer[MAX_PATH] = {0};
@@ -10042,41 +10116,27 @@ void WizWriteLog(LPCTSTR lpszFileName, UINT nMsgID, LPCTSTR lpszParam1, LPCTSTR 
 }
 
 
-
 HRESULT WizCallDispatchDefaultMethod(VARIANT& v)
 {
-	if (v.vt != VT_DISPATCH)
-		return E_FAIL;
-	//
-	if (!v.pdispVal)
-		return S_FALSE;
-	//
-	CComPtr<IDispatch> spDisp(v.pdispVal);
-	if (!spDisp)
-		return S_FALSE;
-	//
-	CComVariant vResult;
-	return spDisp.Invoke0((DISPID)DISPID_VALUE, &vResult);
+	CComVariant vRet;
+	return WizCallDispatchDefaultMethod(v, vRet);
 }
+
 
 HRESULT WizCallDispatchDefaultMethod1(VARIANT& v, VARIANT& vParam1)
 {
-	if (v.vt != VT_DISPATCH)
-		return E_FAIL;
-	//
-	if (!v.pdispVal)
-		return S_FALSE;
-	//
-	CComPtr<IDispatch> spDisp(v.pdispVal);
-	if (!spDisp)
-		return S_FALSE;
-	//
-	CComVariant vResult;
-	return spDisp.Invoke1((DISPID)DISPID_VALUE, &vParam1, &vResult);
+	CComVariant vRet;
+	return WizCallDispatchDefaultMethod1(v, vParam1, vRet);
 }
 
 HRESULT WizCallDispatchDefaultMethod2(VARIANT& v, VARIANT& vParam1, VARIANT& vParam2)
 {
+	CComVariant vRet;
+	return WizCallDispatchDefaultMethod2(v, vParam1, vParam2, vRet);
+}
+
+HRESULT WizCallDispatchDefaultMethod(VARIANT& v, CComVariant& vRet)
+{
 	if (v.vt != VT_DISPATCH)
 		return E_FAIL;
 	//
@@ -10087,8 +10147,70 @@ HRESULT WizCallDispatchDefaultMethod2(VARIANT& v, VARIANT& vParam1, VARIANT& vPa
 	if (!spDisp)
 		return S_FALSE;
 	//
-	CComVariant vResult;
-	return spDisp.Invoke2((DISPID)DISPID_VALUE, &vParam1, &vParam2, &vResult);
+	return spDisp.Invoke0((DISPID)DISPID_VALUE, &vRet);
+}
+
+HRESULT WizCallDispatchDefaultMethod1(VARIANT& v, VARIANT& vParam1, CComVariant& vRet)
+{
+	if (v.vt != VT_DISPATCH)
+		return E_FAIL;
+	//
+	if (!v.pdispVal)
+		return S_FALSE;
+	//
+	CComPtr<IDispatch> spDisp(v.pdispVal);
+	if (!spDisp)
+		return S_FALSE;
+	//
+	return spDisp.Invoke1((DISPID)DISPID_VALUE, &vParam1, &vRet);
+}
+
+HRESULT WizCallDispatchDefaultMethod2(VARIANT& v, VARIANT& vParam1, VARIANT& vParam2, CComVariant& vRet)
+{
+	if (v.vt != VT_DISPATCH)
+		return E_FAIL;
+	//
+	if (!v.pdispVal)
+		return S_FALSE;
+	//
+	CComPtr<IDispatch> spDisp(v.pdispVal);
+	if (!spDisp)
+		return S_FALSE;
+	//
+	return spDisp.Invoke2((DISPID)DISPID_VALUE, &vParam1, &vParam2, &vRet);
+}
+HRESULT WizCallDispatchDefaultMethod3(VARIANT& v, VARIANT& vParam1, VARIANT& vParam2, VARIANT& vParam3, CComVariant& vRet)
+{
+	if (v.vt != VT_DISPATCH)
+		return E_FAIL;
+	//
+	if (!v.pdispVal)
+		return S_FALSE;
+	//
+	CComPtr<IDispatch> spDisp(v.pdispVal);
+	if (!spDisp)
+		return S_FALSE;
+	//
+	CComVariant array3[] = {vParam1, vParam2, vParam3};
+	//
+	return spDisp.InvokeN((DISPID)DISPID_VALUE, array3, 3, &vRet);
+}
+
+HRESULT WizCallDispatchDefaultMethod4(VARIANT& v, VARIANT& vParam1, VARIANT& vParam2, VARIANT& vParam3, VARIANT& vParam4, CComVariant& vRet)
+{
+	if (v.vt != VT_DISPATCH)
+		return E_FAIL;
+	//
+	if (!v.pdispVal)
+		return S_FALSE;
+	//
+	CComPtr<IDispatch> spDisp(v.pdispVal);
+	if (!spDisp)
+		return S_FALSE;
+	//
+	CComVariant array4[] = {vParam1, vParam2, vParam3, vParam4};
+	//
+	return spDisp.InvokeN((DISPID)DISPID_VALUE, array4, 4, &vRet);
 }
 
 #if _WIN32_WINNT >= 0x0501
@@ -13489,6 +13611,51 @@ BOOL WizClipboardGetFilesByHDrop(HDROP hDrop, CWizStdStringArray& arrayFile)
 }
 
 
+
+HDROP WizClipboardFilesToHDrop(const CWizStdStringArray& arrayFile)
+{
+	CString strFileNames;
+	::WizStringArrayToText(arrayFile, strFileNames, _T("*"));
+	//
+	UINT uBufferSize = sizeof(DROPFILES) + sizeof(TCHAR) * (strFileNames.GetLength() + 2);
+	//
+	HGLOBAL hgDrop = GlobalAlloc ( GHND | GMEM_SHARE, uBufferSize);
+    if ( NULL == hgDrop )
+        return NULL;
+	//
+	DROPFILES* pDrop = (DROPFILES*) GlobalLock ( hgDrop );
+    if ( NULL == pDrop )
+	{
+		GlobalFree ( hgDrop );
+		return NULL;
+	}
+	//
+	pDrop->pFiles = sizeof(DROPFILES);
+#ifdef _UNICODE
+    // If we're compiling for Unicode, set the Unicode flag in the struct to
+    // indicate it contains Unicode strings.
+    pDrop->fWide = TRUE;
+#endif
+	//
+	LPTSTR pszBuff = (TCHAR*) (LPBYTE(pDrop) + sizeof(DROPFILES));
+	_tcscpy_s(pszBuff, strFileNames.GetLength() + 2, strFileNames);
+	pszBuff[strFileNames.GetLength()] = '\0';
+	pszBuff[strFileNames.GetLength() + 1] = '\0';
+	LPTSTR p = pszBuff;
+	while (*p)
+	{
+		if (*p == '*')
+			*p = '\0';
+		p++;
+	}
+	//
+	GlobalUnlock(hgDrop);
+	//
+	return (HDROP)hgDrop;
+}
+
+
+
 WIZCLIPBOARDINFO::WIZCLIPBOARDINFO()
 {
 	bHasText = FALSE;
@@ -13567,20 +13734,15 @@ BOOL WIZCLIPBOARDINFO::GetFiles(CWizStdStringArray& arrayFile)
 
 
 
-HWND WizGetPopupWindow(HWND hwnd)
+BOOL WizIsOwnerWindow(HWND hwndParent, HWND hwndChild)
 {
-	while (hwnd)
+	while (hwndChild)
 	{
-		if (GetWindowLong(hwnd, GWL_STYLE) & WS_CHILD)
-		{
-		}
-		else
-		{
-			return hwnd;
-		}
-		hwnd = GetParent(hwnd);
+		if (hwndChild == hwndParent)
+			return TRUE;
+		hwndChild = ::GetParent(hwndChild);
 	}
-	return NULL;
+	return FALSE;
 }
 
 void WizCheckWindowTopMost(HWND hwnd)
@@ -13595,7 +13757,7 @@ void WizCheckWindowTopMost(HWND hwnd)
 	CRect rc;
 	GetWindowRect(hwnd, &rc);
 	//
-	HWND hwndTop = WizGetPopupWindow(::WindowFromPoint(rc.CenterPoint()));
+	HWND hwndTop = WizGetOwnerPopupWindow(::WindowFromPoint(rc.CenterPoint()));
 	if (!hwndTop)
 		return;
 	//
@@ -14010,3 +14172,84 @@ void WizDeleteFiles(const CWizStdStringArray& arrayFiles)
 		DeleteFile(arrayFiles[i]);
 	}
 }
+
+
+BOOL WizGetUIFont(CString& strFontName, int& nFontSize)
+{
+	NONCLIENTMETRICS ncm;
+	ZeroMemory(&ncm, sizeof(NONCLIENTMETRICS));
+#if (WINVER >= 0x0600)
+	ncm.cbSize = sizeof(NONCLIENTMETRICS) - sizeof(ncm.iPaddedBorderWidth);
+#else
+	ncm.cbSize = sizeof(NONCLIENTMETRICS);
+#endif
+	//
+	::SystemParametersInfo(SPI_GETNONCLIENTMETRICS, sizeof(NONCLIENTMETRICS), &ncm, 0);
+	//
+	strFontName = ncm.lfMenuFont.lfFaceName;
+	nFontSize = ncm.lfMenuFont.lfHeight;
+	//
+	return TRUE;
+}
+
+int WizGetUIFontHeight()
+{
+	NONCLIENTMETRICS ncm;
+	ZeroMemory(&ncm, sizeof(NONCLIENTMETRICS));
+#if (WINVER >= 0x0600)
+	ncm.cbSize = sizeof(NONCLIENTMETRICS) - sizeof(ncm.iPaddedBorderWidth);
+#else
+	ncm.cbSize = sizeof(NONCLIENTMETRICS);
+#endif
+	//
+	::SystemParametersInfo(SPI_GETNONCLIENTMETRICS, sizeof(NONCLIENTMETRICS), &ncm, 0);
+	//
+	return ncm.lfMenuFont.lfHeight;
+}
+
+CString WizGetUIFontName()
+{
+	NONCLIENTMETRICS ncm;
+	ZeroMemory(&ncm, sizeof(NONCLIENTMETRICS));
+#if (WINVER >= 0x0600)
+	ncm.cbSize = sizeof(NONCLIENTMETRICS) - sizeof(ncm.iPaddedBorderWidth);
+#else
+	ncm.cbSize = sizeof(NONCLIENTMETRICS);
+#endif
+	//
+	::SystemParametersInfo(SPI_GETNONCLIENTMETRICS, sizeof(NONCLIENTMETRICS), &ncm, 0);
+	//
+	return CString(ncm.lfMenuFont.lfFaceName);
+}
+
+
+int WizFontHeightToCharFormatHeight(int nFontHeight)
+{
+	LONG yPerInch = 96;
+	//
+	HDC hdc = ::CreateDC(_T("DISPLAY"), NULL, NULL, NULL);
+	if (hdc)
+	{
+		yPerInch = ::GetDeviceCaps(hdc, LOGPIXELSY);
+		::DeleteDC(hdc);
+	}
+	//
+	int nHeight = (- nFontHeight) * 1440  / yPerInch;
+	return nHeight;
+}
+
+#ifdef _RICHEDIT_
+
+void WizInitRichEditFont(HWND hwndRichEdit)
+{
+	CHARFORMAT cf;
+	ZeroMemory(&cf, sizeof(CHARFORMAT));
+	cf.cbSize = sizeof(cf);
+	cf.dwMask = CFM_SIZE;
+	cf.yHeight = WizFontHeightToCharFormatHeight(WizGetUIFontHeight());
+
+	cf.cbSize = sizeof(CHARFORMAT);
+	::SendMessage(hwndRichEdit, EM_SETCHARFORMAT, 0, (LPARAM)&cf);
+}
+
+#endif

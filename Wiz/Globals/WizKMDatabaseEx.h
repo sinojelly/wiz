@@ -71,7 +71,14 @@ public:
 	//
 	virtual void SetDatabase(IWizDatabase* pDatabase)
 	{
-		ATLASSERT(FALSE);
+		ATLASSERT(pDatabase);
+		if (m_spDatabase)
+		{
+			m_spDatabase = NULL;
+		}
+		//
+		m_spDatabase = pDatabase;
+		//ATLASSERT(FALSE);
 	}
 };
 

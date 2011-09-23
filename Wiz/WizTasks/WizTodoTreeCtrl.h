@@ -94,6 +94,16 @@ public:
 	END_MSG_MAP()
 	//
 	//
+	void SetBackgroundColor(COLORREF cr)
+	{
+		m_crWindowBackground = cr;
+		//
+		if (IsWindow())
+		{
+			Invalidate();
+		}
+	}
+	//
 	void SetAllChildItemState(HTREEITEM hItemParent, WIZTODOSTATE eState)
 	{
 		HTREEITEM hItem = GetChildItem(hItemParent);
@@ -847,11 +857,11 @@ public:
 			}
 		}
 	}
-	virtual COLORREF GetItemTextColor(HTREEITEM hItem)
+	virtual COLORREF GetItemTextColor(HTREEITEM hItem, BOOL bHot)
 	{
 		if (GetItemState(hItem, TVIS_SELECTED) == TVIS_SELECTED)
 		{
-			return CWizTreeCtrlBase::GetItemTextColor(hItem);
+			return CWizTreeCtrlBase::GetItemTextColor(hItem, bHot);
 		}
 		else
 		{
@@ -959,7 +969,7 @@ public:
 	void UpdateMoveToMenu(WIZTODOSTATE state, CMenuHandle &menu );
 
 	//
-	virtual void DrawItemText(CDCHandle dcPaint, HTREEITEM hItem, CRect& rcItemText, LPCTSTR lpszText)
+	virtual void DrawItemText(CDCHandle dcPaint, HTREEITEM hItem, CRect& rcItemText, LPCTSTR lpszText, BOOL bHot)
 	{
 		WIZTODODATA* pData = GetItemTodo(hItem);
 		if (!pData)
@@ -978,7 +988,7 @@ public:
 			rcItemText.right -= 16;
 		}
 		//
-		CWizTreeCtrlBase::DrawItemText(dcPaint, hItem, rcItemText, lpszText);
+		CWizTreeCtrlBase::DrawItemText(dcPaint, hItem, rcItemText, lpszText, bHot);
 		//
 		if (!bLink)
 			return;

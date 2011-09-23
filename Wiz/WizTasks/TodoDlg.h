@@ -34,6 +34,8 @@ private:
 	CWizVistaIconButton m_btnNew;
 	CWizTodoTreeCtrl m_wndList;
 	CString m_strInitTitle;
+	//
+
 public:
 
 BEGIN_MSG_MAP(CTodoDlg)
@@ -67,6 +69,11 @@ public:
 	virtual BOOL AutoSave();
 	virtual BOOL SavePos();
 	virtual BOOL LoadPos();
+	virtual void UpdateMenu(HMENU hMenu);
+	//
+	BOOL PreTranslateMessage(MSG* pMsg);
+	//
+
 public:
 	//
 	BOOL SaveData();

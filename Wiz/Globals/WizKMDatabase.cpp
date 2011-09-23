@@ -76,6 +76,20 @@ BOOL CWizKMDatabase::IsModified()
 	//
 	return vb ? TRUE : FALSE;
 }
+void CWizKMDatabase::BeginUpdate()
+{
+	if (!m_spDatabase)
+		return;
+	//
+	m_spDatabase->BeginUpdate();
+}
+void CWizKMDatabase::EndUpdate()
+{
+	if (!m_spDatabase)
+		return;
+	//
+	m_spDatabase->EndUpdate();
+}
 
 BOOL CWizKMDatabase::GetTags(CWizTagArray& arrayTag)
 {
@@ -152,6 +166,22 @@ BOOL CWizKMDatabase::GetTagsName(CWizStdStringArray& arrayName)
 	//
 	return TRUE;
 }
+BOOL CWizKMDatabase::GetTagsDisplayName(CWizStdStringArray& arrayName)
+{
+	CWizTagArray arrayTag;
+	if (!GetTags(arrayTag))
+		return FALSE;
+	//
+	for (CWizTagArray::const_iterator it = arrayTag.begin();
+		it != arrayTag.end();
+		it++)
+	{
+		arrayName.push_back(CWizKMDatabase::GetTagDisplayName(*it));
+	}
+	//
+	return TRUE;
+}
+
 
 BOOL CWizKMDatabase::GetTags(IWizTag* pParentTag, CWizTagArray& arrayTag)
 {
@@ -269,6 +299,18 @@ BOOL CWizKMDatabase::GetDocumentsByFolder(IWizFolder* pFolder, IDispatch** ppDoc
 	//
 	return TRUE;
 }
+BOOL CWizKMDatabase::GetDocumentsByFolder(IWizFolder* pFolder, IWizDocumentCollection** ppDocumentCollection)
+{
+	CComPtr<IDispatch> spDisp;
+	HRESULT hr = pFolder->get_Documents(&spDisp);
+	if (FAILED(hr))
+	{
+		TOLOG(_T("Failed to get documents by folder!"));
+		return FALSE;
+	}
+	//
+	return SUCCEEDED(spDisp->QueryInterface(IID_IWizDocumentCollection, (void**)ppDocumentCollection));
+}
 BOOL CWizKMDatabase::GetDocumentsByFolder(IWizFolder* pFolder, CWizDocumentArray& arrayDocument)
 {
 	CComPtr<IDispatch> spDocumentCollectionDisp = NULL;
@@ -280,6 +322,79 @@ BOOL CWizKMDatabase::GetDocumentsByFolder(IWizFolder* pFolder, CWizDocumentArray
 	//
 	return WizCollectionDispatchToArray<IWizDocumentCollection, IWizDocument>(spDocumentCollectionDisp, arrayDocument);
 }
+
+
+BOOL CWizKMDatabase::GetDocumentsByStyle(IWizStyle* pStyle, IDispatch** ppDocumentCollectionDisp)
+{
+	HRESULT hr = pStyle->get_Documents(ppDocumentCollectionDisp);
+	if (FAILED(hr))
+	{
+		TOLOG(_T("Failed to get documents by Style!"));
+		return FALSE;
+	}
+	//
+	return TRUE;
+}
+BOOL CWizKMDatabase::GetDocumentsByStyle(IWizStyle* pStyle, IWizDocumentCollection** ppDocumentCollection)
+{
+	CComPtr<IDispatch> spDisp;
+	HRESULT hr = pStyle->get_Documents(&spDisp);
+	if (FAILED(hr))
+	{
+		TOLOG(_T("Failed to get documents by Style!"));
+		return FALSE;
+	}
+	//
+	return SUCCEEDED(spDisp->QueryInterface(IID_IWizDocumentCollection, (void**)ppDocumentCollection));
+}
+BOOL CWizKMDatabase::GetDocumentsByStyle(IWizStyle* pStyle, CWizDocumentArray& arrayDocument)
+{
+	CComPtr<IDispatch> spDocumentCollectionDisp = NULL;
+	BOOL bRet = GetDocumentsByStyle(pStyle, &spDocumentCollectionDisp);
+	if (!bRet)
+		return FALSE;
+	if (!spDocumentCollectionDisp)
+		return FALSE;
+	//
+	return WizCollectionDispatchToArray<IWizDocumentCollection, IWizDocument>(spDocumentCollectionDisp, arrayDocument);
+}
+
+
+BOOL CWizKMDatabase::GetDocumentsByTag(IWizTag* pTag, IDispatch** ppDocumentCollectionDisp)
+{
+	HRESULT hr = pTag->get_Documents(ppDocumentCollectionDisp);
+	if (FAILED(hr))
+	{
+		TOLOG(_T("Failed to get documents by Tag!"));
+		return FALSE;
+	}
+	//
+	return TRUE;
+}
+BOOL CWizKMDatabase::GetDocumentsByTag(IWizTag* pTag, IWizDocumentCollection** ppDocumentCollection)
+{
+	CComPtr<IDispatch> spDisp;
+	HRESULT hr = pTag->get_Documents(&spDisp);
+	if (FAILED(hr))
+	{
+		TOLOG(_T("Failed to get documents by Tag!"));
+		return FALSE;
+	}
+	//
+	return SUCCEEDED(spDisp->QueryInterface(IID_IWizDocumentCollection, (void**)ppDocumentCollection));
+}
+BOOL CWizKMDatabase::GetDocumentsByTag(IWizTag* pTag, CWizDocumentArray& arrayDocument)
+{
+	CComPtr<IDispatch> spDocumentCollectionDisp = NULL;
+	BOOL bRet = GetDocumentsByTag(pTag, &spDocumentCollectionDisp);
+	if (!bRet)
+		return FALSE;
+	if (!spDocumentCollectionDisp)
+		return FALSE;
+	//
+	return WizCollectionDispatchToArray<IWizDocumentCollection, IWizDocument>(spDocumentCollectionDisp, arrayDocument);
+}
+
 
 BOOL CWizKMDatabase::GetDocumentsTitleSet(IWizFolder* pFolder, CWizStringSet& setDocument)
 {
@@ -404,6 +519,7 @@ CComPtr<IWizTag> CWizKMDatabase::GetTagByName(LPCTSTR lpszTagName, BOOL bCreate,
 	//
 	return CComQIPtr<IWizTag>(spNewTagDisp);
 }
+
 CComPtr<IWizStyle> CWizKMDatabase::GetStyleByName(LPCTSTR lpszStyleName)
 {
 	CWizStyleArray arrayStyle;
@@ -523,6 +639,48 @@ BOOL CWizKMDatabase::GetDocumentsByTags(IWizTagCollection* pTagCollection, IDisp
 	//
 	return TRUE;
 }
+BOOL CWizKMDatabase::GetDocumentsByTagsInFolder(IWizFolder* pFolder, CWizTagArray& arrayTag, IWizDocumentCollection** ppDocumentCollection)
+{
+	CComPtr<IWizTagCollection> spTagColl;
+	if (!WizArrayToCollection<IWizTagCollection, IWizTag>(arrayTag, CLSID_WizTagCollection, &spTagColl, WIZKMCORE_DLL_NAME))
+		return FALSE;
+
+	if (!spTagColl)
+	{
+		TOLOG(_T("NULL Pointer: CWizKMDatabase::GetDocumentsByTagsInFolder"));
+		return FALSE;
+	}
+	//
+	CComPtr<IDispatch> spDisp;
+	HRESULT hr = m_spDatabase->DocumentsFromTagsInFolder(pFolder, spTagColl, &spDisp);
+	if (FAILED(hr) || !spDisp)
+	{
+		TOLOG(_T("Failed to get documents from tags!"));
+		return FALSE;
+	}
+	//
+	return SUCCEEDED(spDisp->QueryInterface(IID_IWizDocumentCollection, (void**)ppDocumentCollection));
+}
+BOOL CWizKMDatabase::GetDocumentsByStyleInFolder(IWizFolder* pFolder, IWizStyle* pStyle, IWizDocumentCollection** ppDocumentCollection)
+{
+	if (!pStyle)
+	{
+		TOLOG(_T("NULL Pointer: CWizKMDatabase::GetDocumentsByStyleInFolder"));
+		return FALSE;
+	}
+	//
+	CComPtr<IDispatch> spDisp;
+	HRESULT hr = m_spDatabase->DocumentsFromStyleInFolder(pFolder, pStyle, &spDisp);
+	if (FAILED(hr) || !spDisp)
+	{
+		TOLOG(_T("Failed to get documents from tags!"));
+		return FALSE;
+	}
+	//
+	return SUCCEEDED(spDisp->QueryInterface(IID_IWizDocumentCollection, (void**)ppDocumentCollection));
+}
+//
+
 BOOL CWizKMDatabase::GetDocumentsByTagWithChildren(IWizTag* pTag, IDispatch** ppDocumentCollectionDisp)
 {
 	if (!pTag)
@@ -580,6 +738,22 @@ BOOL CWizKMDatabase::GetDocumentsByURL(LPCTSTR lpszURL, CWizDocumentArray& array
 	//
 	return WizCollectionDispatchToArray<IWizDocumentCollection, IWizDocument>(spDisp, arrayDocument);
 }
+//
+BOOL CWizKMDatabase::GetDocumentsBySQL2(LPCTSTR lpszSQL, LPCTSTR lpszOptions, CWizDocumentArray& arrayDocument)
+{
+	CComPtr<IDispatch> spDisp;
+	HRESULT hr = m_spDatabase->DocumentsFromSQL2(CComBSTR(lpszSQL), CComBSTR(lpszOptions), &spDisp);
+	if (FAILED(hr))
+	{
+		TOLOG1(_T("Failed to get documents from sql: %1"), lpszSQL);
+		return FALSE;
+	}
+	if (!spDisp)
+		return FALSE;
+	//
+	return WizCollectionDispatchToArray<IWizDocumentCollection, IWizDocument>(spDisp, arrayDocument);
+}
+
 
 CString CWizKMDatabase::DocumentToTemp(IWizDocument* pDocument, long nFlags /*= 0*/)
 {
@@ -692,6 +866,23 @@ BOOL CWizKMDatabase::GetFolderIsDeletedItems(IWizFolder* pFolder)
 	return vb ? TRUE : FALSE;
 }
 
+BOOL CWizKMDatabase::GetFolderIsInDeletedItems(IWizFolder* pFolder)
+{
+	CComPtr<IWizDatabase> spDatabase = GetDatabase<IWizFolder>(pFolder);
+	ATLASSERT(spDatabase);
+	if (!spDatabase)
+		return FALSE;
+	//
+	CWizKMDatabase db;
+	db.SetDatabase(spDatabase);
+	CComPtr<IWizFolder> spDeletedItems = db.GetDeletedItemsFolder();
+	ATLASSERT(spDeletedItems);
+	//
+	VARIANT_BOOL vb = VARIANT_FALSE;
+	pFolder->IsIn(spDeletedItems, &vb);
+	return vb ? TRUE : FALSE;
+}
+
 BOOL CWizKMDatabase::CanRenameFolder(IWizFolder* pFolder)
 {
 	if (!pFolder)
@@ -737,6 +928,23 @@ long CWizKMDatabase::GetDocumentProtected(IWizDocument* pDocument)
 	pDocument->get_Protect(&nProtected);
 	//
 	return nProtected;
+}
+
+static LPCTSTR g_lpszDocumentStarParamName = _T("Rate");
+//
+void CWizKMDatabase::SetDocumentStar(IWizDocument* pDocument, int nStar)
+{
+	pDocument->put_Rate(nStar);
+}
+int CWizKMDatabase::GetDocumentStar(IWizDocument* pDocument)
+{
+	long nStar = 0;
+	pDocument->get_Rate(&nStar);
+	if (nStar < 0)
+		nStar = 0;
+	if (nStar > 5)
+		nStar = 5;
+	return nStar;
 }
 
 HICON CWizKMDatabase::GetFolderIcon(IWizFolder* pFolder)
@@ -791,6 +999,46 @@ BOOL CWizKMDatabase::GetFolderEncrypt(IWizFolder* pFolder)
 	pFolder->get_Encrypt(&vbEncrypt);
 	return vbEncrypt ? TRUE : FALSE;
 }
+
+
+CComPtr<IWizFolder> CWizKMDatabase::GetParentFolder(IWizFolder* pFolder)
+{
+	ATLASSERT(pFolder);
+	if (!pFolder)
+		return NULL;
+	//
+	CComPtr<IDispatch> spFolderDisp;
+	HRESULT hr = pFolder->get_Parent(&spFolderDisp);
+	if (FAILED(hr))
+	{
+		TOLOG(_T("Failed to get parent folder"));
+		return NULL;
+	}
+	//
+	return CComQIPtr<IWizFolder>(spFolderDisp);
+}
+BOOL CWizKMDatabase::GetFolderIsCustomSorted(IWizFolder* pFolder)
+{
+	ATLASSERT(pFolder);
+	if (!pFolder)
+		return FALSE;
+	//
+	VARIANT_BOOL vb= VARIANT_FALSE;
+	pFolder->get_IsCustomSorted(&vb);
+	return vb ? TRUE : FALSE;
+}
+
+BOOL CWizKMDatabase::GetRootFolderIsCustomSorted()
+{
+	ATLASSERT(m_spDatabase);
+	if (!m_spDatabase)
+		return FALSE;
+	//
+	VARIANT_BOOL vb= VARIANT_FALSE;
+	m_spDatabase->get_IsCustomSorted(&vb);
+	return vb ? TRUE : FALSE;
+}
+
 
 BOOL CWizKMDatabase::CreateRootFolder(LPCTSTR lpszName, BOOL bSync, IWizFolder** ppFolder)
 {
@@ -966,6 +1214,29 @@ BOOL CWizKMDatabase::GetDocumentTagGUIDs(IWizDocument* pDocument, CWizStdStringA
 	}
 	return TRUE;
 }
+
+BOOL CWizKMDatabase::GetAllLocations(CWizStdStringArray& arrayLocation)
+{
+	CComVariant v;
+	m_spDatabase->get_AllLocations(&v);
+	return ::WizVariantToStringArray(v, arrayLocation);
+}
+BOOL CWizKMDatabase::GetAllLocationsLowerCase(CWizStringSet& setLocation)
+{
+	CWizStdStringArray arrayLocation;
+	GetAllLocations(arrayLocation);
+	//
+	for (CWizStdStringArray::const_iterator it = arrayLocation.begin();
+		it != arrayLocation.end();
+		it++)
+	{
+		CString str = *it;
+		str.MakeLower();
+		setLocation.insert(str);
+	}
+	return TRUE;
+}
+
 CString CWizKMDatabase::GetDocumentFileName(IWizDocument* pDocument)
 {
 	CComBSTR bstr;
@@ -1329,6 +1600,15 @@ CComPtr<IWizFolder> CWizKMDatabase::GetDocumentFolder(IWizDocument* pDocument)
 	//
 	return CComQIPtr<IWizFolder>(spDisp);
 }
+
+BOOL CWizKMDatabase::IsFolderEmpty(IWizFolder* pFolder)
+{
+	VARIANT_BOOL vb = VARIANT_FALSE;
+	pFolder->get_IsEmpty(&vb);
+	//
+	return vb ? TRUE : FALSE;
+}
+
 
 CComPtr<IWizTag> CWizKMDatabase::GetTagByGUID(LPCTSTR lpszGUID)
 {
@@ -1920,10 +2200,30 @@ BOOL CWizKMDatabase::SetPasswordFlags(UINT nFlags)
 	return SUCCEEDED(hr);
 }
 
+const LPCTSTR g_lpszSERVER_INFO		= _T("SERVER_INFO");
+
 CString CWizKMDatabase::GetUserType()
 {
-	return GetMeta(_T("SERVER_INFO"), _T("user_type"));
+	return GetMeta(g_lpszSERVER_INFO, _T("user_type"));
 }
+CString CWizKMDatabase::GetDisplayName()
+{
+	return GetMeta(g_lpszSERVER_INFO, _T("display_name"));
+}
+CString CWizKMDatabase::GetNickName()
+{
+	return GetMeta(g_lpszSERVER_INFO, _T("ncik_name"));
+}
+
+CString CWizKMDatabase::GetUserLevelName()
+{
+	return GetMeta(g_lpszSERVER_INFO, _T("user_level_name"));
+}
+int CWizKMDatabase::GetUserPoints()
+{
+	return _ttoi(GetMeta(g_lpszSERVER_INFO, _T("user_points")));
+}
+
 
 CComPtr<IWizDocument> CWizKMDatabase::GetEventDocument(IWizEvent* pEvent)
 {
@@ -1995,3 +2295,41 @@ BOOL CWizKMDatabase::SetUseWizServer(BOOL b)
 	//
 	return SetMeta(_T("Sync"), _T("UseWizServer"), b ? _T("1") : _T("0"));
 }
+
+
+static const LPCTSTR WIZKM_RECENT_DOCUMENT_PARAM = _T("RecentDocument");
+
+BOOL CWizKMDatabase::IsRecentDocument(IWizDocument* pDocument)
+{
+	if (!pDocument)
+		return FALSE;
+	//
+	return _T("1") == CWizKMDatabase::GetDocumentParam(pDocument, WIZKM_RECENT_DOCUMENT_PARAM);
+}
+BOOL CWizKMDatabase::SetRecentDocument(IWizDocument* pDocument, BOOL b)
+{
+	if (!pDocument)
+		return FALSE;
+	//
+	if (b)
+	{
+		pDocument->put_ParamValue(CComBSTR(WIZKM_RECENT_DOCUMENT_PARAM), _T("1"));
+	}
+	else
+	{
+		pDocument->put_ParamValue(CComBSTR(WIZKM_RECENT_DOCUMENT_PARAM), _T(""));
+	}
+	//
+	return TRUE;
+}
+CString CWizKMDatabase::GetTagDisplayName(IWizTag* pTag, long nFlags /*= 0*/)
+{
+	if (!pTag)
+		return CString();
+	//
+	CComBSTR bstrName;
+	pTag->get_DisplayName(&bstrName);
+	return CString(bstrName);
+
+}
+

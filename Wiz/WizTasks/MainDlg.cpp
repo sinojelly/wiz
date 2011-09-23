@@ -75,6 +75,24 @@ CMainDlg* CMainDlg::GetMainDlg()
 
 BOOL CMainDlg::PreTranslateMessage(MSG* pMsg)
 {
+	HWND hWnd = pMsg->hwnd;
+	//
+	for (CTodoDlgArray::const_iterator it= m_arrayTodoList.begin();
+		it != m_arrayTodoList.end();
+		it++)
+	{
+		CTodoDlg* pDlg = *it;
+		if (pDlg 
+			&& pDlg->IsWindow()
+			&& (pDlg->GetWindowLong(GWL_STYLE) & WS_VISIBLE)
+			&& WizIsOwnerWindow(pDlg->m_hWnd, hWnd)
+			)
+		{
+			if (pDlg->PreTranslateMessage(pMsg))
+				return TRUE;
+		}
+	}
+	//
 	return CWindow::IsDialogMessage(pMsg);
 }
 
@@ -128,6 +146,23 @@ LRESULT CMainDlg::OnInitDialog(UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*lParam
 	CheckDefaultTodoList();
 	//
 	WizRegisterShowDesktopEvents(m_hWnd);
+	//
+	for (CTodoDlgArray::const_iterator it = m_arrayTodoList.begin();
+		it != m_arrayTodoList.end();
+		it++)
+	{
+		CTodoDlg* pDlg = *it;
+		if (!pDlg)
+		{
+			ATLASSERT(FALSE);
+			continue;
+		}
+		//
+		if (!pDlg->IsWindow())
+			continue;
+		//
+		pDlg->BringWindowToTopEx();
+	}	
 	//
 	//
 	return TRUE;
@@ -253,7 +288,15 @@ void CMainDlg::CheckDefaultTodoList()
 
 	if (!hasDefault)
 	{
-		CWizKMDatabase::SetDocumentParam(*arrayAllTodoList.begin(), _T("DefaultTodoList"), LPCTSTR(_T("1"))); 
+		CComPtr<IWizDocument> spDocument = * arrayAllTodoList.begin();
+		CWizKMDatabase::SetDocumentParam(spDocument, _T("DefaultTodoList"), LPCTSTR(_T("1"))); 
+		//
+		if (m_db.GetMeta(_T("WizTasks"), _T("Update")) != _T("1"))
+		{
+			WIZTODODATAEX::CWizTodoDataExArray arrayData;
+			WizKMAddUncompletedToTodoData(&m_db, spDocument, ::WizGetCurrentTime(), arrayData);
+			m_db.SetMeta(_T("WizTasks"), _T("Update"), _T("1"));
+		}
 	}
 }
 
@@ -521,7 +564,7 @@ void CMainDlg::RegisterAllHotkeys()
 	//
 	CWizHotKeyDataArray arrayHotKey;
 	//
-	CWizKMSettings settings;
+	CWizKMSettings& settings = WizKMGetSettings();
 	//
 	arrayHotKey.push_back(WIZHOTKEYDATA(settings.GetStr(SECTION_HOTKEY, HOTKEY_NAME_NEW_TODOLIST, HOTKEY_DEFAULT_NEW_TODOLIST), ID_TRAY_NEW_TODOLIST));
 	arrayHotKey.push_back(WIZHOTKEYDATA(settings.GetStr(SECTION_HOTKEY, HOTKEY_NAME_SHOW_ALL_TODOLISTS, HOTKEY_DEFAULT_SHOW_ALL_TODOLISTS), ID_TRAY_SHOW_ALL_TODOLISTS));

@@ -210,15 +210,22 @@ struct WIZDOCUMENTDATA
 	CString strParamMD5;
 	__int64 nVersion;
 	//
+	int nFlags;
+	int nRate;
+	//
+	CString strSystemTags;
+	//
 	WIZDOCUMENTDATA()
+		: nIconIndex(0)
+		, nSync(0)
+		, nProtected(0)
+		, nReadCount(0)
+		, nAttachmentCount(0)
+		, nIndexed(0)
+		, nVersion(-1)
+		, nFlags(0)
+		, nRate(0)
 	{
-		nIconIndex = 0;
-		nSync = 0;
-		nProtected = 0;
-		nReadCount = 0;
-		nAttachmentCount = 0;
-		nIndexed = 0;
-		nVersion = -1;
 	}
 	BOOL EqualForSync(const WIZDOCUMENTDATA& data) const
 	{

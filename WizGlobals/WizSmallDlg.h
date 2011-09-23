@@ -1,5 +1,7 @@
 #pragma once
 
+#include "WizAppBar.h"
+
 
 const UINT WIZ_WM_UM_CLIENT_SCROLL_CHANGED = ::RegisterWindowMessage(_T("WizClientScrollChanged"));
 const UINT WIZ_WM_UM_NOTIFY_PARENT_COMMAND = ::RegisterWindowMessage(_T("WizNotifyParentCommand"));
@@ -159,6 +161,7 @@ typedef CWinTraits<WS_POPUP | WS_CLIPCHILDREN | WS_CLIPSIBLINGS | WS_MAXIMIZEBOX
 template <class T>
 class CWizSmallDlgBase
 	: public CWindowImpl<T, CWindow, CWizSmallDlgWinTraits>
+	, public CWizAppBar<T>
 	, public CDoubleBufferImpl<T>
 {
 protected:
@@ -187,7 +190,7 @@ protected:
 	UINT m_nMenuID;
 	//
 	BOOL m_bIniting;
-    bool m_bPinDesk;
+	bool m_bPinDesk;
 public:
 	CWizSmallDlgBase()
 	{
@@ -203,7 +206,7 @@ public:
 		//
 		m_nMenuID = 0;
 		m_bIniting = TRUE;
-
+		//
 		m_bPinDesk = false;
 	}
 	//
@@ -347,6 +350,9 @@ public:
 	virtual void SetDlgState(WIZSMALLDLGSTATE state)
 	{
 		if (!IsWindow())
+			return;
+		//
+		if (IsDocking())
 			return;
 		//
 		if (stateTopMost == state)
@@ -522,6 +528,7 @@ public:
 		MESSAGE_HANDLER(WM_CLOSE, OnClose)
 		MESSAGE_HANDLER(WIZ_WM_UM_CLIENT_SCROLL_CHANGED, OnClientScrollChanged)
 		MESSAGE_HANDLER(WM_WINDOWPOSCHANGED, OnWindowPosChanged)
+		CHAIN_MSG_MAP(CWizAppBar<T>)
 		CHAIN_MSG_MAP(CDoubleBufferImpl<T>)
 	END_MSG_MAP()
 	//
@@ -534,12 +541,14 @@ public:
 		return 0;
 	}
 
-	LRESULT OnSize(UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*lParam*/, BOOL& /*bHandled*/)
+	LRESULT OnSize(UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*lParam*/, BOOL& bHandled)
 	{
 		// TODO: Add your message handler code here and/or call default
 		UpdateLayout();
 		//
 		Invalidate();
+		//
+		bHandled = FALSE;
 		//
 		return 0;
 	}
@@ -699,6 +708,10 @@ public:
 
 	LRESULT OnNcHitTest(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 	{
+		CWizAppBar::OnNcHitTest(uMsg, wParam, lParam, bHandled);
+		//
+		bHandled = TRUE;
+		//
 		CPoint pt;
 		pt.x = GET_X_LPARAM(lParam);
 		pt.y = GET_Y_LPARAM(lParam);
@@ -914,6 +927,8 @@ public:
 		if (subMenu.IsNull())
 			return 0;
 		//
+		UpdateMenu(subMenu);
+		//
 		CPoint pt;
 		if (NULL == hWndCtl)
 		{
@@ -966,6 +981,10 @@ public:
 		m_bInfoModified = b;
 	}
 	//
+	virtual void UpdateMenu(HMENU hMenu)
+	{
+	}
+	//
 	LRESULT OnWindowPosChanged(UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM lParam, BOOL& bHandled)
 	{
 		// TODO: Add your message handler code here and/or call default
@@ -977,7 +996,10 @@ public:
 				if (0 == (pPos->flags & SWP_NOSIZE)
 					|| 0 == (pPos->flags & SWP_NOMOVE))
 				{
-					SavePos();
+					if (!IsDocking())
+					{
+						SavePos();
+					}
 				}
 			}
 		}

@@ -276,7 +276,7 @@ inline BOOL WizKMEnterPasswordDlg(LPCTSTR lpszTitle, LPCTSTR lpszInfo, CString& 
 	return WizKMEnterPasswordDlg(lpszTitle, lpszInfo, TRUE, strPassword, bRememberPassword);
 }
 
-
+#ifdef _WIZKMDATABASE_H_
 
 inline BOOL WizKMBatchOverwriteDocuments(CWizKMDatabase* pDatabase, const CWizDocumentArray& arrayDocument, BOOL bSaveContentOnly)
 {
@@ -319,6 +319,8 @@ inline BOOL WizKMBatchOverwriteDocuments(CWizKMDatabase* pDatabase, const CWizDo
 	return TRUE;
 }
 
+
+#endif //#ifdef _WIZKMDATABASE_H_
 
 
 inline BOOL WizKMInputBox(UINT nDlgTitleID, UINT nDlgDescriptionID, LPCTSTR lpszInit, CString& ret)

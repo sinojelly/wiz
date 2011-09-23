@@ -447,8 +447,11 @@ public:
 		int nCount = menu.GetMenuItemCount();
 		for (int i = 0; i < nCount; i++)
 		{
-			UINT nID = menu.GetMenuItemID(i);
-			if (nID)
+			if (HMENU hSubMenu = GetSubMenu(hMenu, i))
+			{
+				UpdateHotKeyToMenu(hSubMenu);
+			}
+			else if (UINT nID = menu.GetMenuItemID(i))
 			{
 				CString strHotKey = GetRegisteredHotKeyByCommand(nID);
 				if (!strHotKey.IsEmpty())
@@ -490,6 +493,8 @@ inline void WizUpdateAccelToMenu(HACCEL hAccel, CMenuHandle menu)
 {
 	if (!hAccel)
 		return;
+	if (!menu.IsMenu())
+		return;
 	//
 	const UINT ACCEL_COUNT = 40;
 	ACCEL accel[ACCEL_COUNT];
@@ -499,8 +504,11 @@ inline void WizUpdateAccelToMenu(HACCEL hAccel, CMenuHandle menu)
 	int nMenuCount = menu.GetMenuItemCount();
 	for (int iMenu = 0; iMenu < nMenuCount; iMenu++)
 	{
-		UINT nID = menu.GetMenuItemID(iMenu);
-		if (nID)
+		if (HMENU hSubMenu = menu.GetSubMenu(iMenu))
+		{
+			WizUpdateAccelToMenu(hAccel, hSubMenu);
+		}
+		else if (UINT nID = menu.GetMenuItemID(iMenu))
 		{
 			CString strShortcut;
 			for (int iAccel = 0; iAccel < nAccelCount; iAccel++)

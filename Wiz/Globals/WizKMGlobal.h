@@ -12,10 +12,21 @@ CString WizKMGetDataStorePath();
 CString WizKMGetSettingsPath();
 CString WizKMGetSettingsFileName();
 CString WizKMGetLogFileName();
-CString WizKMGetSkinsPath();
-HICON WizKMLoadSkinsIcon(LPCTSTR lpszIconFileName, int nWidth = 16, int nHeight = 16);
 BOOL WizKMIsPortable();
 BOOL WizKMIsDev();
+//
+CString WizKMGetCurrentSkinName();
+BOOL WizKMSetCurrentSkinName(LPCTSTR lpszSkinName);
+CString WizKMGetSkinPath();
+CString WizKMGetSkinIniFileName();
+CString WizKMGetFileNameInSkin(LPCTSTR lpszName);
+void WizKMGetAllSkins(CWizStdStringArray& arraySkinName);
+//
+HICON WizKMLoadSkinsIcon(LPCTSTR lpszIconFileName, int nWidth = 16, int nHeight = 16);
+
+//
+CString WizKMGetShellFileName();
+
 
 BOOL WizKMSetDataStorePath(LPCTSTR lpszPath);
 //
@@ -133,16 +144,9 @@ inline CString WizKMGetExplorerExeFileName()
 	return WizKMGetProductExeFileName();
 }
 
-
-inline BOOL WizKMTodoExists()
+inline BOOL WizKMTasksExists()
 {
-	static BOOL b = PathFileExists(WizGetAppPath() + _T("WizTodo.exe"));
-	return b;
-}
-
-inline BOOL WizKMCalendarExists()
-{
-	static BOOL b = PathFileExists(WizGetAppPath() + _T("WizKMCalendar.exe"));
+	static BOOL b = PathFileExists(WizGetAppPath() + _T("WizTasks.exe"));
 	return b;
 }
 
@@ -216,10 +220,8 @@ inline BOOL WizKMGetPrivateBool(LPCTSTR lpszSection, LPCTSTR lpszKeyName, BOOL b
 class CWizKMToolsDll : public CWizToolsDll
 {
 public:
-	CWizKMToolsDll()
-		: CWizToolsDll(WizKMGetLogFileName(), WizKMGetSettingsFileName())
-	{
-	}
+	CWizKMToolsDll();
+	//
 	HRESULT HtmlGetContentEx(LPCWSTR lpszURL, LPCWSTR lpszHtmlText, CString& strContentHtml)
 	{
 		CComBSTR bstrContentHtml;
@@ -243,7 +245,7 @@ public:
 	}
 	int ShowBubbleWindowDefaultIcon(LPCWSTR lpszSubTitle, LPCWSTR lpszText, LPCWSTR lpszButtonText, int nDelaySeconds, LPCWSTR lpszExtOptions)
 	{
-		return ShowBubbleWindow(lpszSubTitle, WizKMGetSkinsPath() + _T("Wiz.ico"), lpszText, lpszButtonText, nDelaySeconds, lpszExtOptions);
+		return ShowBubbleWindow(lpszSubTitle, WizKMGetFileNameInSkin(_T("Wiz.ico")), lpszText, lpszButtonText, nDelaySeconds, lpszExtOptions);
 	}
 	//
 	BOOL RunScriptInWizShell(HWND hwndParent, LPCTSTR lpszScriptFileName)
@@ -254,7 +256,7 @@ public:
 			lpszScriptFileName
 			);
 		//
-		CString strWizShell2FileName = WizGetAppPath() + _T("WizShell.exe");
+		CString strWizShell2FileName = WizKMGetShellFileName();
 		//
 		return int(ShellExecute(NULL, _T("open"), strWizShell2FileName, strParams, NULL, SW_SHOW)) > 32;
 	}
@@ -371,7 +373,7 @@ public:
 
 inline BOOL WizKMShellRunDll(LPCTSTR lpszDllFileName, LPCTSTR lpszFunctionName, LPCTSTR lpszParams, UINT nShowCommand = SW_SHOW)
 {
-	CString strExeFileName = WizGetAppPath() + _T("WizShell.exe");
+	CString strExeFileName = WizKMGetShellFileName();
 	CString strCommandLine = WizFormatString3(_T("\"%1\", %2 %3"), lpszDllFileName, lpszFunctionName, lpszParams);
 	//
 	DEBUG_TOLOG(strCommandLine);
@@ -937,7 +939,7 @@ inline BOOL WizKMTrackAttachment(LPCTSTR lpszDatabasePath, LPCTSTR lpszAttachmen
 #endif
 	
 	//
-	return int(ShellExecute(NULL, _T("open"), WizGetAppPath() + _T("WizShell.exe"),
+	return int(ShellExecute(NULL, _T("open"), WizKMGetShellFileName(),
 		strWizShellCommandLine, NULL, SW_SHOW)) > 32;
 }
 
@@ -1209,4 +1211,204 @@ inline BOOL WizKMRegularTagsText(CString& strText)
 	//
 	return TRUE;
 }
+
+
+
+
+
+#ifdef __WizKMCore_i_h__
+CString WizKMServerGetToken(IWizDatabase* pDatabase);
+BOOL WizKMServerGetCert(IWizDatabase* pDatabase, CString& strN, CString& stre, CString& strd, CString& strHint, CString& strError);
+BOOL WizKMServerSetCert(IWizDatabase* pDatabase, LPCTSTR lpszN, LPCTSTR lpsze, LPCTSTR lpszd, LPCTSTR lpszHint, CString& strError);
+void WizKMWebSiteVisitWithToken(LPCTSTR lpszCommand, IWizDatabase* pDatabase);
+CString WizKMWebSiteGetURLWithToken(LPCTSTR lpszCommand, IWizDatabase* pDatabase);
+CString WizKMWebSiteGetURLWithToken(LPCTSTR lpszCommand, LPCTSTR lpszAtt, IWizDatabase* pDatabase);
+
+const LPCTSTR g_lpszDocumentCustomIDParamName = _T("DocumentCustomID");
+const LPCTSTR g_lpszDocumentCustomModifiedParamName = _T("DocumentCustomModified");
+
+CString WizKMStringToDocumentCustomID(LPCTSTR lpszIDString);
+BOOL WizKMSetDocumentCustomIDByString(IWizDocument* pDocument, LPCTSTR lpszIDString);
+BOOL WizKMSetDocumentCustomIDByID(IWizDocument* pDocument, LPCTSTR lpszCustomID);
+
+
+template <class TElementInterface>
+inline BOOL WizKMObjectIsEqual(TElementInterface* p1, TElementInterface* p2)
+{
+	if (!p1 && !p2)
+		return TRUE;
+	//
+	if (!p1 || !p2)
+		return FALSE;
+	//
+	CComBSTR bstrGUID1;
+	CComBSTR bstrGUID2;
+	p1->get_GUID(&bstrGUID1);
+	p2->get_GUID(&bstrGUID2);
+	//
+	if (!bstrGUID1 || !bstrGUID2)
+		return FALSE;
+	//
+	return 0 == wcscmp(bstrGUID1, bstrGUID2);
+}
+
+template <>
+inline BOOL WizKMObjectIsEqual(IWizFolder* p1, IWizFolder* p2)
+{
+	if (!p1 && !p2)
+		return TRUE;
+	//
+	if (!p1 || !p2)
+		return FALSE;
+	//
+	CComBSTR bstrFullPath1;
+	CComBSTR bstrFullPath2;
+	p1->get_FullPath(&bstrFullPath1);
+	p2->get_FullPath(&bstrFullPath2);
+	//
+	if (!bstrFullPath1 || !bstrFullPath2)
+		return FALSE;
+	//
+	return 0 == _wcsicmp(bstrFullPath1, bstrFullPath2);
+}
+
+template <class TCollectionInterface, class TElementInterface>
+BOOL WizKMCollectionIsEqual(IDispatch* p1, IDispatch* p2)
+{
+	CComQIPtr<TCollectionInterface> sp1(p1);
+	CComQIPtr<TCollectionInterface> sp2(p2);
+	//
+	if (!sp1 && !sp2)
+		return TRUE;
+	//
+	if (!sp1 || !sp2)
+		return FALSE;
+	//
+	long nCount1 = 0;
+	sp1->get_Count(&nCount1);
+	long nCount2 = 0;
+	sp2->get_Count(&nCount2);
+	//
+	if (nCount1 != nCount2)
+		return FALSE;
+	//
+	if (0 == nCount1)
+		return TRUE;
+	//
+	std::vector<CComPtr<TElementInterface> > array1;
+	if (!WizCollectionDispatchToArray<TCollectionInterface, TElementInterface>(p1, array1))
+		return FALSE;
+	//
+	std::vector<CComPtr<TElementInterface> > array2;
+	if (!WizCollectionDispatchToArray<TCollectionInterface, TElementInterface>(p2, array2))
+		return FALSE;
+	//
+	std::set<CString> set1;
+	for (std::vector<CComPtr<TElementInterface> >::const_iterator it = array1.begin(); it != array1.end(); it++)
+	{
+		CComPtr<TElementInterface> spElem = *it;
+		//
+		CComBSTR bstrGUID;
+		spElem->get_GUID(&bstrGUID);
+		//
+		set1.insert(CString(bstrGUID));
+	}
+	//
+	for (std::vector<CComPtr<TElementInterface> >::const_iterator it = array2.begin(); it != array2.end(); it++)
+	{
+		CComPtr<TElementInterface> spElem = *it;
+		//
+		CComBSTR bstrGUID;
+		spElem->get_GUID(&bstrGUID);
+		//
+		if (set1.find(CString(bstrGUID)) == set1.end())
+			return FALSE;
+	}
+	//
+	return TRUE;
+}
+
+#endif //#ifdef __WizKMCore_i_h__
+
+CString WizKMGetImportFileParams(LPCTSTR lpszDocumentGUID, HWND hwnd, int nID, LPCTSTR lpszDatabasePath, LPCTSTR lpszLocation, LPCTSTR lpszTitle, BOOL bExecuteScript, BOOL bURLAsCustomID, UINT nUpdateDocumentFlags, LPCTSTR lpszURL);
+CString WizKMGetOverwriteDocumentParams(LPCTSTR lpszDocumentGUID, HWND hwnd, int nID, LPCTSTR lpszDatabasePath, UINT nUpdateDocumentFlags, LPCTSTR lpszURL);
+CString WizKMGetImportDocumentParams(HWND hwnd, int nID, LPCTSTR lpszDatabasePath, LPCTSTR lpszLocation, LPCTSTR lpszTitle, BOOL bExecuteScript, BOOL bURLAsCustomID, UINT nUpdateDocumentFlags, LPCTSTR lpszURL);
+CString WizKMGetShellImportFileParams(LPCTSTR lpszParams);
+HANDLE WizKMImportFileInShell(LPCTSTR lpszImportFileParams);
+
+
+
+
+const UINT WIZ_UM_CONTROLEVENTS = ::RegisterWindowMessage(_T("WIZ_UM_CONTROLEVENTS"));
+
+struct WIZKMCONTROLEVENTSDATA
+{
+	CComVariant vParam1;
+	CComVariant vParam2;
+	CComVariant vParam3;
+	CComVariant vParam4;
+	//
+	CComVariant vRet;
+	//
+public:
+	CString GetCommandName() const;
+};
+
+class CWizKMControlEventsListenerObject : public IDispatch
+{
+	HWND m_hWnd;
+public:
+	//
+	CWizKMControlEventsListenerObject() : m_hWnd(NULL) { }
+	//
+	void SetEventsWindow(HWND hwnd) { m_hWnd = hwnd; }
+    //IUnknown
+	ULONG STDMETHODCALLTYPE AddRef( void) { return 1; }
+	ULONG STDMETHODCALLTYPE Release( void) { return 1; }
+	HRESULT STDMETHODCALLTYPE QueryInterface(REFIID riid, void __RPC_FAR *__RPC_FAR *ppv);
+    //IDispatch
+    virtual HRESULT STDMETHODCALLTYPE GetTypeInfoCount(UINT *pctinfo) { return E_NOTIMPL; }
+    virtual HRESULT STDMETHODCALLTYPE GetTypeInfo(UINT iTInfo, LCID lcid, ITypeInfo **ppTInfo) { return E_NOTIMPL; }
+    virtual HRESULT STDMETHODCALLTYPE GetIDsOfNames(REFIID riid, LPOLESTR *rgszNames, UINT cNames, LCID lcid, DISPID *rgDispId) { return E_NOTIMPL; }
+    virtual HRESULT STDMETHODCALLTYPE Invoke(DISPID dispIdMember, REFIID riid, LCID lcid, WORD wFlags, DISPPARAMS *pDispParams, VARIANT *pVarResult, EXCEPINFO *pExcepInfo, UINT *puArgErr);
+};
+
+class CWizKMControlEventsBase
+{
+protected:
+	CWizKMControlEventsListenerObject m_eventListener;
+public:
+	void SetEventsListener(HWND hwnd) { m_eventListener.SetEventsWindow(hwnd); }
+};
+
+
+template <class T>
+class CWizKMControlEventsListenerWindow
+{
+public:
+	BEGIN_MSG_MAP(CWizKMControlEventsListener)
+		MESSAGE_HANDLER(WIZ_UM_CONTROLEVENTS, OnControlEvents)
+	END_MSG_MAP()
+	//
+	LRESULT OnControlEvents(UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM lParam, BOOL& /*bHandled*/)
+	{
+		WIZKMCONTROLEVENTSDATA* pData = (WIZKMCONTROLEVENTSDATA*)lParam;
+		ATLASSERT(pData);
+		//
+		if (!pData)
+			return E_FAIL;
+		//
+		CString strCommandName(pData->GetCommandName());
+		//
+		T* pT = static_cast<T*>(this);
+		return pT->ProcessControlEvents(strCommandName, pData->vParam2.pdispVal, pData->vParam3, pData->vParam4, pData->vRet);
+	}
+
+	//
+	HRESULT ProcessControlEvents(const CString& strCommandName, IDispatch* pControl, CComVariant& vParam3, CComVariant& vParam4, CComVariant& vRet)
+	{
+		ATLASSERT(FALSE);
+		return S_FALSE;
+	}
+};
 

@@ -4,7 +4,7 @@
 
 
  /* File created by MIDL compiler version 7.00.0500 */
-/* at Sun Aug 07 13:21:29 2011
+/* at Wed Sep 21 12:38:43 2011
  */
 /* Compiler settings for .\WizKMControls.idl:
     Oicf, W1, Zp8, env=Win32 (32b run)
@@ -44,24 +44,6 @@
 #endif
 
 /* Forward Declarations */ 
-
-#ifndef __IWizFolderTreeCtrl_FWD_DEFINED__
-#define __IWizFolderTreeCtrl_FWD_DEFINED__
-typedef interface IWizFolderTreeCtrl IWizFolderTreeCtrl;
-#endif 	/* __IWizFolderTreeCtrl_FWD_DEFINED__ */
-
-
-#ifndef __IWizStyleListBox_FWD_DEFINED__
-#define __IWizStyleListBox_FWD_DEFINED__
-typedef interface IWizStyleListBox IWizStyleListBox;
-#endif 	/* __IWizStyleListBox_FWD_DEFINED__ */
-
-
-#ifndef __IWizTagTreeCtrl_FWD_DEFINED__
-#define __IWizTagTreeCtrl_FWD_DEFINED__
-typedef interface IWizTagTreeCtrl IWizTagTreeCtrl;
-#endif 	/* __IWizTagTreeCtrl_FWD_DEFINED__ */
-
 
 #ifndef __IWizDocumentListCtrl_FWD_DEFINED__
 #define __IWizDocumentListCtrl_FWD_DEFINED__
@@ -105,64 +87,10 @@ typedef interface IWizHtmlDialogExternal IWizHtmlDialogExternal;
 #endif 	/* __IWizHtmlDialogExternal_FWD_DEFINED__ */
 
 
-#ifndef ___IWizFolderTreeCtrlEvents_FWD_DEFINED__
-#define ___IWizFolderTreeCtrlEvents_FWD_DEFINED__
-typedef interface _IWizFolderTreeCtrlEvents _IWizFolderTreeCtrlEvents;
-#endif 	/* ___IWizFolderTreeCtrlEvents_FWD_DEFINED__ */
-
-
-#ifndef __WizFolderTreeCtrl_FWD_DEFINED__
-#define __WizFolderTreeCtrl_FWD_DEFINED__
-
-#ifdef __cplusplus
-typedef class WizFolderTreeCtrl WizFolderTreeCtrl;
-#else
-typedef struct WizFolderTreeCtrl WizFolderTreeCtrl;
-#endif /* __cplusplus */
-
-#endif 	/* __WizFolderTreeCtrl_FWD_DEFINED__ */
-
-
-#ifndef ___IWizStyleListBoxEvents_FWD_DEFINED__
-#define ___IWizStyleListBoxEvents_FWD_DEFINED__
-typedef interface _IWizStyleListBoxEvents _IWizStyleListBoxEvents;
-#endif 	/* ___IWizStyleListBoxEvents_FWD_DEFINED__ */
-
-
-#ifndef __WizStyleListBox_FWD_DEFINED__
-#define __WizStyleListBox_FWD_DEFINED__
-
-#ifdef __cplusplus
-typedef class WizStyleListBox WizStyleListBox;
-#else
-typedef struct WizStyleListBox WizStyleListBox;
-#endif /* __cplusplus */
-
-#endif 	/* __WizStyleListBox_FWD_DEFINED__ */
-
-
-#ifndef ___IWizTagTreeCtrlEvents_FWD_DEFINED__
-#define ___IWizTagTreeCtrlEvents_FWD_DEFINED__
-typedef interface _IWizTagTreeCtrlEvents _IWizTagTreeCtrlEvents;
-#endif 	/* ___IWizTagTreeCtrlEvents_FWD_DEFINED__ */
-
-
-#ifndef __WizTagTreeCtrl_FWD_DEFINED__
-#define __WizTagTreeCtrl_FWD_DEFINED__
-
-#ifdef __cplusplus
-typedef class WizTagTreeCtrl WizTagTreeCtrl;
-#else
-typedef struct WizTagTreeCtrl WizTagTreeCtrl;
-#endif /* __cplusplus */
-
-#endif 	/* __WizTagTreeCtrl_FWD_DEFINED__ */
-
-
-#ifndef ___IWizDocumentListCtrlEvents_FWD_DEFINED__
-#define ___IWizDocumentListCtrlEvents_FWD_DEFINED__
-typedef interface _IWizDocumentListCtrlEvents _IWizDocumentListCtrlEvents;
-#endif 	/* ___IWizDocumentListCtrlEvents_FWD_DEFINED__ */
+#ifndef __IWizCategoryCtrl_FWD_DEFINED__
+#define __IWizCategoryCtrl_FWD_DEFINED__
+typedef interface IWizCategoryCtrl IWizCategoryCtrl;
+#endif 	/* __IWizCategoryCtrl_FWD_DEFINED__ */
 
 
 #ifndef __WizDocumentListCtrl_FWD_DEFINED__
@@ -175,12 +103,6 @@ typedef struct WizDocumentListCtrl WizDocumentListCtrl;
 #endif /* __cplusplus */
 
 #endif 	/* __WizDocumentListCtrl_FWD_DEFINED__ */
-
-
-#ifndef ___IWizDocumentAttachmentListCtrlEvents_FWD_DEFINED__
-#define ___IWizDocumentAttachmentListCtrlEvents_FWD_DEFINED__
-typedef interface _IWizDocumentAttachmentListCtrlEvents _IWizDocumentAttachmentListCtrlEvents;
-#endif 	/* ___IWizDocumentAttachmentListCtrlEvents_FWD_DEFINED__ */
 
 
 #ifndef __WizDocumentAttachmentListCtrl_FWD_DEFINED__
@@ -255,6 +177,18 @@ typedef struct WizHtmlDialogExternal WizHtmlDialogExternal;
 #endif 	/* __WizHtmlDialogExternal_FWD_DEFINED__ */
 
 
+#ifndef __WizCategoryCtrl_FWD_DEFINED__
+#define __WizCategoryCtrl_FWD_DEFINED__
+
+#ifdef __cplusplus
+typedef class WizCategoryCtrl WizCategoryCtrl;
+#else
+typedef struct WizCategoryCtrl WizCategoryCtrl;
+#endif /* __cplusplus */
+
+#endif 	/* __WizCategoryCtrl_FWD_DEFINED__ */
+
+
 /* header files for imported files */
 #include "oaidl.h"
 #include "ocidl.h"
@@ -262,837 +196,6 @@ typedef struct WizHtmlDialogExternal WizHtmlDialogExternal;
 #ifdef __cplusplus
 extern "C"{
 #endif 
-
-
-#ifndef __IWizFolderTreeCtrl_INTERFACE_DEFINED__
-#define __IWizFolderTreeCtrl_INTERFACE_DEFINED__
-
-/* interface IWizFolderTreeCtrl */
-/* [unique][helpstring][nonextensible][dual][uuid][object] */ 
-
-
-EXTERN_C const IID IID_IWizFolderTreeCtrl;
-
-#if defined(__cplusplus) && !defined(CINTERFACE)
-    
-    MIDL_INTERFACE("C4CE9188-C153-49D1-BC69-345B1AD693E8")
-    IWizFolderTreeCtrl : public IDispatch
-    {
-    public:
-        virtual /* [helpstring][id][propget] */ HRESULT STDMETHODCALLTYPE get_Database( 
-            /* [retval][out] */ IDispatch **pVal) = 0;
-        
-        virtual /* [helpstring][id][propput] */ HRESULT STDMETHODCALLTYPE put_Database( 
-            /* [in] */ IDispatch *newVal) = 0;
-        
-        virtual /* [helpstring][id][propget] */ HRESULT STDMETHODCALLTYPE get_SelectedFolder( 
-            /* [retval][out] */ IDispatch **pVal) = 0;
-        
-        virtual /* [helpstring][id][propput] */ HRESULT STDMETHODCALLTYPE put_SelectedFolder( 
-            /* [in] */ IDispatch *newVal) = 0;
-        
-        virtual /* [helpstring][id][propget] */ HRESULT STDMETHODCALLTYPE get_StateSection( 
-            /* [retval][out] */ BSTR *pVal) = 0;
-        
-        virtual /* [helpstring][id][propput] */ HRESULT STDMETHODCALLTYPE put_StateSection( 
-            /* [in] */ BSTR newVal) = 0;
-        
-        virtual /* [helpstring][id][propget] */ HRESULT STDMETHODCALLTYPE get_Border( 
-            /* [retval][out] */ VARIANT_BOOL *pVal) = 0;
-        
-        virtual /* [helpstring][id][propput] */ HRESULT STDMETHODCALLTYPE put_Border( 
-            /* [in] */ VARIANT_BOOL newVal) = 0;
-        
-        virtual /* [helpstring][id][propget] */ HRESULT STDMETHODCALLTYPE get_DisableContextMenu( 
-            /* [retval][out] */ VARIANT_BOOL *pVal) = 0;
-        
-        virtual /* [helpstring][id][propput] */ HRESULT STDMETHODCALLTYPE put_DisableContextMenu( 
-            /* [in] */ VARIANT_BOOL newVal) = 0;
-        
-        virtual /* [helpstring][id][propget] */ HRESULT STDMETHODCALLTYPE get_Shadow( 
-            /* [retval][out] */ VARIANT_BOOL *pVal) = 0;
-        
-        virtual /* [helpstring][id][propput] */ HRESULT STDMETHODCALLTYPE put_Shadow( 
-            /* [in] */ VARIANT_BOOL newVal) = 0;
-        
-        virtual /* [helpstring][id] */ HRESULT STDMETHODCALLTYPE Refresh( void) = 0;
-        
-        virtual /* [helpstring][id] */ HRESULT STDMETHODCALLTYPE ExecSimpleCommand( 
-            /* [in] */ BSTR bstrCommandName) = 0;
-        
-        virtual /* [helpstring][id] */ HRESULT STDMETHODCALLTYPE GetSelectedDocuments( 
-            /* [retval][out] */ IDispatch **pVal) = 0;
-        
-        virtual /* [helpstring][id] */ HRESULT STDMETHODCALLTYPE SetShowVirtualFolders( 
-            /* [in] */ VARIANT_BOOL bVisible) = 0;
-        
-        virtual /* [helpstring][id][propget] */ HRESULT STDMETHODCALLTYPE get_OnSelChanged( 
-            /* [retval][out] */ VARIANT *pVal) = 0;
-        
-        virtual /* [helpstring][id][propput] */ HRESULT STDMETHODCALLTYPE put_OnSelChanged( 
-            /* [in] */ VARIANT newVal) = 0;
-        
-        virtual /* [helpstring][id][propget] */ HRESULT STDMETHODCALLTYPE get_Flags( 
-            /* [retval][out] */ LONG *pVal) = 0;
-        
-        virtual /* [helpstring][id][propput] */ HRESULT STDMETHODCALLTYPE put_Flags( 
-            /* [in] */ LONG newVal) = 0;
-        
-        virtual /* [helpstring][id] */ HRESULT STDMETHODCALLTYPE GetSelectedDocuments2( 
-            /* [out] */ BSTR *pbstrSortBy,
-            /* [out] */ BSTR *pbstrSortOrder,
-            /* [retval][out] */ IDispatch **pVal) = 0;
-        
-        virtual /* [helpstring][id] */ HRESULT STDMETHODCALLTYPE SetShowRecentPickFolders( 
-            /* [in] */ VARIANT_BOOL bVisible) = 0;
-        
-    };
-    
-#else 	/* C style interface */
-
-    typedef struct IWizFolderTreeCtrlVtbl
-    {
-        BEGIN_INTERFACE
-        
-        HRESULT ( STDMETHODCALLTYPE *QueryInterface )( 
-            IWizFolderTreeCtrl * This,
-            /* [in] */ REFIID riid,
-            /* [iid_is][out] */ 
-            __RPC__deref_out  void **ppvObject);
-        
-        ULONG ( STDMETHODCALLTYPE *AddRef )( 
-            IWizFolderTreeCtrl * This);
-        
-        ULONG ( STDMETHODCALLTYPE *Release )( 
-            IWizFolderTreeCtrl * This);
-        
-        HRESULT ( STDMETHODCALLTYPE *GetTypeInfoCount )( 
-            IWizFolderTreeCtrl * This,
-            /* [out] */ UINT *pctinfo);
-        
-        HRESULT ( STDMETHODCALLTYPE *GetTypeInfo )( 
-            IWizFolderTreeCtrl * This,
-            /* [in] */ UINT iTInfo,
-            /* [in] */ LCID lcid,
-            /* [out] */ ITypeInfo **ppTInfo);
-        
-        HRESULT ( STDMETHODCALLTYPE *GetIDsOfNames )( 
-            IWizFolderTreeCtrl * This,
-            /* [in] */ REFIID riid,
-            /* [size_is][in] */ LPOLESTR *rgszNames,
-            /* [range][in] */ UINT cNames,
-            /* [in] */ LCID lcid,
-            /* [size_is][out] */ DISPID *rgDispId);
-        
-        /* [local] */ HRESULT ( STDMETHODCALLTYPE *Invoke )( 
-            IWizFolderTreeCtrl * This,
-            /* [in] */ DISPID dispIdMember,
-            /* [in] */ REFIID riid,
-            /* [in] */ LCID lcid,
-            /* [in] */ WORD wFlags,
-            /* [out][in] */ DISPPARAMS *pDispParams,
-            /* [out] */ VARIANT *pVarResult,
-            /* [out] */ EXCEPINFO *pExcepInfo,
-            /* [out] */ UINT *puArgErr);
-        
-        /* [helpstring][id][propget] */ HRESULT ( STDMETHODCALLTYPE *get_Database )( 
-            IWizFolderTreeCtrl * This,
-            /* [retval][out] */ IDispatch **pVal);
-        
-        /* [helpstring][id][propput] */ HRESULT ( STDMETHODCALLTYPE *put_Database )( 
-            IWizFolderTreeCtrl * This,
-            /* [in] */ IDispatch *newVal);
-        
-        /* [helpstring][id][propget] */ HRESULT ( STDMETHODCALLTYPE *get_SelectedFolder )( 
-            IWizFolderTreeCtrl * This,
-            /* [retval][out] */ IDispatch **pVal);
-        
-        /* [helpstring][id][propput] */ HRESULT ( STDMETHODCALLTYPE *put_SelectedFolder )( 
-            IWizFolderTreeCtrl * This,
-            /* [in] */ IDispatch *newVal);
-        
-        /* [helpstring][id][propget] */ HRESULT ( STDMETHODCALLTYPE *get_StateSection )( 
-            IWizFolderTreeCtrl * This,
-            /* [retval][out] */ BSTR *pVal);
-        
-        /* [helpstring][id][propput] */ HRESULT ( STDMETHODCALLTYPE *put_StateSection )( 
-            IWizFolderTreeCtrl * This,
-            /* [in] */ BSTR newVal);
-        
-        /* [helpstring][id][propget] */ HRESULT ( STDMETHODCALLTYPE *get_Border )( 
-            IWizFolderTreeCtrl * This,
-            /* [retval][out] */ VARIANT_BOOL *pVal);
-        
-        /* [helpstring][id][propput] */ HRESULT ( STDMETHODCALLTYPE *put_Border )( 
-            IWizFolderTreeCtrl * This,
-            /* [in] */ VARIANT_BOOL newVal);
-        
-        /* [helpstring][id][propget] */ HRESULT ( STDMETHODCALLTYPE *get_DisableContextMenu )( 
-            IWizFolderTreeCtrl * This,
-            /* [retval][out] */ VARIANT_BOOL *pVal);
-        
-        /* [helpstring][id][propput] */ HRESULT ( STDMETHODCALLTYPE *put_DisableContextMenu )( 
-            IWizFolderTreeCtrl * This,
-            /* [in] */ VARIANT_BOOL newVal);
-        
-        /* [helpstring][id][propget] */ HRESULT ( STDMETHODCALLTYPE *get_Shadow )( 
-            IWizFolderTreeCtrl * This,
-            /* [retval][out] */ VARIANT_BOOL *pVal);
-        
-        /* [helpstring][id][propput] */ HRESULT ( STDMETHODCALLTYPE *put_Shadow )( 
-            IWizFolderTreeCtrl * This,
-            /* [in] */ VARIANT_BOOL newVal);
-        
-        /* [helpstring][id] */ HRESULT ( STDMETHODCALLTYPE *Refresh )( 
-            IWizFolderTreeCtrl * This);
-        
-        /* [helpstring][id] */ HRESULT ( STDMETHODCALLTYPE *ExecSimpleCommand )( 
-            IWizFolderTreeCtrl * This,
-            /* [in] */ BSTR bstrCommandName);
-        
-        /* [helpstring][id] */ HRESULT ( STDMETHODCALLTYPE *GetSelectedDocuments )( 
-            IWizFolderTreeCtrl * This,
-            /* [retval][out] */ IDispatch **pVal);
-        
-        /* [helpstring][id] */ HRESULT ( STDMETHODCALLTYPE *SetShowVirtualFolders )( 
-            IWizFolderTreeCtrl * This,
-            /* [in] */ VARIANT_BOOL bVisible);
-        
-        /* [helpstring][id][propget] */ HRESULT ( STDMETHODCALLTYPE *get_OnSelChanged )( 
-            IWizFolderTreeCtrl * This,
-            /* [retval][out] */ VARIANT *pVal);
-        
-        /* [helpstring][id][propput] */ HRESULT ( STDMETHODCALLTYPE *put_OnSelChanged )( 
-            IWizFolderTreeCtrl * This,
-            /* [in] */ VARIANT newVal);
-        
-        /* [helpstring][id][propget] */ HRESULT ( STDMETHODCALLTYPE *get_Flags )( 
-            IWizFolderTreeCtrl * This,
-            /* [retval][out] */ LONG *pVal);
-        
-        /* [helpstring][id][propput] */ HRESULT ( STDMETHODCALLTYPE *put_Flags )( 
-            IWizFolderTreeCtrl * This,
-            /* [in] */ LONG newVal);
-        
-        /* [helpstring][id] */ HRESULT ( STDMETHODCALLTYPE *GetSelectedDocuments2 )( 
-            IWizFolderTreeCtrl * This,
-            /* [out] */ BSTR *pbstrSortBy,
-            /* [out] */ BSTR *pbstrSortOrder,
-            /* [retval][out] */ IDispatch **pVal);
-        
-        /* [helpstring][id] */ HRESULT ( STDMETHODCALLTYPE *SetShowRecentPickFolders )( 
-            IWizFolderTreeCtrl * This,
-            /* [in] */ VARIANT_BOOL bVisible);
-        
-        END_INTERFACE
-    } IWizFolderTreeCtrlVtbl;
-
-    interface IWizFolderTreeCtrl
-    {
-        CONST_VTBL struct IWizFolderTreeCtrlVtbl *lpVtbl;
-    };
-
-    
-
-#ifdef COBJMACROS
-
-
-#define IWizFolderTreeCtrl_QueryInterface(This,riid,ppvObject)	\
-    ( (This)->lpVtbl -> QueryInterface(This,riid,ppvObject) ) 
-
-#define IWizFolderTreeCtrl_AddRef(This)	\
-    ( (This)->lpVtbl -> AddRef(This) ) 
-
-#define IWizFolderTreeCtrl_Release(This)	\
-    ( (This)->lpVtbl -> Release(This) ) 
-
-
-#define IWizFolderTreeCtrl_GetTypeInfoCount(This,pctinfo)	\
-    ( (This)->lpVtbl -> GetTypeInfoCount(This,pctinfo) ) 
-
-#define IWizFolderTreeCtrl_GetTypeInfo(This,iTInfo,lcid,ppTInfo)	\
-    ( (This)->lpVtbl -> GetTypeInfo(This,iTInfo,lcid,ppTInfo) ) 
-
-#define IWizFolderTreeCtrl_GetIDsOfNames(This,riid,rgszNames,cNames,lcid,rgDispId)	\
-    ( (This)->lpVtbl -> GetIDsOfNames(This,riid,rgszNames,cNames,lcid,rgDispId) ) 
-
-#define IWizFolderTreeCtrl_Invoke(This,dispIdMember,riid,lcid,wFlags,pDispParams,pVarResult,pExcepInfo,puArgErr)	\
-    ( (This)->lpVtbl -> Invoke(This,dispIdMember,riid,lcid,wFlags,pDispParams,pVarResult,pExcepInfo,puArgErr) ) 
-
-
-#define IWizFolderTreeCtrl_get_Database(This,pVal)	\
-    ( (This)->lpVtbl -> get_Database(This,pVal) ) 
-
-#define IWizFolderTreeCtrl_put_Database(This,newVal)	\
-    ( (This)->lpVtbl -> put_Database(This,newVal) ) 
-
-#define IWizFolderTreeCtrl_get_SelectedFolder(This,pVal)	\
-    ( (This)->lpVtbl -> get_SelectedFolder(This,pVal) ) 
-
-#define IWizFolderTreeCtrl_put_SelectedFolder(This,newVal)	\
-    ( (This)->lpVtbl -> put_SelectedFolder(This,newVal) ) 
-
-#define IWizFolderTreeCtrl_get_StateSection(This,pVal)	\
-    ( (This)->lpVtbl -> get_StateSection(This,pVal) ) 
-
-#define IWizFolderTreeCtrl_put_StateSection(This,newVal)	\
-    ( (This)->lpVtbl -> put_StateSection(This,newVal) ) 
-
-#define IWizFolderTreeCtrl_get_Border(This,pVal)	\
-    ( (This)->lpVtbl -> get_Border(This,pVal) ) 
-
-#define IWizFolderTreeCtrl_put_Border(This,newVal)	\
-    ( (This)->lpVtbl -> put_Border(This,newVal) ) 
-
-#define IWizFolderTreeCtrl_get_DisableContextMenu(This,pVal)	\
-    ( (This)->lpVtbl -> get_DisableContextMenu(This,pVal) ) 
-
-#define IWizFolderTreeCtrl_put_DisableContextMenu(This,newVal)	\
-    ( (This)->lpVtbl -> put_DisableContextMenu(This,newVal) ) 
-
-#define IWizFolderTreeCtrl_get_Shadow(This,pVal)	\
-    ( (This)->lpVtbl -> get_Shadow(This,pVal) ) 
-
-#define IWizFolderTreeCtrl_put_Shadow(This,newVal)	\
-    ( (This)->lpVtbl -> put_Shadow(This,newVal) ) 
-
-#define IWizFolderTreeCtrl_Refresh(This)	\
-    ( (This)->lpVtbl -> Refresh(This) ) 
-
-#define IWizFolderTreeCtrl_ExecSimpleCommand(This,bstrCommandName)	\
-    ( (This)->lpVtbl -> ExecSimpleCommand(This,bstrCommandName) ) 
-
-#define IWizFolderTreeCtrl_GetSelectedDocuments(This,pVal)	\
-    ( (This)->lpVtbl -> GetSelectedDocuments(This,pVal) ) 
-
-#define IWizFolderTreeCtrl_SetShowVirtualFolders(This,bVisible)	\
-    ( (This)->lpVtbl -> SetShowVirtualFolders(This,bVisible) ) 
-
-#define IWizFolderTreeCtrl_get_OnSelChanged(This,pVal)	\
-    ( (This)->lpVtbl -> get_OnSelChanged(This,pVal) ) 
-
-#define IWizFolderTreeCtrl_put_OnSelChanged(This,newVal)	\
-    ( (This)->lpVtbl -> put_OnSelChanged(This,newVal) ) 
-
-#define IWizFolderTreeCtrl_get_Flags(This,pVal)	\
-    ( (This)->lpVtbl -> get_Flags(This,pVal) ) 
-
-#define IWizFolderTreeCtrl_put_Flags(This,newVal)	\
-    ( (This)->lpVtbl -> put_Flags(This,newVal) ) 
-
-#define IWizFolderTreeCtrl_GetSelectedDocuments2(This,pbstrSortBy,pbstrSortOrder,pVal)	\
-    ( (This)->lpVtbl -> GetSelectedDocuments2(This,pbstrSortBy,pbstrSortOrder,pVal) ) 
-
-#define IWizFolderTreeCtrl_SetShowRecentPickFolders(This,bVisible)	\
-    ( (This)->lpVtbl -> SetShowRecentPickFolders(This,bVisible) ) 
-
-#endif /* COBJMACROS */
-
-
-#endif 	/* C style interface */
-
-
-
-
-#endif 	/* __IWizFolderTreeCtrl_INTERFACE_DEFINED__ */
-
-
-#ifndef __IWizStyleListBox_INTERFACE_DEFINED__
-#define __IWizStyleListBox_INTERFACE_DEFINED__
-
-/* interface IWizStyleListBox */
-/* [unique][helpstring][nonextensible][dual][uuid][object] */ 
-
-
-EXTERN_C const IID IID_IWizStyleListBox;
-
-#if defined(__cplusplus) && !defined(CINTERFACE)
-    
-    MIDL_INTERFACE("F5AE7BE3-B10A-464A-8A4C-AA8D33E9B272")
-    IWizStyleListBox : public IDispatch
-    {
-    public:
-        virtual /* [helpstring][id][propget] */ HRESULT STDMETHODCALLTYPE get_Database( 
-            /* [retval][out] */ IDispatch **pVal) = 0;
-        
-        virtual /* [helpstring][id][propput] */ HRESULT STDMETHODCALLTYPE put_Database( 
-            /* [in] */ IDispatch *newVal) = 0;
-        
-        virtual /* [helpstring][id][propget] */ HRESULT STDMETHODCALLTYPE get_SelectedStyle( 
-            /* [retval][out] */ IDispatch **pVal) = 0;
-        
-        virtual /* [helpstring][id][propput] */ HRESULT STDMETHODCALLTYPE put_SelectedStyle( 
-            /* [in] */ IDispatch *newVal) = 0;
-        
-        virtual /* [helpstring][id][propget] */ HRESULT STDMETHODCALLTYPE get_StateSection( 
-            /* [retval][out] */ BSTR *pVal) = 0;
-        
-        virtual /* [helpstring][id][propput] */ HRESULT STDMETHODCALLTYPE put_StateSection( 
-            /* [in] */ BSTR newVal) = 0;
-        
-        virtual /* [helpstring][id][propget] */ HRESULT STDMETHODCALLTYPE get_Border( 
-            /* [retval][out] */ VARIANT_BOOL *pVal) = 0;
-        
-        virtual /* [helpstring][id][propput] */ HRESULT STDMETHODCALLTYPE put_Border( 
-            /* [in] */ VARIANT_BOOL newVal) = 0;
-        
-        virtual /* [helpstring][id][propget] */ HRESULT STDMETHODCALLTYPE get_Shadow( 
-            /* [retval][out] */ VARIANT_BOOL *pVal) = 0;
-        
-        virtual /* [helpstring][id][propput] */ HRESULT STDMETHODCALLTYPE put_Shadow( 
-            /* [in] */ VARIANT_BOOL newVal) = 0;
-        
-        virtual /* [helpstring][id] */ HRESULT STDMETHODCALLTYPE Refresh( void) = 0;
-        
-        virtual /* [helpstring][id][propget] */ HRESULT STDMETHODCALLTYPE get_OnSelChanged( 
-            /* [retval][out] */ VARIANT *pVal) = 0;
-        
-        virtual /* [helpstring][id][propput] */ HRESULT STDMETHODCALLTYPE put_OnSelChanged( 
-            /* [in] */ VARIANT newVal) = 0;
-        
-    };
-    
-#else 	/* C style interface */
-
-    typedef struct IWizStyleListBoxVtbl
-    {
-        BEGIN_INTERFACE
-        
-        HRESULT ( STDMETHODCALLTYPE *QueryInterface )( 
-            IWizStyleListBox * This,
-            /* [in] */ REFIID riid,
-            /* [iid_is][out] */ 
-            __RPC__deref_out  void **ppvObject);
-        
-        ULONG ( STDMETHODCALLTYPE *AddRef )( 
-            IWizStyleListBox * This);
-        
-        ULONG ( STDMETHODCALLTYPE *Release )( 
-            IWizStyleListBox * This);
-        
-        HRESULT ( STDMETHODCALLTYPE *GetTypeInfoCount )( 
-            IWizStyleListBox * This,
-            /* [out] */ UINT *pctinfo);
-        
-        HRESULT ( STDMETHODCALLTYPE *GetTypeInfo )( 
-            IWizStyleListBox * This,
-            /* [in] */ UINT iTInfo,
-            /* [in] */ LCID lcid,
-            /* [out] */ ITypeInfo **ppTInfo);
-        
-        HRESULT ( STDMETHODCALLTYPE *GetIDsOfNames )( 
-            IWizStyleListBox * This,
-            /* [in] */ REFIID riid,
-            /* [size_is][in] */ LPOLESTR *rgszNames,
-            /* [range][in] */ UINT cNames,
-            /* [in] */ LCID lcid,
-            /* [size_is][out] */ DISPID *rgDispId);
-        
-        /* [local] */ HRESULT ( STDMETHODCALLTYPE *Invoke )( 
-            IWizStyleListBox * This,
-            /* [in] */ DISPID dispIdMember,
-            /* [in] */ REFIID riid,
-            /* [in] */ LCID lcid,
-            /* [in] */ WORD wFlags,
-            /* [out][in] */ DISPPARAMS *pDispParams,
-            /* [out] */ VARIANT *pVarResult,
-            /* [out] */ EXCEPINFO *pExcepInfo,
-            /* [out] */ UINT *puArgErr);
-        
-        /* [helpstring][id][propget] */ HRESULT ( STDMETHODCALLTYPE *get_Database )( 
-            IWizStyleListBox * This,
-            /* [retval][out] */ IDispatch **pVal);
-        
-        /* [helpstring][id][propput] */ HRESULT ( STDMETHODCALLTYPE *put_Database )( 
-            IWizStyleListBox * This,
-            /* [in] */ IDispatch *newVal);
-        
-        /* [helpstring][id][propget] */ HRESULT ( STDMETHODCALLTYPE *get_SelectedStyle )( 
-            IWizStyleListBox * This,
-            /* [retval][out] */ IDispatch **pVal);
-        
-        /* [helpstring][id][propput] */ HRESULT ( STDMETHODCALLTYPE *put_SelectedStyle )( 
-            IWizStyleListBox * This,
-            /* [in] */ IDispatch *newVal);
-        
-        /* [helpstring][id][propget] */ HRESULT ( STDMETHODCALLTYPE *get_StateSection )( 
-            IWizStyleListBox * This,
-            /* [retval][out] */ BSTR *pVal);
-        
-        /* [helpstring][id][propput] */ HRESULT ( STDMETHODCALLTYPE *put_StateSection )( 
-            IWizStyleListBox * This,
-            /* [in] */ BSTR newVal);
-        
-        /* [helpstring][id][propget] */ HRESULT ( STDMETHODCALLTYPE *get_Border )( 
-            IWizStyleListBox * This,
-            /* [retval][out] */ VARIANT_BOOL *pVal);
-        
-        /* [helpstring][id][propput] */ HRESULT ( STDMETHODCALLTYPE *put_Border )( 
-            IWizStyleListBox * This,
-            /* [in] */ VARIANT_BOOL newVal);
-        
-        /* [helpstring][id][propget] */ HRESULT ( STDMETHODCALLTYPE *get_Shadow )( 
-            IWizStyleListBox * This,
-            /* [retval][out] */ VARIANT_BOOL *pVal);
-        
-        /* [helpstring][id][propput] */ HRESULT ( STDMETHODCALLTYPE *put_Shadow )( 
-            IWizStyleListBox * This,
-            /* [in] */ VARIANT_BOOL newVal);
-        
-        /* [helpstring][id] */ HRESULT ( STDMETHODCALLTYPE *Refresh )( 
-            IWizStyleListBox * This);
-        
-        /* [helpstring][id][propget] */ HRESULT ( STDMETHODCALLTYPE *get_OnSelChanged )( 
-            IWizStyleListBox * This,
-            /* [retval][out] */ VARIANT *pVal);
-        
-        /* [helpstring][id][propput] */ HRESULT ( STDMETHODCALLTYPE *put_OnSelChanged )( 
-            IWizStyleListBox * This,
-            /* [in] */ VARIANT newVal);
-        
-        END_INTERFACE
-    } IWizStyleListBoxVtbl;
-
-    interface IWizStyleListBox
-    {
-        CONST_VTBL struct IWizStyleListBoxVtbl *lpVtbl;
-    };
-
-    
-
-#ifdef COBJMACROS
-
-
-#define IWizStyleListBox_QueryInterface(This,riid,ppvObject)	\
-    ( (This)->lpVtbl -> QueryInterface(This,riid,ppvObject) ) 
-
-#define IWizStyleListBox_AddRef(This)	\
-    ( (This)->lpVtbl -> AddRef(This) ) 
-
-#define IWizStyleListBox_Release(This)	\
-    ( (This)->lpVtbl -> Release(This) ) 
-
-
-#define IWizStyleListBox_GetTypeInfoCount(This,pctinfo)	\
-    ( (This)->lpVtbl -> GetTypeInfoCount(This,pctinfo) ) 
-
-#define IWizStyleListBox_GetTypeInfo(This,iTInfo,lcid,ppTInfo)	\
-    ( (This)->lpVtbl -> GetTypeInfo(This,iTInfo,lcid,ppTInfo) ) 
-
-#define IWizStyleListBox_GetIDsOfNames(This,riid,rgszNames,cNames,lcid,rgDispId)	\
-    ( (This)->lpVtbl -> GetIDsOfNames(This,riid,rgszNames,cNames,lcid,rgDispId) ) 
-
-#define IWizStyleListBox_Invoke(This,dispIdMember,riid,lcid,wFlags,pDispParams,pVarResult,pExcepInfo,puArgErr)	\
-    ( (This)->lpVtbl -> Invoke(This,dispIdMember,riid,lcid,wFlags,pDispParams,pVarResult,pExcepInfo,puArgErr) ) 
-
-
-#define IWizStyleListBox_get_Database(This,pVal)	\
-    ( (This)->lpVtbl -> get_Database(This,pVal) ) 
-
-#define IWizStyleListBox_put_Database(This,newVal)	\
-    ( (This)->lpVtbl -> put_Database(This,newVal) ) 
-
-#define IWizStyleListBox_get_SelectedStyle(This,pVal)	\
-    ( (This)->lpVtbl -> get_SelectedStyle(This,pVal) ) 
-
-#define IWizStyleListBox_put_SelectedStyle(This,newVal)	\
-    ( (This)->lpVtbl -> put_SelectedStyle(This,newVal) ) 
-
-#define IWizStyleListBox_get_StateSection(This,pVal)	\
-    ( (This)->lpVtbl -> get_StateSection(This,pVal) ) 
-
-#define IWizStyleListBox_put_StateSection(This,newVal)	\
-    ( (This)->lpVtbl -> put_StateSection(This,newVal) ) 
-
-#define IWizStyleListBox_get_Border(This,pVal)	\
-    ( (This)->lpVtbl -> get_Border(This,pVal) ) 
-
-#define IWizStyleListBox_put_Border(This,newVal)	\
-    ( (This)->lpVtbl -> put_Border(This,newVal) ) 
-
-#define IWizStyleListBox_get_Shadow(This,pVal)	\
-    ( (This)->lpVtbl -> get_Shadow(This,pVal) ) 
-
-#define IWizStyleListBox_put_Shadow(This,newVal)	\
-    ( (This)->lpVtbl -> put_Shadow(This,newVal) ) 
-
-#define IWizStyleListBox_Refresh(This)	\
-    ( (This)->lpVtbl -> Refresh(This) ) 
-
-#define IWizStyleListBox_get_OnSelChanged(This,pVal)	\
-    ( (This)->lpVtbl -> get_OnSelChanged(This,pVal) ) 
-
-#define IWizStyleListBox_put_OnSelChanged(This,newVal)	\
-    ( (This)->lpVtbl -> put_OnSelChanged(This,newVal) ) 
-
-#endif /* COBJMACROS */
-
-
-#endif 	/* C style interface */
-
-
-
-
-#endif 	/* __IWizStyleListBox_INTERFACE_DEFINED__ */
-
-
-#ifndef __IWizTagTreeCtrl_INTERFACE_DEFINED__
-#define __IWizTagTreeCtrl_INTERFACE_DEFINED__
-
-/* interface IWizTagTreeCtrl */
-/* [unique][helpstring][nonextensible][dual][uuid][object] */ 
-
-
-EXTERN_C const IID IID_IWizTagTreeCtrl;
-
-#if defined(__cplusplus) && !defined(CINTERFACE)
-    
-    MIDL_INTERFACE("30799F2F-3377-4326-818E-1A4BF3CB715A")
-    IWizTagTreeCtrl : public IDispatch
-    {
-    public:
-        virtual /* [helpstring][id][propget] */ HRESULT STDMETHODCALLTYPE get_Database( 
-            /* [retval][out] */ IDispatch **pVal) = 0;
-        
-        virtual /* [helpstring][id][propput] */ HRESULT STDMETHODCALLTYPE put_Database( 
-            /* [in] */ IDispatch *newVal) = 0;
-        
-        virtual /* [helpstring][id][propget] */ HRESULT STDMETHODCALLTYPE get_SelectedTags( 
-            /* [retval][out] */ IDispatch **pVal) = 0;
-        
-        virtual /* [helpstring][id][propput] */ HRESULT STDMETHODCALLTYPE put_SelectedTags( 
-            /* [in] */ IDispatch *newVal) = 0;
-        
-        virtual /* [helpstring][id][propget] */ HRESULT STDMETHODCALLTYPE get_StateSection( 
-            /* [retval][out] */ BSTR *pVal) = 0;
-        
-        virtual /* [helpstring][id][propput] */ HRESULT STDMETHODCALLTYPE put_StateSection( 
-            /* [in] */ BSTR newVal) = 0;
-        
-        virtual /* [helpstring][id][propget] */ HRESULT STDMETHODCALLTYPE get_Border( 
-            /* [retval][out] */ VARIANT_BOOL *pVal) = 0;
-        
-        virtual /* [helpstring][id][propput] */ HRESULT STDMETHODCALLTYPE put_Border( 
-            /* [in] */ VARIANT_BOOL newVal) = 0;
-        
-        virtual /* [helpstring][id][propget] */ HRESULT STDMETHODCALLTYPE get_Shadow( 
-            /* [retval][out] */ VARIANT_BOOL *pVal) = 0;
-        
-        virtual /* [helpstring][id][propput] */ HRESULT STDMETHODCALLTYPE put_Shadow( 
-            /* [in] */ VARIANT_BOOL newVal) = 0;
-        
-        virtual /* [helpstring][id] */ HRESULT STDMETHODCALLTYPE Refresh( void) = 0;
-        
-        virtual /* [helpstring][id][propget] */ HRESULT STDMETHODCALLTYPE get_OnSelChanged( 
-            /* [retval][out] */ VARIANT *pVal) = 0;
-        
-        virtual /* [helpstring][id][propput] */ HRESULT STDMETHODCALLTYPE put_OnSelChanged( 
-            /* [in] */ VARIANT newVal) = 0;
-        
-        virtual /* [helpstring][id][propget] */ HRESULT STDMETHODCALLTYPE get_Flags( 
-            /* [retval][out] */ LONG *pVal) = 0;
-        
-        virtual /* [helpstring][id][propput] */ HRESULT STDMETHODCALLTYPE put_Flags( 
-            /* [in] */ LONG newVal) = 0;
-        
-    };
-    
-#else 	/* C style interface */
-
-    typedef struct IWizTagTreeCtrlVtbl
-    {
-        BEGIN_INTERFACE
-        
-        HRESULT ( STDMETHODCALLTYPE *QueryInterface )( 
-            IWizTagTreeCtrl * This,
-            /* [in] */ REFIID riid,
-            /* [iid_is][out] */ 
-            __RPC__deref_out  void **ppvObject);
-        
-        ULONG ( STDMETHODCALLTYPE *AddRef )( 
-            IWizTagTreeCtrl * This);
-        
-        ULONG ( STDMETHODCALLTYPE *Release )( 
-            IWizTagTreeCtrl * This);
-        
-        HRESULT ( STDMETHODCALLTYPE *GetTypeInfoCount )( 
-            IWizTagTreeCtrl * This,
-            /* [out] */ UINT *pctinfo);
-        
-        HRESULT ( STDMETHODCALLTYPE *GetTypeInfo )( 
-            IWizTagTreeCtrl * This,
-            /* [in] */ UINT iTInfo,
-            /* [in] */ LCID lcid,
-            /* [out] */ ITypeInfo **ppTInfo);
-        
-        HRESULT ( STDMETHODCALLTYPE *GetIDsOfNames )( 
-            IWizTagTreeCtrl * This,
-            /* [in] */ REFIID riid,
-            /* [size_is][in] */ LPOLESTR *rgszNames,
-            /* [range][in] */ UINT cNames,
-            /* [in] */ LCID lcid,
-            /* [size_is][out] */ DISPID *rgDispId);
-        
-        /* [local] */ HRESULT ( STDMETHODCALLTYPE *Invoke )( 
-            IWizTagTreeCtrl * This,
-            /* [in] */ DISPID dispIdMember,
-            /* [in] */ REFIID riid,
-            /* [in] */ LCID lcid,
-            /* [in] */ WORD wFlags,
-            /* [out][in] */ DISPPARAMS *pDispParams,
-            /* [out] */ VARIANT *pVarResult,
-            /* [out] */ EXCEPINFO *pExcepInfo,
-            /* [out] */ UINT *puArgErr);
-        
-        /* [helpstring][id][propget] */ HRESULT ( STDMETHODCALLTYPE *get_Database )( 
-            IWizTagTreeCtrl * This,
-            /* [retval][out] */ IDispatch **pVal);
-        
-        /* [helpstring][id][propput] */ HRESULT ( STDMETHODCALLTYPE *put_Database )( 
-            IWizTagTreeCtrl * This,
-            /* [in] */ IDispatch *newVal);
-        
-        /* [helpstring][id][propget] */ HRESULT ( STDMETHODCALLTYPE *get_SelectedTags )( 
-            IWizTagTreeCtrl * This,
-            /* [retval][out] */ IDispatch **pVal);
-        
-        /* [helpstring][id][propput] */ HRESULT ( STDMETHODCALLTYPE *put_SelectedTags )( 
-            IWizTagTreeCtrl * This,
-            /* [in] */ IDispatch *newVal);
-        
-        /* [helpstring][id][propget] */ HRESULT ( STDMETHODCALLTYPE *get_StateSection )( 
-            IWizTagTreeCtrl * This,
-            /* [retval][out] */ BSTR *pVal);
-        
-        /* [helpstring][id][propput] */ HRESULT ( STDMETHODCALLTYPE *put_StateSection )( 
-            IWizTagTreeCtrl * This,
-            /* [in] */ BSTR newVal);
-        
-        /* [helpstring][id][propget] */ HRESULT ( STDMETHODCALLTYPE *get_Border )( 
-            IWizTagTreeCtrl * This,
-            /* [retval][out] */ VARIANT_BOOL *pVal);
-        
-        /* [helpstring][id][propput] */ HRESULT ( STDMETHODCALLTYPE *put_Border )( 
-            IWizTagTreeCtrl * This,
-            /* [in] */ VARIANT_BOOL newVal);
-        
-        /* [helpstring][id][propget] */ HRESULT ( STDMETHODCALLTYPE *get_Shadow )( 
-            IWizTagTreeCtrl * This,
-            /* [retval][out] */ VARIANT_BOOL *pVal);
-        
-        /* [helpstring][id][propput] */ HRESULT ( STDMETHODCALLTYPE *put_Shadow )( 
-            IWizTagTreeCtrl * This,
-            /* [in] */ VARIANT_BOOL newVal);
-        
-        /* [helpstring][id] */ HRESULT ( STDMETHODCALLTYPE *Refresh )( 
-            IWizTagTreeCtrl * This);
-        
-        /* [helpstring][id][propget] */ HRESULT ( STDMETHODCALLTYPE *get_OnSelChanged )( 
-            IWizTagTreeCtrl * This,
-            /* [retval][out] */ VARIANT *pVal);
-        
-        /* [helpstring][id][propput] */ HRESULT ( STDMETHODCALLTYPE *put_OnSelChanged )( 
-            IWizTagTreeCtrl * This,
-            /* [in] */ VARIANT newVal);
-        
-        /* [helpstring][id][propget] */ HRESULT ( STDMETHODCALLTYPE *get_Flags )( 
-            IWizTagTreeCtrl * This,
-            /* [retval][out] */ LONG *pVal);
-        
-        /* [helpstring][id][propput] */ HRESULT ( STDMETHODCALLTYPE *put_Flags )( 
-            IWizTagTreeCtrl * This,
-            /* [in] */ LONG newVal);
-        
-        END_INTERFACE
-    } IWizTagTreeCtrlVtbl;
-
-    interface IWizTagTreeCtrl
-    {
-        CONST_VTBL struct IWizTagTreeCtrlVtbl *lpVtbl;
-    };
-
-    
-
-#ifdef COBJMACROS
-
-
-#define IWizTagTreeCtrl_QueryInterface(This,riid,ppvObject)	\
-    ( (This)->lpVtbl -> QueryInterface(This,riid,ppvObject) ) 
-
-#define IWizTagTreeCtrl_AddRef(This)	\
-    ( (This)->lpVtbl -> AddRef(This) ) 
-
-#define IWizTagTreeCtrl_Release(This)	\
-    ( (This)->lpVtbl -> Release(This) ) 
-
-
-#define IWizTagTreeCtrl_GetTypeInfoCount(This,pctinfo)	\
-    ( (This)->lpVtbl -> GetTypeInfoCount(This,pctinfo) ) 
-
-#define IWizTagTreeCtrl_GetTypeInfo(This,iTInfo,lcid,ppTInfo)	\
-    ( (This)->lpVtbl -> GetTypeInfo(This,iTInfo,lcid,ppTInfo) ) 
-
-#define IWizTagTreeCtrl_GetIDsOfNames(This,riid,rgszNames,cNames,lcid,rgDispId)	\
-    ( (This)->lpVtbl -> GetIDsOfNames(This,riid,rgszNames,cNames,lcid,rgDispId) ) 
-
-#define IWizTagTreeCtrl_Invoke(This,dispIdMember,riid,lcid,wFlags,pDispParams,pVarResult,pExcepInfo,puArgErr)	\
-    ( (This)->lpVtbl -> Invoke(This,dispIdMember,riid,lcid,wFlags,pDispParams,pVarResult,pExcepInfo,puArgErr) ) 
-
-
-#define IWizTagTreeCtrl_get_Database(This,pVal)	\
-    ( (This)->lpVtbl -> get_Database(This,pVal) ) 
-
-#define IWizTagTreeCtrl_put_Database(This,newVal)	\
-    ( (This)->lpVtbl -> put_Database(This,newVal) ) 
-
-#define IWizTagTreeCtrl_get_SelectedTags(This,pVal)	\
-    ( (This)->lpVtbl -> get_SelectedTags(This,pVal) ) 
-
-#define IWizTagTreeCtrl_put_SelectedTags(This,newVal)	\
-    ( (This)->lpVtbl -> put_SelectedTags(This,newVal) ) 
-
-#define IWizTagTreeCtrl_get_StateSection(This,pVal)	\
-    ( (This)->lpVtbl -> get_StateSection(This,pVal) ) 
-
-#define IWizTagTreeCtrl_put_StateSection(This,newVal)	\
-    ( (This)->lpVtbl -> put_StateSection(This,newVal) ) 
-
-#define IWizTagTreeCtrl_get_Border(This,pVal)	\
-    ( (This)->lpVtbl -> get_Border(This,pVal) ) 
-
-#define IWizTagTreeCtrl_put_Border(This,newVal)	\
-    ( (This)->lpVtbl -> put_Border(This,newVal) ) 
-
-#define IWizTagTreeCtrl_get_Shadow(This,pVal)	\
-    ( (This)->lpVtbl -> get_Shadow(This,pVal) ) 
-
-#define IWizTagTreeCtrl_put_Shadow(This,newVal)	\
-    ( (This)->lpVtbl -> put_Shadow(This,newVal) ) 
-
-#define IWizTagTreeCtrl_Refresh(This)	\
-    ( (This)->lpVtbl -> Refresh(This) ) 
-
-#define IWizTagTreeCtrl_get_OnSelChanged(This,pVal)	\
-    ( (This)->lpVtbl -> get_OnSelChanged(This,pVal) ) 
-
-#define IWizTagTreeCtrl_put_OnSelChanged(This,newVal)	\
-    ( (This)->lpVtbl -> put_OnSelChanged(This,newVal) ) 
-
-#define IWizTagTreeCtrl_get_Flags(This,pVal)	\
-    ( (This)->lpVtbl -> get_Flags(This,pVal) ) 
-
-#define IWizTagTreeCtrl_put_Flags(This,newVal)	\
-    ( (This)->lpVtbl -> put_Flags(This,newVal) ) 
-
-#endif /* COBJMACROS */
-
-
-#endif 	/* C style interface */
-
-
-
-
-#endif 	/* __IWizTagTreeCtrl_INTERFACE_DEFINED__ */
 
 
 #ifndef __IWizDocumentListCtrl_INTERFACE_DEFINED__
@@ -1110,6 +213,18 @@ EXTERN_C const IID IID_IWizDocumentListCtrl;
     IWizDocumentListCtrl : public IDispatch
     {
     public:
+        virtual /* [helpstring][id][propget] */ HRESULT STDMETHODCALLTYPE get_EventsListener( 
+            /* [retval][out] */ VARIANT *pVal) = 0;
+        
+        virtual /* [helpstring][id][propput] */ HRESULT STDMETHODCALLTYPE put_EventsListener( 
+            /* [in] */ VARIANT newVal) = 0;
+        
+        virtual /* [helpstring][id][propget] */ HRESULT STDMETHODCALLTYPE get_App( 
+            /* [retval][out] */ IDispatch **pVal) = 0;
+        
+        virtual /* [helpstring][id][propput] */ HRESULT STDMETHODCALLTYPE put_App( 
+            /* [in] */ IDispatch *newVal) = 0;
+        
         virtual /* [helpstring][id][propget] */ HRESULT STDMETHODCALLTYPE get_Database( 
             /* [retval][out] */ IDispatch **pVal) = 0;
         
@@ -1140,15 +255,6 @@ EXTERN_C const IID IID_IWizDocumentListCtrl;
         virtual /* [helpstring][id][propput] */ HRESULT STDMETHODCALLTYPE put_DisableContextMenu( 
             /* [in] */ VARIANT_BOOL newVal) = 0;
         
-        virtual /* [helpstring][id][propget] */ HRESULT STDMETHODCALLTYPE get_SearchKeywords( 
-            /* [retval][out] */ BSTR *pVal) = 0;
-        
-        virtual /* [helpstring][id][propget] */ HRESULT STDMETHODCALLTYPE get_Shadow( 
-            /* [retval][out] */ VARIANT_BOOL *pVal) = 0;
-        
-        virtual /* [helpstring][id][propput] */ HRESULT STDMETHODCALLTYPE put_Shadow( 
-            /* [in] */ VARIANT_BOOL newVal) = 0;
-        
         virtual /* [helpstring][id][propget] */ HRESULT STDMETHODCALLTYPE get_SortBy( 
             /* [retval][out] */ BSTR *pVal) = 0;
         
@@ -1177,25 +283,17 @@ EXTERN_C const IID IID_IWizDocumentListCtrl;
         virtual /* [helpstring][id] */ HRESULT STDMETHODCALLTYPE GetDocuments( 
             /* [retval][out] */ IDispatch **pVal) = 0;
         
-        virtual /* [helpstring][id][propget] */ HRESULT STDMETHODCALLTYPE get_OnSelChanged( 
-            /* [retval][out] */ VARIANT *pVal) = 0;
+        virtual /* [helpstring][id][propget] */ HRESULT STDMETHODCALLTYPE get_Options( 
+            /* [retval][out] */ LONG *pVal) = 0;
         
-        virtual /* [helpstring][id][propput] */ HRESULT STDMETHODCALLTYPE put_OnSelChanged( 
-            /* [in] */ VARIANT newVal) = 0;
+        virtual /* [helpstring][id][propput] */ HRESULT STDMETHODCALLTYPE put_Options( 
+            /* [in] */ LONG newVal) = 0;
         
-        virtual /* [helpstring][id][propget] */ HRESULT STDMETHODCALLTYPE get_OnDblClickItem( 
-            /* [retval][out] */ VARIANT *pVal) = 0;
+        virtual /* [helpstring][id][propget] */ HRESULT STDMETHODCALLTYPE get_SecondLineType( 
+            /* [retval][out] */ LONG *pVal) = 0;
         
-        virtual /* [helpstring][id][propput] */ HRESULT STDMETHODCALLTYPE put_OnDblClickItem( 
-            /* [in] */ VARIANT newVal) = 0;
-        
-        virtual /* [helpstring][id][propget] */ HRESULT STDMETHODCALLTYPE get_OnExecCommand( 
-            /* [retval][out] */ VARIANT *pVal) = 0;
-        
-        virtual /* [helpstring][id][propput] */ HRESULT STDMETHODCALLTYPE put_OnExecCommand( 
-            /* [in] */ VARIANT newVal) = 0;
-        
-        virtual /* [helpstring][id] */ HRESULT STDMETHODCALLTYPE FocusToSearchBox( void) = 0;
+        virtual /* [helpstring][id][propput] */ HRESULT STDMETHODCALLTYPE put_SecondLineType( 
+            /* [in] */ LONG newVal) = 0;
         
     };
     
@@ -1246,6 +344,22 @@ EXTERN_C const IID IID_IWizDocumentListCtrl;
             /* [out] */ EXCEPINFO *pExcepInfo,
             /* [out] */ UINT *puArgErr);
         
+        /* [helpstring][id][propget] */ HRESULT ( STDMETHODCALLTYPE *get_EventsListener )( 
+            IWizDocumentListCtrl * This,
+            /* [retval][out] */ VARIANT *pVal);
+        
+        /* [helpstring][id][propput] */ HRESULT ( STDMETHODCALLTYPE *put_EventsListener )( 
+            IWizDocumentListCtrl * This,
+            /* [in] */ VARIANT newVal);
+        
+        /* [helpstring][id][propget] */ HRESULT ( STDMETHODCALLTYPE *get_App )( 
+            IWizDocumentListCtrl * This,
+            /* [retval][out] */ IDispatch **pVal);
+        
+        /* [helpstring][id][propput] */ HRESULT ( STDMETHODCALLTYPE *put_App )( 
+            IWizDocumentListCtrl * This,
+            /* [in] */ IDispatch *newVal);
+        
         /* [helpstring][id][propget] */ HRESULT ( STDMETHODCALLTYPE *get_Database )( 
             IWizDocumentListCtrl * This,
             /* [retval][out] */ IDispatch **pVal);
@@ -1286,18 +400,6 @@ EXTERN_C const IID IID_IWizDocumentListCtrl;
             IWizDocumentListCtrl * This,
             /* [in] */ VARIANT_BOOL newVal);
         
-        /* [helpstring][id][propget] */ HRESULT ( STDMETHODCALLTYPE *get_SearchKeywords )( 
-            IWizDocumentListCtrl * This,
-            /* [retval][out] */ BSTR *pVal);
-        
-        /* [helpstring][id][propget] */ HRESULT ( STDMETHODCALLTYPE *get_Shadow )( 
-            IWizDocumentListCtrl * This,
-            /* [retval][out] */ VARIANT_BOOL *pVal);
-        
-        /* [helpstring][id][propput] */ HRESULT ( STDMETHODCALLTYPE *put_Shadow )( 
-            IWizDocumentListCtrl * This,
-            /* [in] */ VARIANT_BOOL newVal);
-        
         /* [helpstring][id][propget] */ HRESULT ( STDMETHODCALLTYPE *get_SortBy )( 
             IWizDocumentListCtrl * This,
             /* [retval][out] */ BSTR *pVal);
@@ -1335,32 +437,21 @@ EXTERN_C const IID IID_IWizDocumentListCtrl;
             IWizDocumentListCtrl * This,
             /* [retval][out] */ IDispatch **pVal);
         
-        /* [helpstring][id][propget] */ HRESULT ( STDMETHODCALLTYPE *get_OnSelChanged )( 
+        /* [helpstring][id][propget] */ HRESULT ( STDMETHODCALLTYPE *get_Options )( 
             IWizDocumentListCtrl * This,
-            /* [retval][out] */ VARIANT *pVal);
+            /* [retval][out] */ LONG *pVal);
         
-        /* [helpstring][id][propput] */ HRESULT ( STDMETHODCALLTYPE *put_OnSelChanged )( 
+        /* [helpstring][id][propput] */ HRESULT ( STDMETHODCALLTYPE *put_Options )( 
             IWizDocumentListCtrl * This,
-            /* [in] */ VARIANT newVal);
+            /* [in] */ LONG newVal);
         
-        /* [helpstring][id][propget] */ HRESULT ( STDMETHODCALLTYPE *get_OnDblClickItem )( 
+        /* [helpstring][id][propget] */ HRESULT ( STDMETHODCALLTYPE *get_SecondLineType )( 
             IWizDocumentListCtrl * This,
-            /* [retval][out] */ VARIANT *pVal);
+            /* [retval][out] */ LONG *pVal);
         
-        /* [helpstring][id][propput] */ HRESULT ( STDMETHODCALLTYPE *put_OnDblClickItem )( 
+        /* [helpstring][id][propput] */ HRESULT ( STDMETHODCALLTYPE *put_SecondLineType )( 
             IWizDocumentListCtrl * This,
-            /* [in] */ VARIANT newVal);
-        
-        /* [helpstring][id][propget] */ HRESULT ( STDMETHODCALLTYPE *get_OnExecCommand )( 
-            IWizDocumentListCtrl * This,
-            /* [retval][out] */ VARIANT *pVal);
-        
-        /* [helpstring][id][propput] */ HRESULT ( STDMETHODCALLTYPE *put_OnExecCommand )( 
-            IWizDocumentListCtrl * This,
-            /* [in] */ VARIANT newVal);
-        
-        /* [helpstring][id] */ HRESULT ( STDMETHODCALLTYPE *FocusToSearchBox )( 
-            IWizDocumentListCtrl * This);
+            /* [in] */ LONG newVal);
         
         END_INTERFACE
     } IWizDocumentListCtrlVtbl;
@@ -1398,6 +489,18 @@ EXTERN_C const IID IID_IWizDocumentListCtrl;
     ( (This)->lpVtbl -> Invoke(This,dispIdMember,riid,lcid,wFlags,pDispParams,pVarResult,pExcepInfo,puArgErr) ) 
 
 
+#define IWizDocumentListCtrl_get_EventsListener(This,pVal)	\
+    ( (This)->lpVtbl -> get_EventsListener(This,pVal) ) 
+
+#define IWizDocumentListCtrl_put_EventsListener(This,newVal)	\
+    ( (This)->lpVtbl -> put_EventsListener(This,newVal) ) 
+
+#define IWizDocumentListCtrl_get_App(This,pVal)	\
+    ( (This)->lpVtbl -> get_App(This,pVal) ) 
+
+#define IWizDocumentListCtrl_put_App(This,newVal)	\
+    ( (This)->lpVtbl -> put_App(This,newVal) ) 
+
 #define IWizDocumentListCtrl_get_Database(This,pVal)	\
     ( (This)->lpVtbl -> get_Database(This,pVal) ) 
 
@@ -1428,15 +531,6 @@ EXTERN_C const IID IID_IWizDocumentListCtrl;
 #define IWizDocumentListCtrl_put_DisableContextMenu(This,newVal)	\
     ( (This)->lpVtbl -> put_DisableContextMenu(This,newVal) ) 
 
-#define IWizDocumentListCtrl_get_SearchKeywords(This,pVal)	\
-    ( (This)->lpVtbl -> get_SearchKeywords(This,pVal) ) 
-
-#define IWizDocumentListCtrl_get_Shadow(This,pVal)	\
-    ( (This)->lpVtbl -> get_Shadow(This,pVal) ) 
-
-#define IWizDocumentListCtrl_put_Shadow(This,newVal)	\
-    ( (This)->lpVtbl -> put_Shadow(This,newVal) ) 
-
 #define IWizDocumentListCtrl_get_SortBy(This,pVal)	\
     ( (This)->lpVtbl -> get_SortBy(This,pVal) ) 
 
@@ -1464,26 +558,17 @@ EXTERN_C const IID IID_IWizDocumentListCtrl;
 #define IWizDocumentListCtrl_GetDocuments(This,pVal)	\
     ( (This)->lpVtbl -> GetDocuments(This,pVal) ) 
 
-#define IWizDocumentListCtrl_get_OnSelChanged(This,pVal)	\
-    ( (This)->lpVtbl -> get_OnSelChanged(This,pVal) ) 
+#define IWizDocumentListCtrl_get_Options(This,pVal)	\
+    ( (This)->lpVtbl -> get_Options(This,pVal) ) 
 
-#define IWizDocumentListCtrl_put_OnSelChanged(This,newVal)	\
-    ( (This)->lpVtbl -> put_OnSelChanged(This,newVal) ) 
+#define IWizDocumentListCtrl_put_Options(This,newVal)	\
+    ( (This)->lpVtbl -> put_Options(This,newVal) ) 
 
-#define IWizDocumentListCtrl_get_OnDblClickItem(This,pVal)	\
-    ( (This)->lpVtbl -> get_OnDblClickItem(This,pVal) ) 
+#define IWizDocumentListCtrl_get_SecondLineType(This,pVal)	\
+    ( (This)->lpVtbl -> get_SecondLineType(This,pVal) ) 
 
-#define IWizDocumentListCtrl_put_OnDblClickItem(This,newVal)	\
-    ( (This)->lpVtbl -> put_OnDblClickItem(This,newVal) ) 
-
-#define IWizDocumentListCtrl_get_OnExecCommand(This,pVal)	\
-    ( (This)->lpVtbl -> get_OnExecCommand(This,pVal) ) 
-
-#define IWizDocumentListCtrl_put_OnExecCommand(This,newVal)	\
-    ( (This)->lpVtbl -> put_OnExecCommand(This,newVal) ) 
-
-#define IWizDocumentListCtrl_FocusToSearchBox(This)	\
-    ( (This)->lpVtbl -> FocusToSearchBox(This) ) 
+#define IWizDocumentListCtrl_put_SecondLineType(This,newVal)	\
+    ( (This)->lpVtbl -> put_SecondLineType(This,newVal) ) 
 
 #endif /* COBJMACROS */
 
@@ -1511,6 +596,18 @@ EXTERN_C const IID IID_IWizDocumentAttachmentListCtrl;
     IWizDocumentAttachmentListCtrl : public IDispatch
     {
     public:
+        virtual /* [helpstring][id][propget] */ HRESULT STDMETHODCALLTYPE get_EventsListener( 
+            /* [retval][out] */ VARIANT *pVal) = 0;
+        
+        virtual /* [helpstring][id][propput] */ HRESULT STDMETHODCALLTYPE put_EventsListener( 
+            /* [in] */ VARIANT newVal) = 0;
+        
+        virtual /* [helpstring][id][propget] */ HRESULT STDMETHODCALLTYPE get_App( 
+            /* [retval][out] */ IDispatch **pVal) = 0;
+        
+        virtual /* [helpstring][id][propput] */ HRESULT STDMETHODCALLTYPE put_App( 
+            /* [in] */ IDispatch *newVal) = 0;
+        
         virtual /* [helpstring][id][propget] */ HRESULT STDMETHODCALLTYPE get_Database( 
             /* [retval][out] */ IDispatch **pVal) = 0;
         
@@ -1534,30 +631,6 @@ EXTERN_C const IID IID_IWizDocumentAttachmentListCtrl;
         
         virtual /* [helpstring][id][propput] */ HRESULT STDMETHODCALLTYPE put_Border( 
             /* [in] */ VARIANT_BOOL newVal) = 0;
-        
-        virtual /* [helpstring][id][propget] */ HRESULT STDMETHODCALLTYPE get_Shadow( 
-            /* [retval][out] */ VARIANT_BOOL *pVal) = 0;
-        
-        virtual /* [helpstring][id][propput] */ HRESULT STDMETHODCALLTYPE put_Shadow( 
-            /* [in] */ VARIANT_BOOL newVal) = 0;
-        
-        virtual /* [helpstring][id][propget] */ HRESULT STDMETHODCALLTYPE get_OnSelChanged( 
-            /* [retval][out] */ VARIANT *pVal) = 0;
-        
-        virtual /* [helpstring][id][propput] */ HRESULT STDMETHODCALLTYPE put_OnSelChanged( 
-            /* [in] */ VARIANT newVal) = 0;
-        
-        virtual /* [helpstring][id][propget] */ HRESULT STDMETHODCALLTYPE get_OnDblClickItem( 
-            /* [retval][out] */ VARIANT *pVal) = 0;
-        
-        virtual /* [helpstring][id][propput] */ HRESULT STDMETHODCALLTYPE put_OnDblClickItem( 
-            /* [in] */ VARIANT newVal) = 0;
-        
-        virtual /* [helpstring][id][propget] */ HRESULT STDMETHODCALLTYPE get_OnExecCommand( 
-            /* [retval][out] */ VARIANT *pVal) = 0;
-        
-        virtual /* [helpstring][id][propput] */ HRESULT STDMETHODCALLTYPE put_OnExecCommand( 
-            /* [in] */ VARIANT newVal) = 0;
         
         virtual /* [helpstring][id] */ HRESULT STDMETHODCALLTYPE AddAttachments( void) = 0;
         
@@ -1613,6 +686,22 @@ EXTERN_C const IID IID_IWizDocumentAttachmentListCtrl;
             /* [out] */ EXCEPINFO *pExcepInfo,
             /* [out] */ UINT *puArgErr);
         
+        /* [helpstring][id][propget] */ HRESULT ( STDMETHODCALLTYPE *get_EventsListener )( 
+            IWizDocumentAttachmentListCtrl * This,
+            /* [retval][out] */ VARIANT *pVal);
+        
+        /* [helpstring][id][propput] */ HRESULT ( STDMETHODCALLTYPE *put_EventsListener )( 
+            IWizDocumentAttachmentListCtrl * This,
+            /* [in] */ VARIANT newVal);
+        
+        /* [helpstring][id][propget] */ HRESULT ( STDMETHODCALLTYPE *get_App )( 
+            IWizDocumentAttachmentListCtrl * This,
+            /* [retval][out] */ IDispatch **pVal);
+        
+        /* [helpstring][id][propput] */ HRESULT ( STDMETHODCALLTYPE *put_App )( 
+            IWizDocumentAttachmentListCtrl * This,
+            /* [in] */ IDispatch *newVal);
+        
         /* [helpstring][id][propget] */ HRESULT ( STDMETHODCALLTYPE *get_Database )( 
             IWizDocumentAttachmentListCtrl * This,
             /* [retval][out] */ IDispatch **pVal);
@@ -1644,38 +733,6 @@ EXTERN_C const IID IID_IWizDocumentAttachmentListCtrl;
         /* [helpstring][id][propput] */ HRESULT ( STDMETHODCALLTYPE *put_Border )( 
             IWizDocumentAttachmentListCtrl * This,
             /* [in] */ VARIANT_BOOL newVal);
-        
-        /* [helpstring][id][propget] */ HRESULT ( STDMETHODCALLTYPE *get_Shadow )( 
-            IWizDocumentAttachmentListCtrl * This,
-            /* [retval][out] */ VARIANT_BOOL *pVal);
-        
-        /* [helpstring][id][propput] */ HRESULT ( STDMETHODCALLTYPE *put_Shadow )( 
-            IWizDocumentAttachmentListCtrl * This,
-            /* [in] */ VARIANT_BOOL newVal);
-        
-        /* [helpstring][id][propget] */ HRESULT ( STDMETHODCALLTYPE *get_OnSelChanged )( 
-            IWizDocumentAttachmentListCtrl * This,
-            /* [retval][out] */ VARIANT *pVal);
-        
-        /* [helpstring][id][propput] */ HRESULT ( STDMETHODCALLTYPE *put_OnSelChanged )( 
-            IWizDocumentAttachmentListCtrl * This,
-            /* [in] */ VARIANT newVal);
-        
-        /* [helpstring][id][propget] */ HRESULT ( STDMETHODCALLTYPE *get_OnDblClickItem )( 
-            IWizDocumentAttachmentListCtrl * This,
-            /* [retval][out] */ VARIANT *pVal);
-        
-        /* [helpstring][id][propput] */ HRESULT ( STDMETHODCALLTYPE *put_OnDblClickItem )( 
-            IWizDocumentAttachmentListCtrl * This,
-            /* [in] */ VARIANT newVal);
-        
-        /* [helpstring][id][propget] */ HRESULT ( STDMETHODCALLTYPE *get_OnExecCommand )( 
-            IWizDocumentAttachmentListCtrl * This,
-            /* [retval][out] */ VARIANT *pVal);
-        
-        /* [helpstring][id][propput] */ HRESULT ( STDMETHODCALLTYPE *put_OnExecCommand )( 
-            IWizDocumentAttachmentListCtrl * This,
-            /* [in] */ VARIANT newVal);
         
         /* [helpstring][id] */ HRESULT ( STDMETHODCALLTYPE *AddAttachments )( 
             IWizDocumentAttachmentListCtrl * This);
@@ -1720,6 +777,18 @@ EXTERN_C const IID IID_IWizDocumentAttachmentListCtrl;
     ( (This)->lpVtbl -> Invoke(This,dispIdMember,riid,lcid,wFlags,pDispParams,pVarResult,pExcepInfo,puArgErr) ) 
 
 
+#define IWizDocumentAttachmentListCtrl_get_EventsListener(This,pVal)	\
+    ( (This)->lpVtbl -> get_EventsListener(This,pVal) ) 
+
+#define IWizDocumentAttachmentListCtrl_put_EventsListener(This,newVal)	\
+    ( (This)->lpVtbl -> put_EventsListener(This,newVal) ) 
+
+#define IWizDocumentAttachmentListCtrl_get_App(This,pVal)	\
+    ( (This)->lpVtbl -> get_App(This,pVal) ) 
+
+#define IWizDocumentAttachmentListCtrl_put_App(This,newVal)	\
+    ( (This)->lpVtbl -> put_App(This,newVal) ) 
+
 #define IWizDocumentAttachmentListCtrl_get_Database(This,pVal)	\
     ( (This)->lpVtbl -> get_Database(This,pVal) ) 
 
@@ -1743,30 +812,6 @@ EXTERN_C const IID IID_IWizDocumentAttachmentListCtrl;
 
 #define IWizDocumentAttachmentListCtrl_put_Border(This,newVal)	\
     ( (This)->lpVtbl -> put_Border(This,newVal) ) 
-
-#define IWizDocumentAttachmentListCtrl_get_Shadow(This,pVal)	\
-    ( (This)->lpVtbl -> get_Shadow(This,pVal) ) 
-
-#define IWizDocumentAttachmentListCtrl_put_Shadow(This,newVal)	\
-    ( (This)->lpVtbl -> put_Shadow(This,newVal) ) 
-
-#define IWizDocumentAttachmentListCtrl_get_OnSelChanged(This,pVal)	\
-    ( (This)->lpVtbl -> get_OnSelChanged(This,pVal) ) 
-
-#define IWizDocumentAttachmentListCtrl_put_OnSelChanged(This,newVal)	\
-    ( (This)->lpVtbl -> put_OnSelChanged(This,newVal) ) 
-
-#define IWizDocumentAttachmentListCtrl_get_OnDblClickItem(This,pVal)	\
-    ( (This)->lpVtbl -> get_OnDblClickItem(This,pVal) ) 
-
-#define IWizDocumentAttachmentListCtrl_put_OnDblClickItem(This,newVal)	\
-    ( (This)->lpVtbl -> put_OnDblClickItem(This,newVal) ) 
-
-#define IWizDocumentAttachmentListCtrl_get_OnExecCommand(This,pVal)	\
-    ( (This)->lpVtbl -> get_OnExecCommand(This,pVal) ) 
-
-#define IWizDocumentAttachmentListCtrl_put_OnExecCommand(This,newVal)	\
-    ( (This)->lpVtbl -> put_OnExecCommand(This,newVal) ) 
 
 #define IWizDocumentAttachmentListCtrl_AddAttachments(This)	\
     ( (This)->lpVtbl -> AddAttachments(This) ) 
@@ -2140,6 +1185,40 @@ EXTERN_C const IID IID_IWizCommonUI;
         virtual /* [helpstring][id] */ HRESULT STDMETHODCALLTYPE URLDownloadToTempFile( 
             /* [in] */ BSTR bstrURL,
             /* [retval][out] */ BSTR *pbstrTempFileName) = 0;
+        
+        virtual /* [helpstring][id] */ HRESULT STDMETHODCALLTYPE EditDocument( 
+            /* [in] */ IDispatch *pApp,
+            /* [in] */ IDispatch *pEvents,
+            /* [in] */ IDispatch *pDocumentDisp,
+            /* [in] */ BSTR bstrOptions,
+            /* [retval][out] */ LONGLONG *pnWindowHandle) = 0;
+        
+        virtual /* [helpstring][id] */ HRESULT STDMETHODCALLTYPE NewDocument( 
+            /* [in] */ IDispatch *pApp,
+            /* [in] */ IDispatch *pEvents,
+            /* [in] */ IDispatch *pFolderDisp,
+            /* [in] */ BSTR bstrOptions,
+            /* [retval][out] */ LONGLONG *pnWindowHandle) = 0;
+        
+        virtual /* [helpstring][id] */ HRESULT STDMETHODCALLTYPE ClearDocumentWindow( void) = 0;
+        
+        virtual /* [helpstring][id] */ HRESULT STDMETHODCALLTYPE CreateAccountDlg( 
+            /* [in] */ BSTR bstrOptions,
+            /* [retval][out] */ BSTR *pbstrRetDatabasePath) = 0;
+        
+        virtual /* [helpstring][id] */ HRESULT STDMETHODCALLTYPE AddExistingAccountDlg( 
+            /* [in] */ BSTR bstrOptions,
+            /* [retval][out] */ BSTR *pbstrRetDatabasePath) = 0;
+        
+        virtual /* [helpstring][id] */ HRESULT STDMETHODCALLTYPE ChangePasswordDlg( 
+            /* [in] */ IDispatch *pDatabaseDisp) = 0;
+        
+        virtual /* [helpstring][id] */ HRESULT STDMETHODCALLTYPE ProtectAccountDlg( 
+            /* [in] */ IDispatch *pDatabaseDisp) = 0;
+        
+        virtual /* [helpstring][id] */ HRESULT STDMETHODCALLTYPE RefreshDatabaseIndex( 
+            /* [in] */ LONGLONG nWindowHandle,
+            /* [in] */ IDispatch *pDatabaseDisp) = 0;
         
     };
     
@@ -2601,6 +1680,48 @@ EXTERN_C const IID IID_IWizCommonUI;
             /* [in] */ BSTR bstrURL,
             /* [retval][out] */ BSTR *pbstrTempFileName);
         
+        /* [helpstring][id] */ HRESULT ( STDMETHODCALLTYPE *EditDocument )( 
+            IWizCommonUI * This,
+            /* [in] */ IDispatch *pApp,
+            /* [in] */ IDispatch *pEvents,
+            /* [in] */ IDispatch *pDocumentDisp,
+            /* [in] */ BSTR bstrOptions,
+            /* [retval][out] */ LONGLONG *pnWindowHandle);
+        
+        /* [helpstring][id] */ HRESULT ( STDMETHODCALLTYPE *NewDocument )( 
+            IWizCommonUI * This,
+            /* [in] */ IDispatch *pApp,
+            /* [in] */ IDispatch *pEvents,
+            /* [in] */ IDispatch *pFolderDisp,
+            /* [in] */ BSTR bstrOptions,
+            /* [retval][out] */ LONGLONG *pnWindowHandle);
+        
+        /* [helpstring][id] */ HRESULT ( STDMETHODCALLTYPE *ClearDocumentWindow )( 
+            IWizCommonUI * This);
+        
+        /* [helpstring][id] */ HRESULT ( STDMETHODCALLTYPE *CreateAccountDlg )( 
+            IWizCommonUI * This,
+            /* [in] */ BSTR bstrOptions,
+            /* [retval][out] */ BSTR *pbstrRetDatabasePath);
+        
+        /* [helpstring][id] */ HRESULT ( STDMETHODCALLTYPE *AddExistingAccountDlg )( 
+            IWizCommonUI * This,
+            /* [in] */ BSTR bstrOptions,
+            /* [retval][out] */ BSTR *pbstrRetDatabasePath);
+        
+        /* [helpstring][id] */ HRESULT ( STDMETHODCALLTYPE *ChangePasswordDlg )( 
+            IWizCommonUI * This,
+            /* [in] */ IDispatch *pDatabaseDisp);
+        
+        /* [helpstring][id] */ HRESULT ( STDMETHODCALLTYPE *ProtectAccountDlg )( 
+            IWizCommonUI * This,
+            /* [in] */ IDispatch *pDatabaseDisp);
+        
+        /* [helpstring][id] */ HRESULT ( STDMETHODCALLTYPE *RefreshDatabaseIndex )( 
+            IWizCommonUI * This,
+            /* [in] */ LONGLONG nWindowHandle,
+            /* [in] */ IDispatch *pDatabaseDisp);
+        
         END_INTERFACE
     } IWizCommonUIVtbl;
 
@@ -2846,6 +1967,30 @@ EXTERN_C const IID IID_IWizCommonUI;
 
 #define IWizCommonUI_URLDownloadToTempFile(This,bstrURL,pbstrTempFileName)	\
     ( (This)->lpVtbl -> URLDownloadToTempFile(This,bstrURL,pbstrTempFileName) ) 
+
+#define IWizCommonUI_EditDocument(This,pApp,pEvents,pDocumentDisp,bstrOptions,pnWindowHandle)	\
+    ( (This)->lpVtbl -> EditDocument(This,pApp,pEvents,pDocumentDisp,bstrOptions,pnWindowHandle) ) 
+
+#define IWizCommonUI_NewDocument(This,pApp,pEvents,pFolderDisp,bstrOptions,pnWindowHandle)	\
+    ( (This)->lpVtbl -> NewDocument(This,pApp,pEvents,pFolderDisp,bstrOptions,pnWindowHandle) ) 
+
+#define IWizCommonUI_ClearDocumentWindow(This)	\
+    ( (This)->lpVtbl -> ClearDocumentWindow(This) ) 
+
+#define IWizCommonUI_CreateAccountDlg(This,bstrOptions,pbstrRetDatabasePath)	\
+    ( (This)->lpVtbl -> CreateAccountDlg(This,bstrOptions,pbstrRetDatabasePath) ) 
+
+#define IWizCommonUI_AddExistingAccountDlg(This,bstrOptions,pbstrRetDatabasePath)	\
+    ( (This)->lpVtbl -> AddExistingAccountDlg(This,bstrOptions,pbstrRetDatabasePath) ) 
+
+#define IWizCommonUI_ChangePasswordDlg(This,pDatabaseDisp)	\
+    ( (This)->lpVtbl -> ChangePasswordDlg(This,pDatabaseDisp) ) 
+
+#define IWizCommonUI_ProtectAccountDlg(This,pDatabaseDisp)	\
+    ( (This)->lpVtbl -> ProtectAccountDlg(This,pDatabaseDisp) ) 
+
+#define IWizCommonUI_RefreshDatabaseIndex(This,nWindowHandle,pDatabaseDisp)	\
+    ( (This)->lpVtbl -> RefreshDatabaseIndex(This,nWindowHandle,pDatabaseDisp) ) 
 
 #endif /* COBJMACROS */
 
@@ -3628,6 +2773,385 @@ EXTERN_C const IID IID_IWizHtmlDialogExternal;
 #endif 	/* __IWizHtmlDialogExternal_INTERFACE_DEFINED__ */
 
 
+#ifndef __IWizCategoryCtrl_INTERFACE_DEFINED__
+#define __IWizCategoryCtrl_INTERFACE_DEFINED__
+
+/* interface IWizCategoryCtrl */
+/* [unique][helpstring][nonextensible][dual][uuid][object] */ 
+
+
+EXTERN_C const IID IID_IWizCategoryCtrl;
+
+#if defined(__cplusplus) && !defined(CINTERFACE)
+    
+    MIDL_INTERFACE("C163AE7B-E5B1-4789-A61B-27AFC8C9E17D")
+    IWizCategoryCtrl : public IDispatch
+    {
+    public:
+        virtual /* [helpstring][id][propget] */ HRESULT STDMETHODCALLTYPE get_EventsListener( 
+            /* [retval][out] */ VARIANT *pVal) = 0;
+        
+        virtual /* [helpstring][id][propput] */ HRESULT STDMETHODCALLTYPE put_EventsListener( 
+            /* [in] */ VARIANT newVal) = 0;
+        
+        virtual /* [helpstring][id][propget] */ HRESULT STDMETHODCALLTYPE get_App( 
+            /* [retval][out] */ IDispatch **pVal) = 0;
+        
+        virtual /* [helpstring][id][propput] */ HRESULT STDMETHODCALLTYPE put_App( 
+            /* [in] */ IDispatch *newVal) = 0;
+        
+        virtual /* [helpstring][id][propget] */ HRESULT STDMETHODCALLTYPE get_Database( 
+            /* [retval][out] */ IDispatch **pVal) = 0;
+        
+        virtual /* [helpstring][id][propput] */ HRESULT STDMETHODCALLTYPE put_Database( 
+            /* [in] */ IDispatch *newVal) = 0;
+        
+        virtual /* [helpstring][id][propget] */ HRESULT STDMETHODCALLTYPE get_SelectedType( 
+            /* [retval][out] */ LONG *pVal) = 0;
+        
+        virtual /* [helpstring][id][propget] */ HRESULT STDMETHODCALLTYPE get_SelectedFolder( 
+            /* [retval][out] */ IDispatch **pVal) = 0;
+        
+        virtual /* [helpstring][id][propput] */ HRESULT STDMETHODCALLTYPE put_SelectedFolder( 
+            /* [in] */ IDispatch *newVal) = 0;
+        
+        virtual /* [helpstring][id][propget] */ HRESULT STDMETHODCALLTYPE get_SelectedTags( 
+            /* [retval][out] */ IDispatch **pVal) = 0;
+        
+        virtual /* [helpstring][id][propput] */ HRESULT STDMETHODCALLTYPE put_SelectedTags( 
+            /* [in] */ IDispatch *newVal) = 0;
+        
+        virtual /* [helpstring][id][propget] */ HRESULT STDMETHODCALLTYPE get_SelectedStyle( 
+            /* [retval][out] */ IDispatch **pVal) = 0;
+        
+        virtual /* [helpstring][id][propput] */ HRESULT STDMETHODCALLTYPE put_SelectedStyle( 
+            /* [in] */ IDispatch *newVal) = 0;
+        
+        virtual /* [helpstring][id][propget] */ HRESULT STDMETHODCALLTYPE get_SelectedDocument( 
+            /* [retval][out] */ IDispatch **pVal) = 0;
+        
+        virtual /* [helpstring][id][propput] */ HRESULT STDMETHODCALLTYPE put_SelectedDocument( 
+            /* [in] */ IDispatch *newVal) = 0;
+        
+        virtual /* [helpstring][id][propget] */ HRESULT STDMETHODCALLTYPE get_StateSection( 
+            /* [retval][out] */ BSTR *pVal) = 0;
+        
+        virtual /* [helpstring][id][propput] */ HRESULT STDMETHODCALLTYPE put_StateSection( 
+            /* [in] */ BSTR newVal) = 0;
+        
+        virtual /* [helpstring][id][propget] */ HRESULT STDMETHODCALLTYPE get_Options( 
+            /* [retval][out] */ LONG *pVal) = 0;
+        
+        virtual /* [helpstring][id][propput] */ HRESULT STDMETHODCALLTYPE put_Options( 
+            /* [in] */ LONG newVal) = 0;
+        
+        virtual /* [helpstring][id][propget] */ HRESULT STDMETHODCALLTYPE get_ShowDocuments( 
+            /* [retval][out] */ VARIANT_BOOL *pVal) = 0;
+        
+        virtual /* [helpstring][id][propput] */ HRESULT STDMETHODCALLTYPE put_ShowDocuments( 
+            /* [in] */ VARIANT_BOOL newVal) = 0;
+        
+        virtual /* [helpstring][id][propget] */ HRESULT STDMETHODCALLTYPE get_Border( 
+            /* [retval][out] */ VARIANT_BOOL *pVal) = 0;
+        
+        virtual /* [helpstring][id][propput] */ HRESULT STDMETHODCALLTYPE put_Border( 
+            /* [in] */ VARIANT_BOOL newVal) = 0;
+        
+        virtual /* [helpstring][id] */ HRESULT STDMETHODCALLTYPE Refresh( void) = 0;
+        
+        virtual /* [helpstring][id] */ HRESULT STDMETHODCALLTYPE ExecuteCommand( 
+            /* [in] */ BSTR bstrCommandName,
+            /* [in] */ VARIANT *pvParam1,
+            /* [in] */ VARIANT *pvParam2,
+            /* [retval][out] */ VARIANT *pvRetValue) = 0;
+        
+        virtual /* [helpstring][id] */ HRESULT STDMETHODCALLTYPE GetSelectedDocuments2( 
+            /* [out] */ BSTR *pbstrSortBy,
+            /* [out] */ BSTR *pbstrSortOrder,
+            /* [retval][out] */ IDispatch **pVal) = 0;
+        
+    };
+    
+#else 	/* C style interface */
+
+    typedef struct IWizCategoryCtrlVtbl
+    {
+        BEGIN_INTERFACE
+        
+        HRESULT ( STDMETHODCALLTYPE *QueryInterface )( 
+            IWizCategoryCtrl * This,
+            /* [in] */ REFIID riid,
+            /* [iid_is][out] */ 
+            __RPC__deref_out  void **ppvObject);
+        
+        ULONG ( STDMETHODCALLTYPE *AddRef )( 
+            IWizCategoryCtrl * This);
+        
+        ULONG ( STDMETHODCALLTYPE *Release )( 
+            IWizCategoryCtrl * This);
+        
+        HRESULT ( STDMETHODCALLTYPE *GetTypeInfoCount )( 
+            IWizCategoryCtrl * This,
+            /* [out] */ UINT *pctinfo);
+        
+        HRESULT ( STDMETHODCALLTYPE *GetTypeInfo )( 
+            IWizCategoryCtrl * This,
+            /* [in] */ UINT iTInfo,
+            /* [in] */ LCID lcid,
+            /* [out] */ ITypeInfo **ppTInfo);
+        
+        HRESULT ( STDMETHODCALLTYPE *GetIDsOfNames )( 
+            IWizCategoryCtrl * This,
+            /* [in] */ REFIID riid,
+            /* [size_is][in] */ LPOLESTR *rgszNames,
+            /* [range][in] */ UINT cNames,
+            /* [in] */ LCID lcid,
+            /* [size_is][out] */ DISPID *rgDispId);
+        
+        /* [local] */ HRESULT ( STDMETHODCALLTYPE *Invoke )( 
+            IWizCategoryCtrl * This,
+            /* [in] */ DISPID dispIdMember,
+            /* [in] */ REFIID riid,
+            /* [in] */ LCID lcid,
+            /* [in] */ WORD wFlags,
+            /* [out][in] */ DISPPARAMS *pDispParams,
+            /* [out] */ VARIANT *pVarResult,
+            /* [out] */ EXCEPINFO *pExcepInfo,
+            /* [out] */ UINT *puArgErr);
+        
+        /* [helpstring][id][propget] */ HRESULT ( STDMETHODCALLTYPE *get_EventsListener )( 
+            IWizCategoryCtrl * This,
+            /* [retval][out] */ VARIANT *pVal);
+        
+        /* [helpstring][id][propput] */ HRESULT ( STDMETHODCALLTYPE *put_EventsListener )( 
+            IWizCategoryCtrl * This,
+            /* [in] */ VARIANT newVal);
+        
+        /* [helpstring][id][propget] */ HRESULT ( STDMETHODCALLTYPE *get_App )( 
+            IWizCategoryCtrl * This,
+            /* [retval][out] */ IDispatch **pVal);
+        
+        /* [helpstring][id][propput] */ HRESULT ( STDMETHODCALLTYPE *put_App )( 
+            IWizCategoryCtrl * This,
+            /* [in] */ IDispatch *newVal);
+        
+        /* [helpstring][id][propget] */ HRESULT ( STDMETHODCALLTYPE *get_Database )( 
+            IWizCategoryCtrl * This,
+            /* [retval][out] */ IDispatch **pVal);
+        
+        /* [helpstring][id][propput] */ HRESULT ( STDMETHODCALLTYPE *put_Database )( 
+            IWizCategoryCtrl * This,
+            /* [in] */ IDispatch *newVal);
+        
+        /* [helpstring][id][propget] */ HRESULT ( STDMETHODCALLTYPE *get_SelectedType )( 
+            IWizCategoryCtrl * This,
+            /* [retval][out] */ LONG *pVal);
+        
+        /* [helpstring][id][propget] */ HRESULT ( STDMETHODCALLTYPE *get_SelectedFolder )( 
+            IWizCategoryCtrl * This,
+            /* [retval][out] */ IDispatch **pVal);
+        
+        /* [helpstring][id][propput] */ HRESULT ( STDMETHODCALLTYPE *put_SelectedFolder )( 
+            IWizCategoryCtrl * This,
+            /* [in] */ IDispatch *newVal);
+        
+        /* [helpstring][id][propget] */ HRESULT ( STDMETHODCALLTYPE *get_SelectedTags )( 
+            IWizCategoryCtrl * This,
+            /* [retval][out] */ IDispatch **pVal);
+        
+        /* [helpstring][id][propput] */ HRESULT ( STDMETHODCALLTYPE *put_SelectedTags )( 
+            IWizCategoryCtrl * This,
+            /* [in] */ IDispatch *newVal);
+        
+        /* [helpstring][id][propget] */ HRESULT ( STDMETHODCALLTYPE *get_SelectedStyle )( 
+            IWizCategoryCtrl * This,
+            /* [retval][out] */ IDispatch **pVal);
+        
+        /* [helpstring][id][propput] */ HRESULT ( STDMETHODCALLTYPE *put_SelectedStyle )( 
+            IWizCategoryCtrl * This,
+            /* [in] */ IDispatch *newVal);
+        
+        /* [helpstring][id][propget] */ HRESULT ( STDMETHODCALLTYPE *get_SelectedDocument )( 
+            IWizCategoryCtrl * This,
+            /* [retval][out] */ IDispatch **pVal);
+        
+        /* [helpstring][id][propput] */ HRESULT ( STDMETHODCALLTYPE *put_SelectedDocument )( 
+            IWizCategoryCtrl * This,
+            /* [in] */ IDispatch *newVal);
+        
+        /* [helpstring][id][propget] */ HRESULT ( STDMETHODCALLTYPE *get_StateSection )( 
+            IWizCategoryCtrl * This,
+            /* [retval][out] */ BSTR *pVal);
+        
+        /* [helpstring][id][propput] */ HRESULT ( STDMETHODCALLTYPE *put_StateSection )( 
+            IWizCategoryCtrl * This,
+            /* [in] */ BSTR newVal);
+        
+        /* [helpstring][id][propget] */ HRESULT ( STDMETHODCALLTYPE *get_Options )( 
+            IWizCategoryCtrl * This,
+            /* [retval][out] */ LONG *pVal);
+        
+        /* [helpstring][id][propput] */ HRESULT ( STDMETHODCALLTYPE *put_Options )( 
+            IWizCategoryCtrl * This,
+            /* [in] */ LONG newVal);
+        
+        /* [helpstring][id][propget] */ HRESULT ( STDMETHODCALLTYPE *get_ShowDocuments )( 
+            IWizCategoryCtrl * This,
+            /* [retval][out] */ VARIANT_BOOL *pVal);
+        
+        /* [helpstring][id][propput] */ HRESULT ( STDMETHODCALLTYPE *put_ShowDocuments )( 
+            IWizCategoryCtrl * This,
+            /* [in] */ VARIANT_BOOL newVal);
+        
+        /* [helpstring][id][propget] */ HRESULT ( STDMETHODCALLTYPE *get_Border )( 
+            IWizCategoryCtrl * This,
+            /* [retval][out] */ VARIANT_BOOL *pVal);
+        
+        /* [helpstring][id][propput] */ HRESULT ( STDMETHODCALLTYPE *put_Border )( 
+            IWizCategoryCtrl * This,
+            /* [in] */ VARIANT_BOOL newVal);
+        
+        /* [helpstring][id] */ HRESULT ( STDMETHODCALLTYPE *Refresh )( 
+            IWizCategoryCtrl * This);
+        
+        /* [helpstring][id] */ HRESULT ( STDMETHODCALLTYPE *ExecuteCommand )( 
+            IWizCategoryCtrl * This,
+            /* [in] */ BSTR bstrCommandName,
+            /* [in] */ VARIANT *pvParam1,
+            /* [in] */ VARIANT *pvParam2,
+            /* [retval][out] */ VARIANT *pvRetValue);
+        
+        /* [helpstring][id] */ HRESULT ( STDMETHODCALLTYPE *GetSelectedDocuments2 )( 
+            IWizCategoryCtrl * This,
+            /* [out] */ BSTR *pbstrSortBy,
+            /* [out] */ BSTR *pbstrSortOrder,
+            /* [retval][out] */ IDispatch **pVal);
+        
+        END_INTERFACE
+    } IWizCategoryCtrlVtbl;
+
+    interface IWizCategoryCtrl
+    {
+        CONST_VTBL struct IWizCategoryCtrlVtbl *lpVtbl;
+    };
+
+    
+
+#ifdef COBJMACROS
+
+
+#define IWizCategoryCtrl_QueryInterface(This,riid,ppvObject)	\
+    ( (This)->lpVtbl -> QueryInterface(This,riid,ppvObject) ) 
+
+#define IWizCategoryCtrl_AddRef(This)	\
+    ( (This)->lpVtbl -> AddRef(This) ) 
+
+#define IWizCategoryCtrl_Release(This)	\
+    ( (This)->lpVtbl -> Release(This) ) 
+
+
+#define IWizCategoryCtrl_GetTypeInfoCount(This,pctinfo)	\
+    ( (This)->lpVtbl -> GetTypeInfoCount(This,pctinfo) ) 
+
+#define IWizCategoryCtrl_GetTypeInfo(This,iTInfo,lcid,ppTInfo)	\
+    ( (This)->lpVtbl -> GetTypeInfo(This,iTInfo,lcid,ppTInfo) ) 
+
+#define IWizCategoryCtrl_GetIDsOfNames(This,riid,rgszNames,cNames,lcid,rgDispId)	\
+    ( (This)->lpVtbl -> GetIDsOfNames(This,riid,rgszNames,cNames,lcid,rgDispId) ) 
+
+#define IWizCategoryCtrl_Invoke(This,dispIdMember,riid,lcid,wFlags,pDispParams,pVarResult,pExcepInfo,puArgErr)	\
+    ( (This)->lpVtbl -> Invoke(This,dispIdMember,riid,lcid,wFlags,pDispParams,pVarResult,pExcepInfo,puArgErr) ) 
+
+
+#define IWizCategoryCtrl_get_EventsListener(This,pVal)	\
+    ( (This)->lpVtbl -> get_EventsListener(This,pVal) ) 
+
+#define IWizCategoryCtrl_put_EventsListener(This,newVal)	\
+    ( (This)->lpVtbl -> put_EventsListener(This,newVal) ) 
+
+#define IWizCategoryCtrl_get_App(This,pVal)	\
+    ( (This)->lpVtbl -> get_App(This,pVal) ) 
+
+#define IWizCategoryCtrl_put_App(This,newVal)	\
+    ( (This)->lpVtbl -> put_App(This,newVal) ) 
+
+#define IWizCategoryCtrl_get_Database(This,pVal)	\
+    ( (This)->lpVtbl -> get_Database(This,pVal) ) 
+
+#define IWizCategoryCtrl_put_Database(This,newVal)	\
+    ( (This)->lpVtbl -> put_Database(This,newVal) ) 
+
+#define IWizCategoryCtrl_get_SelectedType(This,pVal)	\
+    ( (This)->lpVtbl -> get_SelectedType(This,pVal) ) 
+
+#define IWizCategoryCtrl_get_SelectedFolder(This,pVal)	\
+    ( (This)->lpVtbl -> get_SelectedFolder(This,pVal) ) 
+
+#define IWizCategoryCtrl_put_SelectedFolder(This,newVal)	\
+    ( (This)->lpVtbl -> put_SelectedFolder(This,newVal) ) 
+
+#define IWizCategoryCtrl_get_SelectedTags(This,pVal)	\
+    ( (This)->lpVtbl -> get_SelectedTags(This,pVal) ) 
+
+#define IWizCategoryCtrl_put_SelectedTags(This,newVal)	\
+    ( (This)->lpVtbl -> put_SelectedTags(This,newVal) ) 
+
+#define IWizCategoryCtrl_get_SelectedStyle(This,pVal)	\
+    ( (This)->lpVtbl -> get_SelectedStyle(This,pVal) ) 
+
+#define IWizCategoryCtrl_put_SelectedStyle(This,newVal)	\
+    ( (This)->lpVtbl -> put_SelectedStyle(This,newVal) ) 
+
+#define IWizCategoryCtrl_get_SelectedDocument(This,pVal)	\
+    ( (This)->lpVtbl -> get_SelectedDocument(This,pVal) ) 
+
+#define IWizCategoryCtrl_put_SelectedDocument(This,newVal)	\
+    ( (This)->lpVtbl -> put_SelectedDocument(This,newVal) ) 
+
+#define IWizCategoryCtrl_get_StateSection(This,pVal)	\
+    ( (This)->lpVtbl -> get_StateSection(This,pVal) ) 
+
+#define IWizCategoryCtrl_put_StateSection(This,newVal)	\
+    ( (This)->lpVtbl -> put_StateSection(This,newVal) ) 
+
+#define IWizCategoryCtrl_get_Options(This,pVal)	\
+    ( (This)->lpVtbl -> get_Options(This,pVal) ) 
+
+#define IWizCategoryCtrl_put_Options(This,newVal)	\
+    ( (This)->lpVtbl -> put_Options(This,newVal) ) 
+
+#define IWizCategoryCtrl_get_ShowDocuments(This,pVal)	\
+    ( (This)->lpVtbl -> get_ShowDocuments(This,pVal) ) 
+
+#define IWizCategoryCtrl_put_ShowDocuments(This,newVal)	\
+    ( (This)->lpVtbl -> put_ShowDocuments(This,newVal) ) 
+
+#define IWizCategoryCtrl_get_Border(This,pVal)	\
+    ( (This)->lpVtbl -> get_Border(This,pVal) ) 
+
+#define IWizCategoryCtrl_put_Border(This,newVal)	\
+    ( (This)->lpVtbl -> put_Border(This,newVal) ) 
+
+#define IWizCategoryCtrl_Refresh(This)	\
+    ( (This)->lpVtbl -> Refresh(This) ) 
+
+#define IWizCategoryCtrl_ExecuteCommand(This,bstrCommandName,pvParam1,pvParam2,pvRetValue)	\
+    ( (This)->lpVtbl -> ExecuteCommand(This,bstrCommandName,pvParam1,pvParam2,pvRetValue) ) 
+
+#define IWizCategoryCtrl_GetSelectedDocuments2(This,pbstrSortBy,pbstrSortOrder,pVal)	\
+    ( (This)->lpVtbl -> GetSelectedDocuments2(This,pbstrSortBy,pbstrSortOrder,pVal) ) 
+
+#endif /* COBJMACROS */
+
+
+#endif 	/* C style interface */
+
+
+
+
+#endif 	/* __IWizCategoryCtrl_INTERFACE_DEFINED__ */
+
+
 
 #ifndef __WizKMControlsLib_LIBRARY_DEFINED__
 #define __WizKMControlsLib_LIBRARY_DEFINED__
@@ -3636,19 +3160,26 @@ EXTERN_C const IID IID_IWizHtmlDialogExternal;
 /* [helpstring][version][uuid] */ 
 
 
+enum WizCategorySelectedType
+    {	wizCategorySelectedTypeNone	= 0,
+	wizCategorySelectedTypeFolder	= 1,
+	wizCategorySelectedTypeDocument	= 2,
+	wizCategorySelectedTypeTag	= 3,
+	wizCategorySelectedTypeStyle	= 4,
+	wizCategorySelectedTypeAllFolders	= 5,
+	wizCategorySelectedTypeAllTags	= 6,
+	wizCategorySelectedTypeAllStyles	= 7,
+	wizCategorySelectedTypeAllQuickSearches	= 8,
+	wizCategorySelectedTypeQuickSearchGroup	= 9,
+	wizCategorySelectedTypeQuickSearch	= 10,
+	wizCategorySelectedTypeFavoriteFolder	= 11,
+	wizCategorySelectedTypeAllFavoriteFolders	= 12
+    } ;
+
 enum WizBatchDownloaderJobFlags
     {	wizWizBatchDownloaderJobLinkTextAsTitle	= 0x1,
 	wizWizBatchDownloaderJobExecuteScript	= 0x2,
 	wizWizBatchDownloaderJobURLAsCustomID	= 0x4
-    } ;
-
-enum WizFolderTreeCtrlFlags
-    {	wizFolderTreeCtrlEnableNewDocument	= 0x1,
-	wizFolderTreeCtrlIncludeSubFolders	= 0x2
-    } ;
-
-enum WizTagTreeCtrlFlags
-    {	wizTagTreeCtrlIncludeSubFolders	= 0x2
     } ;
 
 enum WizCommandID
@@ -3656,459 +3187,40 @@ enum WizCommandID
 	wizCommandSelectNextDocument	= 0x2
     } ;
 
+enum WizCategoryCtrlOptions
+    {	wizCategoryShowDocuments	= 0x1,
+	wizCategoryDisplaySubFolderDocuments	= 0x2,
+	wizCategoryDisplayChildTagDocuments	= 0x4,
+	wizCategoryShowFolders	= 0x8,
+	wizCategoryShowTags	= 0x10,
+	wizCategoryShowStyles	= 0x20,
+	wizCategoryShowQuickSearches	= 0x40,
+	wizCategoryShowFavoriteFolders	= 0x80,
+	wizCategoryNoSkin	= 0x100,
+	wizCategoryNoMenu	= 0x200,
+	wizCategoryForceBorder	= 0x400
+    } ;
+
+enum WizDocumentListCtrlOptions
+    {	wizDocumentCtrlSingleLine	= 0x1
+    } ;
+
+enum WizDocumentListCtrlSecondLineType
+    {	wizDocumentCtrlSecondLineAuto	= 0,
+	wizDocumentCtrlSecondLineStar	= 0x1,
+	wizDocumentCtrlSecondLineLocation	= 0x2,
+	wizDocumentCtrlSecondLineDateCreated	= 0x3,
+	wizDocumentCtrlSecondLineDateModified	= 0x4,
+	wizDocumentCtrlSecondLineDateAccessed	= 0x5,
+	wizDocumentCtrlSecondLineURL	= 0x6,
+	wizDocumentCtrlSecondLineAuthor	= 0x7,
+	wizDocumentCtrlSecondLineKeywords	= 0x8,
+	wizDocumentCtrlSecondLineTags	= 0x9,
+	wizDocumentCtrlSecondLineDataSize	= 0x10,
+	wizDocumentCtrlSecondLineReadCount	= 0x11
+    } ;
+
 EXTERN_C const IID LIBID_WizKMControlsLib;
-
-#ifndef ___IWizFolderTreeCtrlEvents_DISPINTERFACE_DEFINED__
-#define ___IWizFolderTreeCtrlEvents_DISPINTERFACE_DEFINED__
-
-/* dispinterface _IWizFolderTreeCtrlEvents */
-/* [helpstring][uuid] */ 
-
-
-EXTERN_C const IID DIID__IWizFolderTreeCtrlEvents;
-
-#if defined(__cplusplus) && !defined(CINTERFACE)
-
-    MIDL_INTERFACE("C6A08167-A326-40C6-9BF3-529F07206E93")
-    _IWizFolderTreeCtrlEvents : public IDispatch
-    {
-    };
-    
-#else 	/* C style interface */
-
-    typedef struct _IWizFolderTreeCtrlEventsVtbl
-    {
-        BEGIN_INTERFACE
-        
-        HRESULT ( STDMETHODCALLTYPE *QueryInterface )( 
-            _IWizFolderTreeCtrlEvents * This,
-            /* [in] */ REFIID riid,
-            /* [iid_is][out] */ 
-            __RPC__deref_out  void **ppvObject);
-        
-        ULONG ( STDMETHODCALLTYPE *AddRef )( 
-            _IWizFolderTreeCtrlEvents * This);
-        
-        ULONG ( STDMETHODCALLTYPE *Release )( 
-            _IWizFolderTreeCtrlEvents * This);
-        
-        HRESULT ( STDMETHODCALLTYPE *GetTypeInfoCount )( 
-            _IWizFolderTreeCtrlEvents * This,
-            /* [out] */ UINT *pctinfo);
-        
-        HRESULT ( STDMETHODCALLTYPE *GetTypeInfo )( 
-            _IWizFolderTreeCtrlEvents * This,
-            /* [in] */ UINT iTInfo,
-            /* [in] */ LCID lcid,
-            /* [out] */ ITypeInfo **ppTInfo);
-        
-        HRESULT ( STDMETHODCALLTYPE *GetIDsOfNames )( 
-            _IWizFolderTreeCtrlEvents * This,
-            /* [in] */ REFIID riid,
-            /* [size_is][in] */ LPOLESTR *rgszNames,
-            /* [range][in] */ UINT cNames,
-            /* [in] */ LCID lcid,
-            /* [size_is][out] */ DISPID *rgDispId);
-        
-        /* [local] */ HRESULT ( STDMETHODCALLTYPE *Invoke )( 
-            _IWizFolderTreeCtrlEvents * This,
-            /* [in] */ DISPID dispIdMember,
-            /* [in] */ REFIID riid,
-            /* [in] */ LCID lcid,
-            /* [in] */ WORD wFlags,
-            /* [out][in] */ DISPPARAMS *pDispParams,
-            /* [out] */ VARIANT *pVarResult,
-            /* [out] */ EXCEPINFO *pExcepInfo,
-            /* [out] */ UINT *puArgErr);
-        
-        END_INTERFACE
-    } _IWizFolderTreeCtrlEventsVtbl;
-
-    interface _IWizFolderTreeCtrlEvents
-    {
-        CONST_VTBL struct _IWizFolderTreeCtrlEventsVtbl *lpVtbl;
-    };
-
-    
-
-#ifdef COBJMACROS
-
-
-#define _IWizFolderTreeCtrlEvents_QueryInterface(This,riid,ppvObject)	\
-    ( (This)->lpVtbl -> QueryInterface(This,riid,ppvObject) ) 
-
-#define _IWizFolderTreeCtrlEvents_AddRef(This)	\
-    ( (This)->lpVtbl -> AddRef(This) ) 
-
-#define _IWizFolderTreeCtrlEvents_Release(This)	\
-    ( (This)->lpVtbl -> Release(This) ) 
-
-
-#define _IWizFolderTreeCtrlEvents_GetTypeInfoCount(This,pctinfo)	\
-    ( (This)->lpVtbl -> GetTypeInfoCount(This,pctinfo) ) 
-
-#define _IWizFolderTreeCtrlEvents_GetTypeInfo(This,iTInfo,lcid,ppTInfo)	\
-    ( (This)->lpVtbl -> GetTypeInfo(This,iTInfo,lcid,ppTInfo) ) 
-
-#define _IWizFolderTreeCtrlEvents_GetIDsOfNames(This,riid,rgszNames,cNames,lcid,rgDispId)	\
-    ( (This)->lpVtbl -> GetIDsOfNames(This,riid,rgszNames,cNames,lcid,rgDispId) ) 
-
-#define _IWizFolderTreeCtrlEvents_Invoke(This,dispIdMember,riid,lcid,wFlags,pDispParams,pVarResult,pExcepInfo,puArgErr)	\
-    ( (This)->lpVtbl -> Invoke(This,dispIdMember,riid,lcid,wFlags,pDispParams,pVarResult,pExcepInfo,puArgErr) ) 
-
-#endif /* COBJMACROS */
-
-
-#endif 	/* C style interface */
-
-
-#endif 	/* ___IWizFolderTreeCtrlEvents_DISPINTERFACE_DEFINED__ */
-
-
-EXTERN_C const CLSID CLSID_WizFolderTreeCtrl;
-
-#ifdef __cplusplus
-
-class DECLSPEC_UUID("26C7C9DF-8814-4FB5-925A-C720E75C924A")
-WizFolderTreeCtrl;
-#endif
-
-#ifndef ___IWizStyleListBoxEvents_DISPINTERFACE_DEFINED__
-#define ___IWizStyleListBoxEvents_DISPINTERFACE_DEFINED__
-
-/* dispinterface _IWizStyleListBoxEvents */
-/* [helpstring][uuid] */ 
-
-
-EXTERN_C const IID DIID__IWizStyleListBoxEvents;
-
-#if defined(__cplusplus) && !defined(CINTERFACE)
-
-    MIDL_INTERFACE("94B0B237-5327-454F-8DB7-EB767BCFD2CC")
-    _IWizStyleListBoxEvents : public IDispatch
-    {
-    };
-    
-#else 	/* C style interface */
-
-    typedef struct _IWizStyleListBoxEventsVtbl
-    {
-        BEGIN_INTERFACE
-        
-        HRESULT ( STDMETHODCALLTYPE *QueryInterface )( 
-            _IWizStyleListBoxEvents * This,
-            /* [in] */ REFIID riid,
-            /* [iid_is][out] */ 
-            __RPC__deref_out  void **ppvObject);
-        
-        ULONG ( STDMETHODCALLTYPE *AddRef )( 
-            _IWizStyleListBoxEvents * This);
-        
-        ULONG ( STDMETHODCALLTYPE *Release )( 
-            _IWizStyleListBoxEvents * This);
-        
-        HRESULT ( STDMETHODCALLTYPE *GetTypeInfoCount )( 
-            _IWizStyleListBoxEvents * This,
-            /* [out] */ UINT *pctinfo);
-        
-        HRESULT ( STDMETHODCALLTYPE *GetTypeInfo )( 
-            _IWizStyleListBoxEvents * This,
-            /* [in] */ UINT iTInfo,
-            /* [in] */ LCID lcid,
-            /* [out] */ ITypeInfo **ppTInfo);
-        
-        HRESULT ( STDMETHODCALLTYPE *GetIDsOfNames )( 
-            _IWizStyleListBoxEvents * This,
-            /* [in] */ REFIID riid,
-            /* [size_is][in] */ LPOLESTR *rgszNames,
-            /* [range][in] */ UINT cNames,
-            /* [in] */ LCID lcid,
-            /* [size_is][out] */ DISPID *rgDispId);
-        
-        /* [local] */ HRESULT ( STDMETHODCALLTYPE *Invoke )( 
-            _IWizStyleListBoxEvents * This,
-            /* [in] */ DISPID dispIdMember,
-            /* [in] */ REFIID riid,
-            /* [in] */ LCID lcid,
-            /* [in] */ WORD wFlags,
-            /* [out][in] */ DISPPARAMS *pDispParams,
-            /* [out] */ VARIANT *pVarResult,
-            /* [out] */ EXCEPINFO *pExcepInfo,
-            /* [out] */ UINT *puArgErr);
-        
-        END_INTERFACE
-    } _IWizStyleListBoxEventsVtbl;
-
-    interface _IWizStyleListBoxEvents
-    {
-        CONST_VTBL struct _IWizStyleListBoxEventsVtbl *lpVtbl;
-    };
-
-    
-
-#ifdef COBJMACROS
-
-
-#define _IWizStyleListBoxEvents_QueryInterface(This,riid,ppvObject)	\
-    ( (This)->lpVtbl -> QueryInterface(This,riid,ppvObject) ) 
-
-#define _IWizStyleListBoxEvents_AddRef(This)	\
-    ( (This)->lpVtbl -> AddRef(This) ) 
-
-#define _IWizStyleListBoxEvents_Release(This)	\
-    ( (This)->lpVtbl -> Release(This) ) 
-
-
-#define _IWizStyleListBoxEvents_GetTypeInfoCount(This,pctinfo)	\
-    ( (This)->lpVtbl -> GetTypeInfoCount(This,pctinfo) ) 
-
-#define _IWizStyleListBoxEvents_GetTypeInfo(This,iTInfo,lcid,ppTInfo)	\
-    ( (This)->lpVtbl -> GetTypeInfo(This,iTInfo,lcid,ppTInfo) ) 
-
-#define _IWizStyleListBoxEvents_GetIDsOfNames(This,riid,rgszNames,cNames,lcid,rgDispId)	\
-    ( (This)->lpVtbl -> GetIDsOfNames(This,riid,rgszNames,cNames,lcid,rgDispId) ) 
-
-#define _IWizStyleListBoxEvents_Invoke(This,dispIdMember,riid,lcid,wFlags,pDispParams,pVarResult,pExcepInfo,puArgErr)	\
-    ( (This)->lpVtbl -> Invoke(This,dispIdMember,riid,lcid,wFlags,pDispParams,pVarResult,pExcepInfo,puArgErr) ) 
-
-#endif /* COBJMACROS */
-
-
-#endif 	/* C style interface */
-
-
-#endif 	/* ___IWizStyleListBoxEvents_DISPINTERFACE_DEFINED__ */
-
-
-EXTERN_C const CLSID CLSID_WizStyleListBox;
-
-#ifdef __cplusplus
-
-class DECLSPEC_UUID("45654514-333B-4E1F-A82F-B5A770B51DF2")
-WizStyleListBox;
-#endif
-
-#ifndef ___IWizTagTreeCtrlEvents_DISPINTERFACE_DEFINED__
-#define ___IWizTagTreeCtrlEvents_DISPINTERFACE_DEFINED__
-
-/* dispinterface _IWizTagTreeCtrlEvents */
-/* [helpstring][uuid] */ 
-
-
-EXTERN_C const IID DIID__IWizTagTreeCtrlEvents;
-
-#if defined(__cplusplus) && !defined(CINTERFACE)
-
-    MIDL_INTERFACE("B9344735-5486-4FF9-BDFA-5CDCD30122AD")
-    _IWizTagTreeCtrlEvents : public IDispatch
-    {
-    };
-    
-#else 	/* C style interface */
-
-    typedef struct _IWizTagTreeCtrlEventsVtbl
-    {
-        BEGIN_INTERFACE
-        
-        HRESULT ( STDMETHODCALLTYPE *QueryInterface )( 
-            _IWizTagTreeCtrlEvents * This,
-            /* [in] */ REFIID riid,
-            /* [iid_is][out] */ 
-            __RPC__deref_out  void **ppvObject);
-        
-        ULONG ( STDMETHODCALLTYPE *AddRef )( 
-            _IWizTagTreeCtrlEvents * This);
-        
-        ULONG ( STDMETHODCALLTYPE *Release )( 
-            _IWizTagTreeCtrlEvents * This);
-        
-        HRESULT ( STDMETHODCALLTYPE *GetTypeInfoCount )( 
-            _IWizTagTreeCtrlEvents * This,
-            /* [out] */ UINT *pctinfo);
-        
-        HRESULT ( STDMETHODCALLTYPE *GetTypeInfo )( 
-            _IWizTagTreeCtrlEvents * This,
-            /* [in] */ UINT iTInfo,
-            /* [in] */ LCID lcid,
-            /* [out] */ ITypeInfo **ppTInfo);
-        
-        HRESULT ( STDMETHODCALLTYPE *GetIDsOfNames )( 
-            _IWizTagTreeCtrlEvents * This,
-            /* [in] */ REFIID riid,
-            /* [size_is][in] */ LPOLESTR *rgszNames,
-            /* [range][in] */ UINT cNames,
-            /* [in] */ LCID lcid,
-            /* [size_is][out] */ DISPID *rgDispId);
-        
-        /* [local] */ HRESULT ( STDMETHODCALLTYPE *Invoke )( 
-            _IWizTagTreeCtrlEvents * This,
-            /* [in] */ DISPID dispIdMember,
-            /* [in] */ REFIID riid,
-            /* [in] */ LCID lcid,
-            /* [in] */ WORD wFlags,
-            /* [out][in] */ DISPPARAMS *pDispParams,
-            /* [out] */ VARIANT *pVarResult,
-            /* [out] */ EXCEPINFO *pExcepInfo,
-            /* [out] */ UINT *puArgErr);
-        
-        END_INTERFACE
-    } _IWizTagTreeCtrlEventsVtbl;
-
-    interface _IWizTagTreeCtrlEvents
-    {
-        CONST_VTBL struct _IWizTagTreeCtrlEventsVtbl *lpVtbl;
-    };
-
-    
-
-#ifdef COBJMACROS
-
-
-#define _IWizTagTreeCtrlEvents_QueryInterface(This,riid,ppvObject)	\
-    ( (This)->lpVtbl -> QueryInterface(This,riid,ppvObject) ) 
-
-#define _IWizTagTreeCtrlEvents_AddRef(This)	\
-    ( (This)->lpVtbl -> AddRef(This) ) 
-
-#define _IWizTagTreeCtrlEvents_Release(This)	\
-    ( (This)->lpVtbl -> Release(This) ) 
-
-
-#define _IWizTagTreeCtrlEvents_GetTypeInfoCount(This,pctinfo)	\
-    ( (This)->lpVtbl -> GetTypeInfoCount(This,pctinfo) ) 
-
-#define _IWizTagTreeCtrlEvents_GetTypeInfo(This,iTInfo,lcid,ppTInfo)	\
-    ( (This)->lpVtbl -> GetTypeInfo(This,iTInfo,lcid,ppTInfo) ) 
-
-#define _IWizTagTreeCtrlEvents_GetIDsOfNames(This,riid,rgszNames,cNames,lcid,rgDispId)	\
-    ( (This)->lpVtbl -> GetIDsOfNames(This,riid,rgszNames,cNames,lcid,rgDispId) ) 
-
-#define _IWizTagTreeCtrlEvents_Invoke(This,dispIdMember,riid,lcid,wFlags,pDispParams,pVarResult,pExcepInfo,puArgErr)	\
-    ( (This)->lpVtbl -> Invoke(This,dispIdMember,riid,lcid,wFlags,pDispParams,pVarResult,pExcepInfo,puArgErr) ) 
-
-#endif /* COBJMACROS */
-
-
-#endif 	/* C style interface */
-
-
-#endif 	/* ___IWizTagTreeCtrlEvents_DISPINTERFACE_DEFINED__ */
-
-
-EXTERN_C const CLSID CLSID_WizTagTreeCtrl;
-
-#ifdef __cplusplus
-
-class DECLSPEC_UUID("2ECF9CCC-A138-4940-A8FB-06509F8A1D09")
-WizTagTreeCtrl;
-#endif
-
-#ifndef ___IWizDocumentListCtrlEvents_DISPINTERFACE_DEFINED__
-#define ___IWizDocumentListCtrlEvents_DISPINTERFACE_DEFINED__
-
-/* dispinterface _IWizDocumentListCtrlEvents */
-/* [helpstring][uuid] */ 
-
-
-EXTERN_C const IID DIID__IWizDocumentListCtrlEvents;
-
-#if defined(__cplusplus) && !defined(CINTERFACE)
-
-    MIDL_INTERFACE("6F374E41-29D7-426A-8F9D-995E3DA812CA")
-    _IWizDocumentListCtrlEvents : public IDispatch
-    {
-    };
-    
-#else 	/* C style interface */
-
-    typedef struct _IWizDocumentListCtrlEventsVtbl
-    {
-        BEGIN_INTERFACE
-        
-        HRESULT ( STDMETHODCALLTYPE *QueryInterface )( 
-            _IWizDocumentListCtrlEvents * This,
-            /* [in] */ REFIID riid,
-            /* [iid_is][out] */ 
-            __RPC__deref_out  void **ppvObject);
-        
-        ULONG ( STDMETHODCALLTYPE *AddRef )( 
-            _IWizDocumentListCtrlEvents * This);
-        
-        ULONG ( STDMETHODCALLTYPE *Release )( 
-            _IWizDocumentListCtrlEvents * This);
-        
-        HRESULT ( STDMETHODCALLTYPE *GetTypeInfoCount )( 
-            _IWizDocumentListCtrlEvents * This,
-            /* [out] */ UINT *pctinfo);
-        
-        HRESULT ( STDMETHODCALLTYPE *GetTypeInfo )( 
-            _IWizDocumentListCtrlEvents * This,
-            /* [in] */ UINT iTInfo,
-            /* [in] */ LCID lcid,
-            /* [out] */ ITypeInfo **ppTInfo);
-        
-        HRESULT ( STDMETHODCALLTYPE *GetIDsOfNames )( 
-            _IWizDocumentListCtrlEvents * This,
-            /* [in] */ REFIID riid,
-            /* [size_is][in] */ LPOLESTR *rgszNames,
-            /* [range][in] */ UINT cNames,
-            /* [in] */ LCID lcid,
-            /* [size_is][out] */ DISPID *rgDispId);
-        
-        /* [local] */ HRESULT ( STDMETHODCALLTYPE *Invoke )( 
-            _IWizDocumentListCtrlEvents * This,
-            /* [in] */ DISPID dispIdMember,
-            /* [in] */ REFIID riid,
-            /* [in] */ LCID lcid,
-            /* [in] */ WORD wFlags,
-            /* [out][in] */ DISPPARAMS *pDispParams,
-            /* [out] */ VARIANT *pVarResult,
-            /* [out] */ EXCEPINFO *pExcepInfo,
-            /* [out] */ UINT *puArgErr);
-        
-        END_INTERFACE
-    } _IWizDocumentListCtrlEventsVtbl;
-
-    interface _IWizDocumentListCtrlEvents
-    {
-        CONST_VTBL struct _IWizDocumentListCtrlEventsVtbl *lpVtbl;
-    };
-
-    
-
-#ifdef COBJMACROS
-
-
-#define _IWizDocumentListCtrlEvents_QueryInterface(This,riid,ppvObject)	\
-    ( (This)->lpVtbl -> QueryInterface(This,riid,ppvObject) ) 
-
-#define _IWizDocumentListCtrlEvents_AddRef(This)	\
-    ( (This)->lpVtbl -> AddRef(This) ) 
-
-#define _IWizDocumentListCtrlEvents_Release(This)	\
-    ( (This)->lpVtbl -> Release(This) ) 
-
-
-#define _IWizDocumentListCtrlEvents_GetTypeInfoCount(This,pctinfo)	\
-    ( (This)->lpVtbl -> GetTypeInfoCount(This,pctinfo) ) 
-
-#define _IWizDocumentListCtrlEvents_GetTypeInfo(This,iTInfo,lcid,ppTInfo)	\
-    ( (This)->lpVtbl -> GetTypeInfo(This,iTInfo,lcid,ppTInfo) ) 
-
-#define _IWizDocumentListCtrlEvents_GetIDsOfNames(This,riid,rgszNames,cNames,lcid,rgDispId)	\
-    ( (This)->lpVtbl -> GetIDsOfNames(This,riid,rgszNames,cNames,lcid,rgDispId) ) 
-
-#define _IWizDocumentListCtrlEvents_Invoke(This,dispIdMember,riid,lcid,wFlags,pDispParams,pVarResult,pExcepInfo,puArgErr)	\
-    ( (This)->lpVtbl -> Invoke(This,dispIdMember,riid,lcid,wFlags,pDispParams,pVarResult,pExcepInfo,puArgErr) ) 
-
-#endif /* COBJMACROS */
-
-
-#endif 	/* C style interface */
-
-
-#endif 	/* ___IWizDocumentListCtrlEvents_DISPINTERFACE_DEFINED__ */
-
 
 EXTERN_C const CLSID CLSID_WizDocumentListCtrl;
 
@@ -4117,113 +3229,6 @@ EXTERN_C const CLSID CLSID_WizDocumentListCtrl;
 class DECLSPEC_UUID("D30F2928-D136-4F2D-98C4-080E3CB1C92C")
 WizDocumentListCtrl;
 #endif
-
-#ifndef ___IWizDocumentAttachmentListCtrlEvents_DISPINTERFACE_DEFINED__
-#define ___IWizDocumentAttachmentListCtrlEvents_DISPINTERFACE_DEFINED__
-
-/* dispinterface _IWizDocumentAttachmentListCtrlEvents */
-/* [helpstring][uuid] */ 
-
-
-EXTERN_C const IID DIID__IWizDocumentAttachmentListCtrlEvents;
-
-#if defined(__cplusplus) && !defined(CINTERFACE)
-
-    MIDL_INTERFACE("B752B564-DA68-4F9F-894F-556F641C4FCE")
-    _IWizDocumentAttachmentListCtrlEvents : public IDispatch
-    {
-    };
-    
-#else 	/* C style interface */
-
-    typedef struct _IWizDocumentAttachmentListCtrlEventsVtbl
-    {
-        BEGIN_INTERFACE
-        
-        HRESULT ( STDMETHODCALLTYPE *QueryInterface )( 
-            _IWizDocumentAttachmentListCtrlEvents * This,
-            /* [in] */ REFIID riid,
-            /* [iid_is][out] */ 
-            __RPC__deref_out  void **ppvObject);
-        
-        ULONG ( STDMETHODCALLTYPE *AddRef )( 
-            _IWizDocumentAttachmentListCtrlEvents * This);
-        
-        ULONG ( STDMETHODCALLTYPE *Release )( 
-            _IWizDocumentAttachmentListCtrlEvents * This);
-        
-        HRESULT ( STDMETHODCALLTYPE *GetTypeInfoCount )( 
-            _IWizDocumentAttachmentListCtrlEvents * This,
-            /* [out] */ UINT *pctinfo);
-        
-        HRESULT ( STDMETHODCALLTYPE *GetTypeInfo )( 
-            _IWizDocumentAttachmentListCtrlEvents * This,
-            /* [in] */ UINT iTInfo,
-            /* [in] */ LCID lcid,
-            /* [out] */ ITypeInfo **ppTInfo);
-        
-        HRESULT ( STDMETHODCALLTYPE *GetIDsOfNames )( 
-            _IWizDocumentAttachmentListCtrlEvents * This,
-            /* [in] */ REFIID riid,
-            /* [size_is][in] */ LPOLESTR *rgszNames,
-            /* [range][in] */ UINT cNames,
-            /* [in] */ LCID lcid,
-            /* [size_is][out] */ DISPID *rgDispId);
-        
-        /* [local] */ HRESULT ( STDMETHODCALLTYPE *Invoke )( 
-            _IWizDocumentAttachmentListCtrlEvents * This,
-            /* [in] */ DISPID dispIdMember,
-            /* [in] */ REFIID riid,
-            /* [in] */ LCID lcid,
-            /* [in] */ WORD wFlags,
-            /* [out][in] */ DISPPARAMS *pDispParams,
-            /* [out] */ VARIANT *pVarResult,
-            /* [out] */ EXCEPINFO *pExcepInfo,
-            /* [out] */ UINT *puArgErr);
-        
-        END_INTERFACE
-    } _IWizDocumentAttachmentListCtrlEventsVtbl;
-
-    interface _IWizDocumentAttachmentListCtrlEvents
-    {
-        CONST_VTBL struct _IWizDocumentAttachmentListCtrlEventsVtbl *lpVtbl;
-    };
-
-    
-
-#ifdef COBJMACROS
-
-
-#define _IWizDocumentAttachmentListCtrlEvents_QueryInterface(This,riid,ppvObject)	\
-    ( (This)->lpVtbl -> QueryInterface(This,riid,ppvObject) ) 
-
-#define _IWizDocumentAttachmentListCtrlEvents_AddRef(This)	\
-    ( (This)->lpVtbl -> AddRef(This) ) 
-
-#define _IWizDocumentAttachmentListCtrlEvents_Release(This)	\
-    ( (This)->lpVtbl -> Release(This) ) 
-
-
-#define _IWizDocumentAttachmentListCtrlEvents_GetTypeInfoCount(This,pctinfo)	\
-    ( (This)->lpVtbl -> GetTypeInfoCount(This,pctinfo) ) 
-
-#define _IWizDocumentAttachmentListCtrlEvents_GetTypeInfo(This,iTInfo,lcid,ppTInfo)	\
-    ( (This)->lpVtbl -> GetTypeInfo(This,iTInfo,lcid,ppTInfo) ) 
-
-#define _IWizDocumentAttachmentListCtrlEvents_GetIDsOfNames(This,riid,rgszNames,cNames,lcid,rgDispId)	\
-    ( (This)->lpVtbl -> GetIDsOfNames(This,riid,rgszNames,cNames,lcid,rgDispId) ) 
-
-#define _IWizDocumentAttachmentListCtrlEvents_Invoke(This,dispIdMember,riid,lcid,wFlags,pDispParams,pVarResult,pExcepInfo,puArgErr)	\
-    ( (This)->lpVtbl -> Invoke(This,dispIdMember,riid,lcid,wFlags,pDispParams,pVarResult,pExcepInfo,puArgErr) ) 
-
-#endif /* COBJMACROS */
-
-
-#endif 	/* C style interface */
-
-
-#endif 	/* ___IWizDocumentAttachmentListCtrlEvents_DISPINTERFACE_DEFINED__ */
-
 
 EXTERN_C const CLSID CLSID_WizDocumentAttachmentListCtrl;
 
@@ -4271,6 +3276,14 @@ EXTERN_C const CLSID CLSID_WizHtmlDialogExternal;
 
 class DECLSPEC_UUID("31B3C15F-0113-42A2-A652-93D299392ACF")
 WizHtmlDialogExternal;
+#endif
+
+EXTERN_C const CLSID CLSID_WizCategoryCtrl;
+
+#ifdef __cplusplus
+
+class DECLSPEC_UUID("96D74A38-2385-41D0-A006-5D93BF796B61")
+WizCategoryCtrl;
 #endif
 #endif /* __WizKMControlsLib_LIBRARY_DEFINED__ */
 

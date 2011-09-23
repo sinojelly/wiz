@@ -63,7 +63,7 @@ inline BOOL WizKMDocumentToCalendarEvent(IWizDocument* pDocument, WIZDOCUMENTEVE
 }
 
 
-
+#ifdef _WIZKMDATABASE_H_
 
 
 inline BOOL WizKMGetCalendarEvents(CWizKMDatabase* pDatabase, const COleDateTime& tStart, const COleDateTime& tEnd, CWizDocumentEventDataArray& events)
@@ -102,6 +102,8 @@ inline BOOL WizKMGetCalendarEvents(CWizKMDatabase* pDatabase, const COleDateTime
 	return TRUE;
 }
 
+#endif //_WIZKMDATABASE_H_
+
 inline BOOL WizKMUpdateEvent(IWizDocument* pDocument, const WIZDOCUMENTEVENTDATA& e)
 {
 	CComPtr<IWizEvent> spEvent = WizKMCreateEvent();
@@ -121,7 +123,7 @@ inline BOOL WizKMUpdateEvent(IWizDocument* pDocument, const WIZDOCUMENTEVENTDATA
 	return SUCCEEDED(pDocument->put_Event(spEvent));
 }
 
-
+#ifdef _WIZKMDATABASE_H_
 
 inline BOOL WizKMDocumentAddToCalendar(IWizDocument* pDocument, const COleDateTime& tStart, const COleDateTime& tEnd, LPCTSTR lpszRecurrence, LPCTSTR lpszEndRecurrence, COLORREF crBackground, int nReminder)
 {
@@ -144,7 +146,7 @@ inline BOOL WizKMDocumentAddToCalendar(IWizDocument* pDocument, const COleDateTi
 	//
 	return WizKMUpdateEvent(pDocument, e);
 }
-
+#endif //_WIZKMDATABASE_H_
 inline BOOL WizKMEventSetCompleted(IWizEvent* pEvent)
 {
 	return SUCCEEDED(pEvent->put_Completed(VARIANT_TRUE))
@@ -158,7 +160,7 @@ inline BOOL WizKMEventSetDonotRemind(IWizEvent* pEvent)
 }
 
 
-
+#ifdef _WIZKMDATABASE_H_
 inline BOOL WizKMCalendarEventsAddToTodoData(CWizKMDatabase* pDatabase, const COleDateTime& t, WIZTODODATAEX::CWizTodoDataExArray& arrayData)
 {
 	if (!pDatabase)
@@ -260,6 +262,7 @@ inline BOOL WizKMTodoDataMoveUncompletedTasks(CWizKMDatabase* pDatabase, WIZTODO
 	return bRet;
 }
 
+#endif //#ifdef _WIZKMDATABASE_H_
 
 inline BOOL WizKMTodoDataMoveCompletedTasks(WIZTODODATAEX::CWizTodoDataExArray& arrayDataSrc, WIZTODODATAEX::CWizTodoDataExArray& arrayDataDest)
 {
@@ -281,6 +284,8 @@ inline BOOL WizKMTodoDataMoveCompletedTasks(WIZTODODATAEX::CWizTodoDataExArray& 
 	//
 	return bRet;
 }
+
+#ifdef _WIZKMDATABASE_H_
 
 inline BOOL WizKMAddUncompletedToTodoData(CWizKMDatabase* pDatabase, CComPtr<IWizDocument>& spDocument, const COleDateTime& t, WIZTODODATAEX::CWizTodoDataExArray& arrayData)
 {
@@ -318,7 +323,7 @@ inline BOOL WizKMAddUncompletedToTodoData(CWizKMDatabase* pDatabase, CComPtr<IWi
 					{
 						bRet = TRUE;
 						//
-						WizDocumentSetTodoData(spDocumentOld, arrayDataOld);
+						//WizDocumentSetTodoData(spDocumentOld, arrayDataOld);
 					}
 				}
 				//
@@ -353,3 +358,4 @@ inline BOOL WizKMAddUncompletedToTodoData(CWizKMDatabase* pDatabase, CComPtr<IWi
 	//
 	return bRet;
 }
+#endif //#ifdef _WIZKMDATABASE_H_

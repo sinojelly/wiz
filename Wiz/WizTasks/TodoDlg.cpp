@@ -65,6 +65,38 @@ LRESULT CTodoDlg::OnDestroy(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHand
 	return 0;
 }
 
+
+BOOL CTodoDlg::PreTranslateMessage(MSG* pMsg)
+{
+	if (pMsg->message == WM_KEYDOWN)
+	{
+		BOOL bCtrl = GetKeyState(VK_CONTROL) < 0;
+		BOOL bShift = GetKeyState(VK_SHIFT) < 0;
+		BOOL bAlt = GetKeyState(VK_MENU) < 0;
+		//
+		if (bCtrl && !bShift && bAlt)
+		{
+			if (VK_LEFT == (UINT)pMsg->wParam)
+			{
+				Dock(APPBAR_DOCKING_LEFT);
+				return TRUE;
+			}
+			else if (VK_RIGHT == (UINT)pMsg->wParam)
+			{
+				Dock(APPBAR_DOCKING_RIGHT);
+				return TRUE;
+			}
+			else if (VK_DOWN == (UINT)pMsg->wParam)
+			{
+				Dock(APPBAR_DOCKING_NONE);
+				return TRUE;
+			}
+		}
+	}
+		//
+	return FALSE;
+}
+
 CRect CTodoDlg::GetTitleRect()
 {
 	CRect rcNew;
@@ -119,12 +151,14 @@ void CTodoDlg::SetColor(COLORREF cr)
 }
 
 
-LRESULT CTodoDlg::OnTimer(UINT /*uMsg*/, WPARAM wParam, LPARAM /*lParam*/, BOOL& /*bHandled*/)
+LRESULT CTodoDlg::OnTimer(UINT /*uMsg*/, WPARAM wParam, LPARAM /*lParam*/, BOOL& bHandled)
 {
+	bHandled = FALSE;
 	switch ((UINT)wParam)
 	{
 	case TIMER_ID_SAVE:
 		AutoSave();
+		bHandled = TRUE;
 		break;
 	}
 	//
@@ -175,6 +209,11 @@ void CTodoDlg::UpdateLayout()
 
 void CTodoDlg::Close()
 {
+	if (IsDocking())
+	{
+		Dock(APPBAR_DOCKING_NONE);
+	}
+	//
 	CWizKMSmallDlgBase<CTodoDlg>::Close();
 	//
 	WizGetMainDlg()->PostMessage(UM_SAVE_TODOLISTS_STATUS, 0, 0);
@@ -189,6 +228,9 @@ BOOL CTodoDlg::SavePos()
 		return FALSE;
 	if (!m_pDatabase)
 		return FALSE;
+	//
+	if (IsDocking())
+		return TRUE;
 	//
 	CRect rc;
 	GetWindowRect(&rc);
@@ -233,6 +275,9 @@ BOOL CTodoDlg::LoadPos()
 	//
 	if (!m_pDatabase)
 		return FALSE;
+	//
+	if (IsDocking())
+		return TRUE;
 	//
 	CWizKMDocumentParamLine line(m_pDatabase->GetMeta(_T("TodoPos"), CWizKMDatabase::GetObjectGUID(m_spDocument.p)));
 	//
@@ -666,3 +711,25 @@ CComPtr<IWizEvent> CTodoDlg::GetTodoEvent(WIZTODODATA* pData)
 	return spEvent;
 }
 //
+
+void CTodoDlg::UpdateMenu(HMENU hMenu)
+{
+	CMenuHandle menu(hMenu);
+	if (!menu.IsNull())
+	{
+		UINT nChecked = MF_BYCOMMAND | MF_CHECKED;
+		UINT nUnchecked = MF_BYCOMMAND | MF_UNCHECKED;
+
+		UINT nEnabled = MF_BYCOMMAND | MF_ENABLED;
+		UINT nDisabled = MF_BYCOMMAND | MF_DISABLED | MF_GRAYED;
+		//
+		UINT nDock = GetCurrentDock();
+		//
+		menu.CheckMenuItem(ID_DOCK_LEFT, nDock == APPBAR_DOCKING_LEFT ? nChecked : nUnchecked);
+		menu.CheckMenuItem(ID_DOCK_RIGHT, nDock == APPBAR_DOCKING_RIGHT? nChecked : nUnchecked);
+		menu.CheckMenuItem(ID_DOCK_NONE, nDock == APPBAR_DOCKING_NONE ? nChecked : nUnchecked);
+		//
+		menu.CheckMenuItem(ID_DOCK_AUTOHIDE, IsAutoHide() ? nChecked : nUnchecked);
+		menu.EnableMenuItem(ID_DOCK_AUTOHIDE, IsDocking() ? nEnabled : nDisabled);
+	}
+}

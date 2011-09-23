@@ -23,8 +23,8 @@ public:
 	{
 	}
 private:
-	CWizHotKeyCtrlExWithSettings<CWizKMSettings> m_hotkeyNewTodoList;
-	CWizHotKeyCtrlExWithSettings<CWizKMSettings> m_hotkeyDisplayAllTodoLists;
+	CWizHotKeyCtrlExWithSettings<CWizKMSettingsEx> m_hotkeyNewTodoList;
+	CWizHotKeyCtrlExWithSettings<CWizKMSettingsEx> m_hotkeyDisplayAllTodoLists;
 public:
 
 	enum { IDD = IDD_DIALOG_CONFIG_HOTKEY };

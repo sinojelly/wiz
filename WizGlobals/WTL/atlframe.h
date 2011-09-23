@@ -829,7 +829,8 @@ public:
 			}
 			RECT rectTB = { 0 };
 			::GetWindowRect(m_hWndToolBar, &rectTB);
-			rect.top += rectTB.bottom - rectTB.top;
+			ScreenToClient(&rectTB);
+			rect.top = rectTB.bottom;// - rectTB.top;
 		}
 
 		// resize status bar

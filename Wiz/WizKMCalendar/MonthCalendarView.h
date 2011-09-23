@@ -54,7 +54,7 @@ public:
 		lf.lfWeight = FW_BOLD;
 		m_fontDay.CreateFontIndirect(&lf);
 
-		m_bmpCalc.Attach((HBITMAP)::LoadImage(NULL, WizKMGetSkinsPath() + _T("calendar_back.bmp"), IMAGE_BITMAP, 0, 0, LR_DEFAULTCOLOR | LR_LOADFROMFILE | LR_CREATEDIBSECTION));
+		m_bmpCalc.Attach((HBITMAP)::LoadImage(NULL, ::WizKMGetFileNameInSkin(_T("calendar_back.bmp")), IMAGE_BITMAP, 0, 0, LR_DEFAULTCOLOR | LR_LOADFROMFILE | LR_CREATEDIBSECTION));
 	}
 private:
 	BOOL HasSecondCalendar()

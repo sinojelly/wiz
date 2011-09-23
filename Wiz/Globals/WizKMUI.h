@@ -1,6 +1,6 @@
 #pragma once
 
-class CWizKMHotKeyCtrl : public CWizHotKeyCtrlImpl<CWizKMHotKeyCtrl, CWizKMSettings>
+class CWizKMHotKeyCtrl : public CWizHotKeyCtrlImpl<CWizKMHotKeyCtrl, CWizKMSettingsEx>
 {
 };
 
@@ -8,8 +8,8 @@ class CWizKMHotKeyCtrl : public CWizHotKeyCtrlImpl<CWizKMHotKeyCtrl, CWizKMSetti
 #ifdef _WIZUIBASE_H_
 
 #ifdef __ATLSPLIT_H__
-typedef CWizVistaSplitterWindowT<true, CWizKMSettings>    CWizKMSplitterWindow;
-typedef CWizVistaSplitterWindowT<false, CWizKMSettings>   CWizKMHorSplitterWindow;
+typedef CWizSplitterWindowT<true, CWizKMSettingsEx>    CWizKMSplitterWindow;
+typedef CWizSplitterWindowT<false, CWizKMSettingsEx>   CWizKMHorSplitterWindow;
 #endif //__ATLSPLIT_H__
 
 #ifdef __ATLCTRLX_H__
@@ -26,7 +26,7 @@ public:
 #endif //_WIZUIBASE_H_
 
 
-
+/*
 class CWizKMToolBar 
 	: public CWizVistaToolBarCtrl
 {
@@ -56,7 +56,7 @@ public:
 	}
 };
 
-
+*/
 
 
 template <class T, int SIZE>
@@ -179,6 +179,7 @@ class CWizKMTreeCtrlState_Settings :
 {
 public:
 	CWizKMTreeCtrlState_Settings(LPCTSTR lpszSection, BOOL bLoad)
+		: m_bLoad(bLoad)
 	{
 		m_strSection = lpszSection;
 		//
@@ -195,9 +196,17 @@ public:
 			m_settings.ClearSection(lpszSection);
 		}
 	}
+	~CWizKMTreeCtrlState_Settings()
+	{
+		if (!m_bLoad)
+		{
+			m_settings.Save();
+		}
+	}
 protected:
+	BOOL m_bLoad;
 	CString m_strSection;
-	CWizKMSettings m_settings;
+	CWizKMSettingsEx m_settings;
 	CWizKMSettingsSection m_section;
 	CString m_strSelectedID;
 private:
@@ -212,8 +221,8 @@ public:
 	}
 	virtual void SaveScrollState(POINT pt)
 	{
-		m_settings.SetInt(m_strSection, _T("X"), pt.x);
-		m_settings.SetInt(m_strSection, _T("Y"), pt.y);
+		m_settings.SetInt(m_strSection, _T("X"), pt.x, WIZ_SETTINGS_MANUAL_SAVE);
+		m_settings.SetInt(m_strSection, _T("Y"), pt.y, WIZ_SETTINGS_MANUAL_SAVE);
 	}
 	virtual void SaveItemState(CWizTreeCtrlWithState<T>& tree, HTREEITEM hItem, BOOL bExpanded, BOOL bSelected)
 	{
@@ -229,7 +238,7 @@ public:
 		//
 		CString strID = tree.GetItemStateID(hItem);
 		//
-		m_settings.SetInt(m_strSection, IDToKey(strID), nState);
+		m_settings.SetInt(m_strSection, IDToKey(strID), nState, WIZ_SETTINGS_MANUAL_SAVE);
 	}
 	virtual POINT GetScrollState()
 	{
@@ -265,7 +274,7 @@ public:
 	}
 	virtual BOOL SetBool(LPCTSTR lpszKey, BOOL b)
 	{
-		return m_settings.SetBool(m_strSection, lpszKey, b);
+		return m_settings.SetBool(m_strSection, lpszKey, b, WIZ_SETTINGS_MANUAL_SAVE);
 	}
 	//
 	virtual int ReadInt(LPCTSTR lpszKey, int nDef)
@@ -277,7 +286,7 @@ public:
 	}
 	virtual BOOL SetInt(LPCTSTR lpszKey, int n)
 	{
-		return m_settings.SetInt(m_strSection, lpszKey, n);
+		return m_settings.SetInt(m_strSection, lpszKey, n, WIZ_SETTINGS_MANUAL_SAVE);
 	}
 };
 
@@ -359,8 +368,7 @@ public:
 			{
 				if (IsVIP())
 				{
-					CWizKMSettings settings;
-					if (settings.GetBool(_T("Common"), _T("ShowAD"), TRUE)
+					if (WizKMGetSettings().GetBool(_T("Common"), _T("ShowAD"), TRUE)
 						|| IsNotice())
 					{
 						ShowAD();
@@ -471,8 +479,7 @@ public:
 				ShowWindow(SW_HIDE);
 				GetParent().SendMessage(WM_SETTINGCHANGE, 0, 0);
 				//
-				CWizKMSettings settings;
-				settings.SetBool(_T("Common"), _T("ShowAD"), FALSE);
+				WizKMGetSettings().SetBool(_T("Common"), _T("ShowAD"), FALSE, TRUE);
 			}
 			else if (IsCloseable())
 			{
@@ -495,6 +502,167 @@ public:
 		return FALSE;
 	}
 };
+
+
+
+
+struct WIZKMSTYLEDATA
+{
+	COLORREF crText;
+	COLORREF crBack;
+	BOOL bBold;
+	int nFlag;
+	BOOL bDefault;
+	//
+	WIZKMSTYLEDATA()
+		: bDefault(FALSE)
+	{
+		crText = RGB(0, 0, 0);
+		crBack = RGB(255, 255, 255);
+		bBold = FALSE;
+		nFlag = -1;
+	}
+};
+
+typedef std::map<CString, WIZKMSTYLEDATA> CWizKMStyleMap;
+
+class CWizKMStyles : public CWizKMStyleMap
+{
+public:
+	CWizKMStyles()
+	{
+		m_pDatabase = NULL;
+		//
+		m_dataDefault.crText = WizGetSkin()->GetItemTextColor(CWizSkin::wizisNormal);
+		m_dataDefault.crBack = WizGetSkin()->GetItemColor(CWizSkin::wizisNormal);
+		m_dataDefault.bDefault = TRUE;
+	}
+	~CWizKMStyles()
+	{
+	}
+protected:
+	CWizKMDatabase* m_pDatabase;
+	//
+	WIZKMSTYLEDATA m_dataDefault;
+	//
+	CWizStdStringArray m_arrayStyleName;
+public:
+	void SetDatabase(CWizKMDatabase* pDatabase)
+	{
+		ATLASSERT(pDatabase);
+		m_pDatabase = pDatabase;
+		//
+		Reset();
+	}
+	//
+	void Reset()
+	{
+		clear();
+		m_arrayStyleName.clear();
+		//
+		InitStyles();
+	}
+	//
+	const_iterator AddStyle(LPCTSTR lpszStyleGUID)
+	{
+		ATLASSERT(find(lpszStyleGUID) == end());
+		//
+		CComPtr<IWizStyle> spStyle = m_pDatabase->GetStyleByGUID(lpszStyleGUID);
+		if (!spStyle)
+		{
+			AddEmptyStyle(lpszStyleGUID);
+		}
+		else
+		{
+			AddStyle(spStyle);
+		}
+		//
+		return find(lpszStyleGUID);
+	}
+	//
+	BOOL AddStyle(IWizStyle* pStyle)
+	{
+		CString strGUID = CWizKMDatabase::GetObjectGUID(pStyle);
+		ATLASSERT(find(strGUID) == end());
+		//
+		WIZKMSTYLEDATA data;
+		data.crText = CWizKMDatabase::GetStyleTextColor(pStyle);
+		data.crBack = CWizKMDatabase::GetStyleBackgroundColor(pStyle);
+		data.bBold = CWizKMDatabase::GetStyleTextBold(pStyle);
+		data.nFlag = CWizKMDatabase::GetStyleFlagIndex(pStyle);
+		//
+		operator [] (strGUID) = data;
+		//
+		return TRUE;
+	}
+	BOOL AddEmptyStyle(LPCTSTR lpszStyleGUID)
+	{
+		CString strGUID = lpszStyleGUID;
+		ATLASSERT(find(strGUID) == end());
+		//
+		WIZKMSTYLEDATA data;
+		data.crText = ::GetSysColor(COLOR_WINDOWTEXT);
+		data.crBack = ::GetSysColor(COLOR_WINDOW);
+		data.bBold = FALSE;
+		data.nFlag = -1;
+		//
+		operator [] (strGUID) = data;
+		//
+		return TRUE;
+	}
+	//
+	const WIZKMSTYLEDATA& GetStyle(LPCTSTR lpszStyleGUID)
+	{
+		if (!lpszStyleGUID || !*lpszStyleGUID)
+			return m_dataDefault;
+		//
+		const_iterator it = find(lpszStyleGUID);
+		if (it != end())
+			return it->second;
+		//
+		it = AddStyle(lpszStyleGUID);
+		if (it != end())
+			return it->second;
+		//
+		return m_dataDefault;
+	}
+	CComPtr<IWizStyle> GetStyleByName(LPCTSTR lpszStyleName)
+	{
+		CComPtr<IWizStyle> spStyle = m_pDatabase->GetStyleByName(lpszStyleName);
+		return spStyle;
+	}
+	const WIZKMSTYLEDATA& GetDocumentStyle(IWizDocument* pDocument)
+	{
+		CString strStyleGUID = CWizKMDatabase::GetDocumentStyleGUID(pDocument);
+		return GetStyle(strStyleGUID);
+	}
+	//
+	BOOL InitStyles()
+	{
+		if (!m_pDatabase)
+			return FALSE;
+		//
+		CWizStyleArray arrayStyle;
+		m_pDatabase->GetStyles(arrayStyle);
+		//
+		for (CWizStyleArray::const_iterator it = arrayStyle.begin();
+			it != arrayStyle.end();
+			it++)
+		{
+			AddStyle(*it);
+			m_arrayStyleName.push_back(CWizKMDatabase::GetObjectName(it->p));
+		}
+		//
+		return TRUE;
+	}
+	//
+	void GetAllStyleNames(CWizStdStringArray& arrayName)
+	{
+		arrayName.assign(m_arrayStyleName.begin(), m_arrayStyleName.end());
+	}
+};
+
+
 
 #endif
 

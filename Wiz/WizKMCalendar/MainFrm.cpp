@@ -36,7 +36,7 @@ CMainFrame::CMainFrame(LPCTSTR lpszCommandLine)
 	//
 	CString strSection(_T("WizKMCalendar"));
 	//
-	CWizKMSettings settings;
+	CWizKMSettings& settings = WizKMGetSettings();
 	m_view.SetView((WizCalendarViewType)settings.GetInt(strSection, _T("View"), viewtypeMonth));
 	m_view.SetBackgroundTextType((WizKMMonthViewCellBackgroundTextType)settings.GetInt(strSection, _T("Background"), textNone));
 }
@@ -84,16 +84,28 @@ LRESULT CMainFrame::OnCreate(UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*lParam*/
 	m_toolbar.CreateEx(m_hWnd);
 	ATLASSERT(m_toolbar.IsWindow());
 	//
+	CSize szPadding;
+	m_toolbar.GetPadding(&szPadding);
+	m_toolbar.SetPadding(20, szPadding.cy);
+	//
+	m_toolbar.SetAddTopSpace(TRUE);
+	m_toolbar.SetAddBottomSpace(TRUE);
+	m_toolbar.SetButtonBorder(TRUE);
+	//
 	//
 	m_toolbar.AddToolButton(ID_CALENDAR_NEWEVENT);
+	m_toolbar.AddToolButtonSep();
 	m_toolbar.AddToolButton(ID_CALENDAR_EDITEVENT);
 	m_toolbar.AddToolButton(ID_CALENDAR_DELETEEVENT);
+	m_toolbar.AddToolButtonSep();
 	m_toolbar.AddToolButton(ID_CALENDAR_MONTH);
 	m_toolbar.AddToolButton(ID_CALENDAR_WEEK);
 	m_toolbar.AddToolButton(ID_CALENDAR_DAY);
+	m_toolbar.AddToolButtonSep();
 	m_toolbar.AddToolButton(ID_CALENDAR_BACKGROUND, BTNS_WHOLEDROPDOWN);
-	m_toolbar.AddToolButton(ID_CALENDAR_HELP, BTNS_WHOLEDROPDOWN);
 	m_toolbar.AddToolButton(ID_CALENDAR_OPTIONS);
+	m_toolbar.AddToolButtonSep();
+	m_toolbar.AddToolButton(ID_CALENDAR_HELP, BTNS_WHOLEDROPDOWN);
 	//
 	m_toolbar.AutoSetButtonSize();
 	//
@@ -140,9 +152,10 @@ LRESULT CMainFrame::OnDestroy(UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*lParam*
 	//
 	CString strSection(_T("WizKMCalendar"));
 	//
-	CWizKMSettings settings;
-	settings.SetInt(strSection, _T("View"), m_view.GetView());
-	settings.SetInt(strSection, _T("Background"), m_view.GetBackgroundTextType());
+	CWizKMSettings& settings = WizKMGetSettings();
+	settings.SetInt(strSection, _T("View"), m_view.GetView(), WIZ_SETTINGS_MANUAL_SAVE);
+	settings.SetInt(strSection, _T("Background"), m_view.GetBackgroundTextType(), WIZ_SETTINGS_MANUAL_SAVE);
+	settings.Save();
 	//
 	CMessageLoop* pLoop = _Module.GetMessageLoop();
 	ATLASSERT(pLoop != NULL);
@@ -323,7 +336,7 @@ void CMainFrame::UpdateLayout(BOOL bResizeBars /*= TRUE*/)
 	CRect rc;
 	GetClientRect(&rc);
 	//
-	int nToolBarHeight = m_toolbar.GetMinHeight();
+	int nToolBarHeight = m_toolbar.GetMinHeight() + 2;
 	//
 	CRect rcToolBar(0, 0, rc.right, nToolBarHeight);
 	//

@@ -435,6 +435,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\Globals\WizKMSettings.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\..\WizGlobals\WizMisc.cpp"
 				>
 			</File>
@@ -509,6 +513,10 @@
 			</File>
 			<File
 				RelativePath="..\Globals\WizKMGlobal.h"
+				>
+			</File>
+			<File
+				RelativePath="..\Globals\WizKMSettings.h"
 				>
 			</File>
 			<File

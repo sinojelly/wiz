@@ -6,7 +6,7 @@
 
 
  /* File created by MIDL compiler version 7.00.0500 */
-/* at Sun Aug 07 13:18:24 2011
+/* at Wed Sep 21 12:24:39 2011
  */
 /* Compiler settings for .\WizKMCore.idl:
     Oicf, W1, Zp8, env=Win32 (32b run)

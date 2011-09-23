@@ -15,24 +15,341 @@
 #include "WizUIShare.h"
 #endif
 
-enum WizDrawItemBackgroundState 
+class CWizSkinBase
 {
-	wizStateNone = 0, 
-	wizStateSelected = 0x01, 
-	wizStateHot = 0x02, 
-	wizStateFocused = 0x04,
-	wizStateControlDropTarget = 0x08,
+public:
+	CWizSkinBase();
+private:
+	std::map<CString, CString> m_map;
+public:
+	virtual BOOL Init(LPCTSTR lpszFileName);
+	virtual CString GetValue(const CString& strKey);
+	virtual COLORREF GetColor(const CString& strKey, COLORREF crDefault);
+	virtual BOOL GetBool(const CString& strKey, BOOL bDef);
+	virtual int GetInt(const CString& strKey, int nDef);
 };
 
-void WizGradientFill(HDC hDC, const RECT& rcItem, COLORREF cr1, COLORREF cr2, BOOL bHor);
-void WizDrawItemBackgroundBox(HDC hDC, const RECT& rcItem, COLORREF rgbBackground, COLORREF rgbOuter, COLORREF rgbInner, COLORREF rgbTop, COLORREF rgbBottom);
-void WizDrawItemBackground(HWND hWnd, HDC hDC, const RECT& rc, UINT nState, COLORREF crDefaultBackgroundColor);
-void WizDrawItemBackground_Button(HDC hDC, const RECT& rcItem, BOOL bHover);
-void WizDrawCrystalBackground(HDC hDC, const RECT& rcItem, int nCenterLine, BOOL bHot);
-void WizDrawCrystalBackground_Hot(HDC hDC, const RECT& rcItem, int nCenterLine);
-void WizDrawCrystalBackground_Pressed(HDC hDC, const RECT& rcItem, int nCenterLine);
-void WizDrawLighterGradientLine(HDC hDC, const POINT& ptFrom, const POINT& ptTo);
-void WizDrawDarkerGradientLine(HDC hDC, const POINT& ptFrom, const POINT& ptTo);
+const UINT WIZ_UM_SKIN_CHANGED = ::RegisterWindowMessage(_T("WIZ_UM_SKIN_CHANGED"));
+
+
+class CWizSkin : public CWizSkinBase
+{
+public:
+	CWizSkin();
+public:
+	enum WizSkinColorType
+	{
+		crWindow = 0,
+		crWindowText,
+		crControl,
+		crControlText,
+		
+		crMenuBar,
+		crMenuBarHot,
+		crMenuBarText,
+		crMenuBarTextHot,
+		
+		crToolBar,
+		
+		crToolBarButtonNormal,
+		crToolBarButtonHot,
+		crToolBarButtonDown,
+		crToolBarButtonDisabled,
+		
+		crToolBarButtonBorderNormal,
+		crToolBarButtonBorderHot,
+		crToolBarButtonBorderDown,
+		crToolBarButtonBorderDisabled,
+		
+		crToolBarButtonTextNormal,
+		crToolBarButtonTextHot,
+		crToolBarButtonTextDown,
+		crToolBarButtonTextDisabled,
+		
+		crItem,
+		crItemHot,
+		crItemSelected,
+		crItemSelectedNoFocus,
+		//
+		crItemText,
+		crItemTextHot,
+		crItemTextSelected,
+		crItemTextSelectedNoFocus,
+
+		crToolBarEdit,
+		crToolBarEditText,
+		crToolBarEditBorderHot,
+
+		crSecondLineText,
+
+		crToolBarShadow,
+		crToolBarBorder,
+		
+		crSplitter,
+
+		crControlBorder,
+	};
+public:
+	static const int WIZCOLORTYPE_BEGIN = crWindow;
+	static const int WIZCOLORTYPE_END = crControlBorder;
+private:
+	COLORREF m_arrayColor[WIZCOLORTYPE_END - WIZCOLORTYPE_BEGIN + 1];
+public:
+	virtual void InitDefault();
+	virtual BOOL Init(LPCTSTR lpszFileName);
+	//
+	virtual COLORREF GetMenuBarColor(BOOL bHot);
+	virtual COLORREF GetMenuBarTextColor(BOOL bHot);
+	//
+	virtual COLORREF GetToolBarColor();
+	//
+	enum WizButtonState { wizbsNormal, wizbsHot, wizbsDown, wizbsDisabled};
+	virtual COLORREF GetToolBarButtonColor(WizButtonState state);
+	virtual COLORREF GetToolBarButtonBorderColor(WizButtonState state);
+	virtual COLORREF GetToolBarButtonTextColor(WizButtonState state);
+	//
+	enum WizItemState { wizisNormal, wizisHot, wizisSelected, wizisSelectedNoFocus };
+	virtual COLORREF GetItemColor(WizItemState state);
+	virtual COLORREF GetItemTextColor(WizItemState state);
+	//
+	virtual COLORREF GetWindowColor();
+	virtual COLORREF GetWindowTextColor();
+	//
+	virtual COLORREF GetControlColor();
+	virtual COLORREF GetControlTextColor();
+	//
+	virtual COLORREF GetToolBarEditColor();
+	virtual COLORREF GetToolBarEditTextColor();
+	virtual COLORREF GetToolBarEditBorderHotColor();
+	//
+	virtual COLORREF GetSecondLineTextColor();
+	//
+	virtual COLORREF GetToolBarShadowColor();
+	virtual COLORREF GetToolBarBorderColor();
+	//
+	virtual COLORREF GetSplitterColor();
+	//
+	virtual COLORREF GetControlBorderColor();
+	//
+	virtual CString GetCustomKey(LPCTSTR lpszName, WizSkinColorType type);
+	virtual COLORREF GetCustomColor(LPCTSTR lpszName, WizSkinColorType type, COLORREF crDefault);
+
+	virtual void DrawItemBackground(CDCHandle dc, const RECT& rcItem, WizItemState state, BOOL bFocusOnItem, COLORREF crDefault);
+	//
+	virtual void DrawButtonBackground(CDCHandle dc, const RECT& rcButton, WizButtonState state);
+	virtual void DrawButtonBackgroundEx(CDCHandle dc, const RECT& rcButton, WizButtonState state, BOOL bLeft, BOOL bRight);
+	//
+	enum WizToolButtonDropDownState { wizddsNone, wizddsDropDown, wizddsWholeDropDown};
+	virtual void DrawDropDownArrow(CDCHandle dc, const CRect& rc, COLORREF cr);
+	virtual void DrawDropDownArrow2(CDCHandle dc, const CRect& rc, COLORREF cr);
+	virtual int GetDropDownArrowWidth();
+	//
+	enum WizToolButtonBackgroundFlags { wizbbText = 0x01, wizbbImage = 0x02, wizbbBorder = 0x04 };
+	virtual void DrawToolButtonBackground(CDCHandle dc, const RECT& rcButton, LPCTSTR lpszText, UINT nFlags, WizButtonState state, WizToolButtonDropDownState stateDropDown);
+	virtual void DrawToolButtonBackgroundEx(CDCHandle dc, const RECT& rcButton, LPCTSTR lpszText, UINT nFlags, WizButtonState state, WizToolButtonDropDownState stateDropDown, BOOL bLeft, BOOL bRight);
+	virtual void DrawToolButtonBackgroundCustomColor(CDCHandle dc, const RECT& rcButton, LPCTSTR lpszText, UINT nFlags, COLORREF crBorder, COLORREF crFill, COLORREF crText, CWizSkin::WizButtonState state, WizToolButtonDropDownState stateDropDown, BOOL bLeft, BOOL bRight);
+	//
+	virtual void DrawRoundRect(CDCHandle dc, const CRect& rc, COLORREF crColor, COLORREF crFill, BOOL bLeft, BOOL bRight);
+	//
+	virtual BOOL GetDrawToolBarTopBorder();
+	virtual BOOL GetDrawControlBorder();
+public:
+	static CString ColorTypeToName(WizSkinColorType type);
+	static WizItemState CalItemState(HWND hwnd, BOOL bSelected, BOOL bHot);
+
+};
+
+CWizSkin* WizGetSkin();
+
+class CWizSkinCustomItem
+{
+public:
+	CWizSkinCustomItem()
+	{
+		Init();
+	}
+	virtual CString GetSkinName()
+	{
+		return m_strSkinName;
+	}
+	virtual void SetSkinName(LPCTSTR lpszSkinName)
+	{
+		m_strSkinName = lpszSkinName;
+		//
+		Init();
+		//
+		CString strSkinName(lpszSkinName);
+		if (strSkinName.IsEmpty())
+			return;
+		//
+		m_crWindowBackground = WizGetSkin()->GetColor(strSkinName + _T("_WindowBackground"), -1);
+		m_crControlBackground = WizGetSkin()->GetColor(strSkinName + _T("_ControlBackground"), -1);
+		m_crSecondLine = WizGetSkin()->GetColor(strSkinName + _T("SecondLineText"), -1);
+		for (int i = 0; i < 4; i++)
+		{
+			m_crItemBackground[i] = WizGetSkin()->GetCustomColor(lpszSkinName, CWizSkin::WizSkinColorType(CWizSkin::crItem + i), m_crItemBackground[i]);
+			m_crItemText[i] = WizGetSkin()->GetCustomColor(lpszSkinName, CWizSkin::WizSkinColorType(CWizSkin::crItemText + i), m_crItemText[i]);
+		}
+	}
+	//
+	void Init()
+	{
+		m_crWindowBackground = -1;
+		m_crControlBackground = -1;
+		m_crSecondLine = -1;
+		for (int i = 0; i < 4; i++)
+		{
+			m_crItemBackground[i] = -1;
+			m_crItemText[i] = -1;
+		}
+	}
+protected:
+	CString m_strSkinName;
+	//
+	COLORREF m_crWindowBackground;
+	COLORREF m_crControlBackground;
+	COLORREF m_crSecondLine;
+	COLORREF m_crItemBackground[4];
+	COLORREF m_crItemText[4];
+
+public:
+	virtual COLORREF GetCustomWindowBackgroundColor()
+	{
+		if ((COLORREF)-1 == m_crWindowBackground)
+			return WizGetSkin()->GetWindowColor();
+		return m_crWindowBackground;
+	}
+	virtual COLORREF GetCustomControlBackgroundColor()
+	{
+		if ((COLORREF)-1 == m_crControlBackground)
+			return WizGetSkin()->GetControlColor();
+		return m_crControlBackground;
+	}
+	virtual COLORREF GetCustomSecondLineColor()
+	{
+		if ((COLORREF)-1 == m_crSecondLine)
+			return WizGetSkin()->GetSecondLineTextColor();
+		return m_crSecondLine;
+	}
+	virtual COLORREF GetCustomItemColor(CWizSkin::WizItemState state)
+	{
+		COLORREF cr = m_crItemBackground[state - CWizSkin::wizisNormal];
+		if ((COLORREF)-1 == cr)
+			return WizGetSkin()->GetItemColor(state);
+		return cr;
+	}
+	virtual COLORREF GetCustomItemTextColor(CWizSkin::WizItemState state)
+	{
+		COLORREF cr = m_crItemText[state - CWizSkin::wizisNormal];
+		if ((COLORREF)-1 == cr)
+			return WizGetSkin()->GetItemTextColor(state);
+		return cr;
+	}
+};
+
+
+template <class T>
+class CWizSkinBorder
+{
+public:
+	CWizSkinBorder()
+		: m_nForceBorder(-1)
+	{
+	}
+private:
+	int m_nForceBorder;
+public:
+	BEGIN_MSG_MAP(CWizSkinBorder)
+		MESSAGE_HANDLER(WIZ_UM_SKIN_CHANGED, OnSkinChanged)
+		MESSAGE_HANDLER(WM_NCPAINT, OnNcPaint)
+	END_MSG_MAP()
+
+public:
+	LRESULT OnSkinChanged(UINT /*uMsg*/, WPARAM wParam, LPARAM /*lParam*/, BOOL& bHandled)
+	{
+		bHandled = FALSE;
+		//
+		InitBorder();
+		//
+		return 0;
+	}
+	LRESULT OnNcPaint(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& /*bHandled*/)
+	{
+		T* pT = static_cast<T*>(this);
+		//
+		LRESULT ret = pT->DefWindowProc(uMsg, wParam, lParam);
+		//
+		if (0 == (pT->GetWindowLong(GWL_STYLE) & WS_BORDER))
+			return ret;
+		//		
+		CWindowDC dc(pT->m_hWnd);
+		//
+		CRgn rgn; 
+		CRect rcWindow; 
+		pT->GetWindowRect(rcWindow); 
+		rcWindow.MoveToXY(0, 0);
+		//
+		CRect rcClient = rcWindow;
+		rcClient.DeflateRect(1, 1);
+		//
+		rgn.CreateRectRgn(rcClient.left, rcClient.top, rcClient.right, rcClient.bottom); 
+		dc.SelectClipRgn(rgn, RGN_DIFF); 
+		//
+		dc.FillSolidRect(&rcWindow, ::WizGetSkin()->GetControlBorderColor());
+		//
+		return ret;
+	}
+	//
+	int GetForceBorder()
+	{
+		return m_nForceBorder;
+	}
+	void SetForceBorder(BOOL b)
+	{
+		m_nForceBorder = b ? 1 : 0;
+		//
+		T* pT = static_cast<T*>(this);
+		//		
+		if (pT->IsWindow())
+		{
+			InitBorder();
+		}
+	}
+	void InitBorder()
+	{
+		T* pT = static_cast<T*>(this);
+		//		
+		if (!pT->IsWindow())
+			return;
+		//
+		pT->ModifyStyleEx(WS_EX_CLIENTEDGE, 0);
+		//
+		BOOL bBorder = FALSE;
+		if (1 == m_nForceBorder)
+		{
+			bBorder = TRUE;
+		}
+		else if (0 == m_nForceBorder)
+		{
+			bBorder = FALSE;
+		}
+		else
+		{
+			bBorder = WizGetSkin()->GetDrawControlBorder();
+		}
+		//
+		if (bBorder)
+		{
+			pT->SetWindowLong(GWL_STYLE, WS_BORDER | pT->GetWindowLong(GWL_STYLE));
+		}
+		else
+		{
+			pT->SetWindowLong(GWL_STYLE, ~WS_BORDER & pT->GetWindowLong(GWL_STYLE));
+		}
+		//
+		pT->SetWindowPos(NULL, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOZORDER | SWP_FRAMECHANGED);
+	}
+};
 
 
 #define WIZUIFONT_BOLD			0x01
@@ -63,18 +380,18 @@ private:
 
 
 template <bool t_bVertical = true, class TSettings = CWizEmptySettings>
-class CWizVistaSplitterWindowT : 
-	public CSplitterWindowImpl<CWizVistaSplitterWindowT<t_bVertical>, t_bVertical>
+class CWizSplitterWindowT : 
+	public CSplitterWindowImpl<CWizSplitterWindowT<t_bVertical>, t_bVertical>
 {
 public:
-	CWizVistaSplitterWindowT()
+	CWizSplitterWindowT()
 		: m_nSmallWindowHeight(100)
 	{
 		m_dwExtendedStyle = 0;
 	}
 	DECLARE_WND_CLASS_EX(_T("Wiz_SplitterWindow"), CS_DBLCLKS, COLOR_BTNFACE)
 
-	typedef CSplitterWindowImpl<CWizVistaSplitterWindowT<t_bVertical>, t_bVertical>   _baseClass;
+	typedef CSplitterWindowImpl<CWizSplitterWindowT<t_bVertical>, t_bVertical>   _baseClass;
 
 	// Overrideables
 	void DrawSplitterBar(CDCHandle dc)
@@ -83,101 +400,7 @@ public:
 
 		if ( GetSplitterBarRect ( &rect ) )
 		{
-
-			COLORREF rgbTop = RGB(255, 255, 255);
-			//
-			if (t_bVertical)
-			{
-				int nWidth = rect.right - rect.left;
-				for (int i = 0; i < nWidth; i++)
-				{
-					double f = 160 + (255.0 - 160) * (i + 1.0) / nWidth;
-					int n = int(f);
-					COLORREF rgbBottom = RGB(n, n, n);
-					//
-					//
-					GRADIENT_RECT grdRect = { 0, 1 };
-					TRIVERTEX triVertextTop[ 2 ] = {
-												rect.left + i,
-												rect.top,
-												GetRValue( rgbTop) << 8,
-												GetGValue( rgbTop) << 8,
-												GetBValue( rgbTop) << 8,
-												0x0000,			
-												rect.left + i + 1,
-												rect.bottom / 2,
-												GetRValue( rgbBottom) << 8,
-												GetGValue( rgbBottom) << 8,
-												GetBValue( rgbBottom) << 8,
-												0x0000
-											};
-				
-					dc.GradientFill( triVertextTop, 2, &grdRect, 1, GRADIENT_FILL_RECT_V );
-					//
-					TRIVERTEX triVertextBottom[ 2 ] = {
-												rect.left + i,
-												rect.bottom / 2,
-												GetRValue( rgbBottom) << 8,
-												GetGValue( rgbBottom) << 8,
-												GetBValue( rgbBottom) << 8,
-												0x0000,			
-												rect.left + i + 1,
-												rect.bottom,
-												GetRValue( rgbTop) << 8,
-												GetGValue( rgbTop) << 8,
-												GetBValue( rgbTop) << 8,
-												0x0000
-											};
-				
-					dc.GradientFill( triVertextBottom, 2, &grdRect, 1, GRADIENT_FILL_RECT_V );
-				}
-			}
-			else
-			{
-				int nHeight = rect.bottom - rect.top;
-				for (int i = 0; i < nHeight; i++)
-				{
-					double f = 160 + (255.0 - 160) * (i + 1.0) / nHeight;
-					int n = int(f);
-					COLORREF rgbBottom = RGB(n, n, n);
-					//
-					//
-					GRADIENT_RECT grdRect = { 0, 1 };
-					TRIVERTEX triVertextLeft[ 2 ] = {
-												rect.left,
-												rect.top + i,
-												GetRValue( rgbTop) << 8,
-												GetGValue( rgbTop) << 8,
-												GetBValue( rgbTop) << 8,
-												0x0000,			
-												rect.right / 2,
-												rect.top + i + 1,
-												GetRValue( rgbBottom) << 8,
-												GetGValue( rgbBottom) << 8,
-												GetBValue( rgbBottom) << 8,
-												0x0000
-											};
-				
-					dc.GradientFill( triVertextLeft, 2, &grdRect, 1, GRADIENT_FILL_RECT_H );
-					//
-					TRIVERTEX triVertextRight[ 2 ] = {
-												rect.right / 2,
-												rect.top + i,
-												GetRValue( rgbBottom) << 8,
-												GetGValue( rgbBottom) << 8,
-												GetBValue( rgbBottom) << 8,
-												0x0000,			
-												rect.right,
-												rect.top + i + 1,
-												GetRValue( rgbTop) << 8,
-												GetGValue( rgbTop) << 8,
-												GetBValue( rgbTop) << 8,
-												0x0000
-											};
-				
-					dc.GradientFill( triVertextRight, 2, &grdRect, 1, GRADIENT_FILL_RECT_H );
-				}
-			}
+			dc.FillSolidRect(&rect, WizGetSkin()->GetSplitterColor() );
 		}
 	}
 
@@ -211,7 +434,7 @@ public:
 	}
 public:
 	//
-	BEGIN_MSG_MAP(CWizVistaSplitterWindowT)
+	BEGIN_MSG_MAP(CWizSplitterWindowT)
 		MESSAGE_HANDLER(WM_DESTROY, OnDestroy)
 		CHAIN_MSG_MAP(_baseClass)
 	END_MSG_MAP()
@@ -230,7 +453,7 @@ public:
 			if (SPLIT_PANE_NONE == GetSinglePaneMode())
 			{
 				TSettings settings;
-				settings.SetInt(m_strSection, _T("SplitterPos"), GetSplitterPos());
+				settings.SetInt(m_strSection, _T("SplitterPos"), GetSplitterPos(), 0);
 			}
 		}
 	}
@@ -280,8 +503,8 @@ public:
 	}
 };
 
-typedef CWizVistaSplitterWindowT<true, CWizEmptySettings>    CWizVistaSplitterWindow;
-typedef CWizVistaSplitterWindowT<false, CWizEmptySettings>   CWizVistaHorSplitterWindow;
+typedef CWizSplitterWindowT<true, CWizEmptySettings>    CWizSplitterWindow;
+typedef CWizSplitterWindowT<false, CWizEmptySettings>   CWizHorSplitterWindow;
 
 
 #endif //__ATLSPLIT_H__
@@ -289,15 +512,15 @@ typedef CWizVistaSplitterWindowT<false, CWizEmptySettings>   CWizVistaHorSplitte
 
 
 template <class T>
-class CWizVistaListBoxImpl 
+class CWizListBoxImpl 
 	: public ATL::CWindowImpl< T, CListBox, ATL::CControlWinTraits>
-	, public COwnerDraw<CWizVistaListBoxImpl<T> >
-	, public CDoubleBufferImpl<CWizVistaListBoxImpl<T> >
+	, public COwnerDraw<CWizListBoxImpl<T> >
+	, public CDoubleBufferImpl<CWizListBoxImpl<T> >
 {
 public:
 	DECLARE_WND_SUPERCLASS(NULL, CListBox::GetWndClassName())
 public:
-	CWizVistaListBoxImpl(void)
+	CWizListBoxImpl(void)
 	{
 		WizCreateUIFont(m_font);
 		WizCreateUIFont(m_fontBold, WIZUIFONT_BOLD);
@@ -308,7 +531,7 @@ public:
 		m_nFocusedItem = -1;
 	}
 public:
-	BEGIN_MSG_MAP(CWizVistaListBoxImpl)
+	BEGIN_MSG_MAP(CWizListBoxImpl)
 		MESSAGE_HANDLER(WM_CREATE, OnCreate)
 		MESSAGE_HANDLER(WM_DESTROY, OnDestroy)
 		MESSAGE_HANDLER(WM_SETFOCUS, OnSetFocus)
@@ -316,8 +539,8 @@ public:
 		MESSAGE_HANDLER(WM_MOUSEMOVE, OnMouseMove)
 		MESSAGE_HANDLER(WM_MOUSELEAVE, OnMouseLeave)
 		MESSAGE_HANDLER(WM_CONTEXTMENU, OnContextMenu)
-		CHAIN_MSG_MAP_ALT(COwnerDraw<CWizVistaListBoxImpl>, 1)
-		CHAIN_MSG_MAP(CDoubleBufferImpl<CWizVistaListBoxImpl> )
+		CHAIN_MSG_MAP_ALT(COwnerDraw<CWizListBoxImpl>, 1)
+		CHAIN_MSG_MAP(CDoubleBufferImpl<CWizListBoxImpl> )
 		DEFAULT_REFLECTION_HANDLER()
 	END_MSG_MAP()
 protected:
@@ -521,28 +744,9 @@ protected:
 		BOOL bSelected = (lpDrawItemStruct->itemState & ODS_SELECTED) == ODS_SELECTED;
 		BOOL bFocus = (lpDrawItemStruct->itemState & ODS_FOCUS) == ODS_FOCUS;
 		//
-		CPoint pt;
-		GetCursorPos(&pt);
-		ScreenToClient(&pt);
+		CWizSkin::WizItemState state = CWizSkin::CalItemState(m_hWnd, bSelected, FALSE);
 		//
-		//BOOL bHot = CRect(lpDrawItemStruct->rcItem).PtInRect(pt);
-		BOOL bHot = FALSE;
-		//
-		UINT nState = 0;
-		if (bSelected)
-		{
-			nState |= wizStateSelected;
-		}
-		if (bHot)
-		{
-			nState |= wizStateHot;
-		}
-		//if (bFocus)
-		//{
-		//	nState |= wizStateFocused;
-		//}
-
-		WizDrawItemBackground(m_hWnd, lpDrawItemStruct->hDC, lpDrawItemStruct->rcItem, nState, GetBackgroundColor(nItem));
+		WizGetSkin()->DrawItemBackground(lpDrawItemStruct->hDC, lpDrawItemStruct->rcItem, state, bFocus, GetBackgroundColor(nItem));
 	}
 	virtual void DrawText(LPDRAWITEMSTRUCT lpDrawItemStruct)
 	{
@@ -628,7 +832,7 @@ public:
 	}
 	virtual void ResetItemHeight()
 	{
-		CWizVistaListBoxImpl::SetItemHeight(0, CalItemHeight());
+		CWizListBoxImpl::SetItemHeight(0, CalItemHeight());
 	}
 	virtual HMENU GetContextMenu()
 	{
@@ -761,7 +965,8 @@ public:
 };
 
 
-class CWizVistaListBox : public CWizVistaListBoxImpl<CWizVistaListBox>
+class CWizVistaListBox 
+	: public CWizListBoxImpl<CWizVistaListBox>
 {
 public:
 	DECLARE_WND_SUPERCLASS(_T("Wiz_ListBox"), GetWndClassName())
@@ -781,7 +986,7 @@ public:
 };
 
 class CWizVistaListBoxMultipleSelect : 
-	public CWizVistaListBoxImpl<CWizVistaListBoxMultipleSelect>,
+	public CWizListBoxImpl<CWizVistaListBoxMultipleSelect>,
 	public CWizVistaListBoxMultiSelectBase<CWizVistaListBoxMultipleSelect>
 {
 public:
@@ -801,7 +1006,7 @@ public:
 };
 
 class CWizVistaListBoxExtendedSelect : 
-	public CWizVistaListBoxImpl<CWizVistaListBoxExtendedSelect>,
+	public CWizListBoxImpl<CWizVistaListBoxExtendedSelect>,
 	public CWizVistaListBoxMultiSelectBase<CWizVistaListBoxMultipleSelect>
 {
 public:
@@ -915,19 +1120,17 @@ public:
 	//
 	int CalComboBoxHeight()
 	{
-		static int height = -1;
-		if (-1 == height)
+		if (m_combo.IsWindow())
 		{
-			CClientDC dc(m_hWnd);
-			HFONT hFont = ((HFONT)GetStockObject( DEFAULT_GUI_FONT ));
-			dc.SelectFont( hFont ); //GetFont()
-			TEXTMETRIC tm;
-			dc.GetTextMetrics(&tm); 
-
-			height = tm.tmHeight + tm.tmInternalLeading + 4;
+			CRect rc;
+			m_combo.GetWindowRect(&rc);
+			return rc.Height();
 		}
-		
-		return height;
+		else
+		{
+			static int height = ::GetSystemMetrics(SM_CYMENU);
+			return height + 3;
+		}
 	}
 	//
 	LRESULT OnComboSelChange(WORD wNotifyCode, WORD wID, HWND hWndCtl, BOOL& bHandled)
@@ -963,6 +1166,9 @@ public:
 		}
 		//
 		rcCombo.bottom = rcCombo.top + 400;
+		//
+		rcCombo.left++;
+		rcCombo.right--;
 		//
 		m_combo.MoveWindow(rcCombo);
 	}
@@ -1041,6 +1247,8 @@ public:
 	void ToolTipRelayEvent();
 };
 
+const UINT WIZ_UM_TOOLBAR_GET_BACKGROUND = ::RegisterWindowMessage(_T("WIZ_UM_TOOLBAR_GET_BACKGROUND"));
+
 template <class TEditClass, bool t_bLargeFont = false>
 class CWizToolBarEditContainer 
 	: public CWizToolBarControlContainer<CWizToolBarEditContainer<TEditClass>  >
@@ -1049,19 +1257,20 @@ public:
 	CWizToolBarEditContainer(DWORD dwEditStyle)
 		: m_dwEditStyle(dwEditStyle)
 		, m_fMouseOver(0)
+		, m_fAlwaysBorder(0)
+		, m_crBorderHot((COLORREF)-1)
 	{
 		WizCreateUIFont(m_font, t_bLargeFont ? WIZUIFONT_LARGE : 0);
-		//
-		m_penBorderLight.CreatePen(PS_SOLID, 1, ::GetSysColor(COLOR_BTNFACE));
-		m_penBorderDark.CreatePen(PS_SOLID, 1, ::GetSysColor(COLOR_BTNSHADOW));
 	}
 public:
 	DWORD m_dwEditStyle;
 	CFont m_font;
 	TEditClass m_edit;
-	CPen m_penBorderLight;
-	CPen m_penBorderDark;
+	COLORREF m_crBorderHot;
 	unsigned m_fMouseOver:1;
+	unsigned m_fAlwaysBorder:1;
+	CBrush m_brushEditHot;
+	CBrush m_brushEditNormal;
 public:
 	BEGIN_MSG_MAP(CWizToolBarControlContainer)
 		COMMAND_CODE_HANDLER(EN_CHANGE, OnEditNotify)
@@ -1072,6 +1281,8 @@ public:
 		MESSAGE_HANDLER(WM_MOUSEMOVE, OnMouseMove)
 		MESSAGE_HANDLER(WM_MOUSELEAVE, OnMouseLeave)
 		MESSAGE_HANDLER(WM_LBUTTONDOWN, OnLButtonDown)
+		MESSAGE_HANDLER(WM_CTLCOLOREDIT, OnCtlColorEdit)
+		MESSAGE_HANDLER(WIZ_UM_SKIN_CHANGED, OnSkinChanged)
 		CHAIN_MSG_MAP(CWizToolBarControlContainer)
 	END_MSG_MAP()
 
@@ -1094,6 +1305,7 @@ public:
 		{
 			m_fMouseOver = 1;
 			Invalidate();
+			m_edit.Invalidate();
 			UpdateWindow();
 			StartTrackMouseLeave();
 		}
@@ -1107,6 +1319,7 @@ public:
 		{
 			m_fMouseOver = 0;
 			Invalidate();
+			m_edit.Invalidate();
 			UpdateWindow();
 		}
 		return 0;
@@ -1146,6 +1359,51 @@ public:
 		//
 		return 0;
 	}
+	LRESULT OnSkinChanged(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
+	{
+		bHandled = FALSE;
+		//
+		if (!m_brushEditNormal.IsNull())
+		{
+			m_brushEditNormal.DeleteObject();
+		}
+		if (!m_brushEditHot.IsNull())
+		{
+			m_brushEditHot.DeleteObject();
+		}
+		return 0;
+	}
+
+	LRESULT OnCtlColorEdit(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
+	{
+		BOOL bHot = IsMouseHover();
+		//
+		if (m_fAlwaysBorder || bHot)
+		{
+			if (m_brushEditHot.IsNull())
+			{
+				m_brushEditHot.CreateSolidBrush(WizGetSkin()->GetToolBarEditColor());
+			}
+			return (LRESULT)m_brushEditHot.m_hBrush;
+		}
+		else
+		{
+			if (m_brushEditNormal.IsNull())
+			{
+				COLORREF cr = -1;
+				if (0 != GetParent().SendMessage(WIZ_UM_TOOLBAR_GET_BACKGROUND, 0, (LPARAM)&cr))
+				{
+					m_brushEditNormal.CreateSolidBrush(cr);
+				}
+				else
+				{
+					m_brushEditNormal.CreateSolidBrush(WizGetSkin()->GetToolBarColor());
+				}
+			}
+			//
+			return (LRESULT)m_brushEditNormal.m_hBrush;
+		}
+	}
 	//
 	BOOL StartTrackMouseLeave()
 	{
@@ -1177,18 +1435,25 @@ public:
 		CRect rcClient;
 		GetClientRect(&rcClient);
 		//
-		CWizDCSaver saver(dcPaint);
+		BOOL bHot = IsMouseHover();
 		//
-		if (IsMouseHover())
+		if (m_fAlwaysBorder || bHot)
 		{
-			dcPaint.SelectStockBrush(NULL_BRUSH);
-			dcPaint.SelectPen(IsMouseHover() ? m_penBorderDark : m_penBorderLight);
+			COLORREF crBorder = bHot ? WizGetSkin()->GetToolBarEditBorderHotColor() : WizGetSkin()->GetToolBarButtonBorderColor(CWizSkin::wizbsNormal);
+			COLORREF crBackground = WizGetSkin()->GetToolBarEditColor();
+			if (bHot
+				&& m_crBorderHot != (COLORREF)-1)
+			{
+				crBorder = m_crBorderHot;
+			}
 			//
-			CRect rcBorder = rcClient;
-			//rcBorder.DeflateRect(1, 1);
-			//
-			dcPaint.Rectangle(rcBorder);
+			WizGetSkin()->DrawRoundRect(dcPaint, &rcClient, crBorder, crBackground, TRUE, TRUE);
 		}
+	}
+	//
+	void SetAlwaysBorder(BOOL b)
+	{
+		m_fAlwaysBorder = b ? 1 : 0;
 	}
 	//
 	virtual void OnEnSetFocus()
@@ -1259,6 +1524,7 @@ public:
 	}
 };
 
+#if 0
 
 template <class TEditClass, bool t_bLargeFont = false>
 class CWizToolBarIconEditContainer 
@@ -1752,20 +2018,25 @@ public:
 };
 
 
-
+#endif
 
 template <class T>
-class CWizToolBarCtrlBase : public ATL::CWindowImpl< T, CToolBarCtrl, ATL::CControlWinTraits>
+class CWizToolBarCtrlBase 
+	: public ATL::CWindowImpl< T, CToolBarCtrl, ATL::CControlWinTraits>
 {
 public:
 	CWizToolBarCtrlBase()
 	{
 		m_bAutoSize = TRUE;
+		m_bAddTopSpace = FALSE;
+		m_bAddBottomSpace = FALSE;
 		m_nStreatchButtonCommand = 0;
 		m_nStreatchButtonMinWidth = 24;
 	}
 protected:
 	BOOL m_bAutoSize;
+	BOOL m_bAddTopSpace;
+	BOOL m_bAddBottomSpace;
 	int m_nStreatchButtonCommand;
 	int m_nStreatchButtonMinWidth;
 public:
@@ -1841,9 +2112,37 @@ public:
 
 		return lResult;
 	}
-	void AddToolButtonNoTextWithToolTip(UINT nID, LPCTSTR lpszButtonText, UINT nImageIndex)
+	void AddToolButtonNoTextWithoutToolTip(UINT nID, UINT nButtonStyle, UINT nImageIndex, int nInsertPos = -1)
 	{
-		int nButtonStyle = BTNS_BUTTON;
+		if (m_bAutoSize)
+		{
+			nButtonStyle |= BTNS_AUTOSIZE;
+		}
+		//
+		TBBUTTON tbbtn = { 0 };
+		ZeroMemory(&tbbtn, sizeof(tbbtn));
+		tbbtn.idCommand = nID;
+		tbbtn.fsState = TBSTATE_ENABLED;
+		tbbtn.fsStyle = nButtonStyle;
+		tbbtn.iBitmap = nImageIndex;
+		tbbtn.iString = -1;
+		//
+		if (-1 == nInsertPos)
+		{
+			AddButtons(1, &tbbtn);
+		}
+		else
+		{
+			InsertButton(nInsertPos, &tbbtn);
+		}
+	}
+	//
+	void AddToolButtonNoTextWithToolTip2(UINT nID, UINT nButtonStyle, LPCTSTR lpszButtonText, UINT nImageIndex, int nInsertPos = -1)
+	{
+		if (m_bAutoSize)
+		{
+			nButtonStyle |= BTNS_AUTOSIZE;
+		}
 		//
 		CString str(lpszButtonText);
 		//
@@ -1860,8 +2159,21 @@ public:
 		tbbtn.fsStyle = nButtonStyle;
 		tbbtn.iBitmap = nImageIndex;
 		tbbtn.iString = nStringIndex;
-		AddButtons(1, &tbbtn);
+		//
+		if (-1 == nInsertPos)
+		{
+			AddButtons(1, &tbbtn);
+		}
+		else
+		{
+			InsertButton(nInsertPos, &tbbtn);
+		}
 	}
+	void AddToolButtonNoTextWithToolTip(UINT nID, LPCTSTR lpszButtonText, UINT nImageIndex, int nInsertPos = -1)
+	{
+		AddToolButtonNoTextWithToolTip2(nID, BTNS_BUTTON, lpszButtonText, nImageIndex, nInsertPos);
+	}
+	//
 	void AddToolButton2(UINT nID, LPCTSTR lpszButtonText, UINT nButtonStyle = 0, BOOL bShowText = TRUE, UINT nImageIndex = I_IMAGENONE, int nInsertPos = -1)
 	{
 		if (0 == nButtonStyle)
@@ -1874,23 +2186,24 @@ public:
 			nButtonStyle |= BTNS_AUTOSIZE;
 		}
 		//
-		int nStringIndex = -1;
-		if (bShowText)
+		if (!bShowText)
 		{
-			CString str(lpszButtonText);
-			//
-			TCHAR szText[1024];
-			ZeroMemory(szText, sizeof(TCHAR) * 1024);
-			memcpy_s(szText, sizeof(TCHAR) * (1024), (LPCTSTR)str, str.GetLength() * sizeof(TCHAR));
-			//
-			nStringIndex = AddStrings(szText);
-			//
-			if (-1 != nStringIndex)
-			{
-				nButtonStyle |= BTNS_SHOWTEXT;
-			}
+			AddToolButtonNoTextWithToolTip2(nID, nButtonStyle, lpszButtonText, nImageIndex, nInsertPos);
+			return;
 		}
 		//
+		CString str(lpszButtonText);
+		//
+		TCHAR szText[1024];
+		ZeroMemory(szText, sizeof(TCHAR) * 1024);
+		memcpy_s(szText, sizeof(TCHAR) * (1024), (LPCTSTR)str, str.GetLength() * sizeof(TCHAR));
+		//
+		int nStringIndex = AddStrings(szText);
+		//
+		if (-1 != nStringIndex)
+		{
+			nButtonStyle |= BTNS_SHOWTEXT;
+		}
 		//
 		TBBUTTON tbbtn = { 0 };
 		ZeroMemory(&tbbtn, sizeof(tbbtn));
@@ -2021,6 +2334,36 @@ public:
 		SetButtonInfo(m_nStreatchButtonCommand, TBIF_SIZE, 0, 0, NULL, 0, nStreatchWidth, 0, NULL); 
 	}
 
+	//
+	void SetAddTopSpace(BOOL b)
+	{
+		m_bAddTopSpace = b;
+	}
+	virtual BOOL IsAddTopSpace()
+	{
+		return m_bAddTopSpace;
+	}
+	void SetAddBottomSpace(BOOL b)
+	{
+		m_bAddBottomSpace = b;
+	}
+	virtual BOOL IsAddBottomSpace()
+	{
+		return m_bAddBottomSpace;
+	}
+	virtual void GetToolButtonRect(int nIndex, RECT *lprc)
+	{
+		GetItemRect(nIndex, lprc);
+		if (IsAddTopSpace())
+		{
+			lprc->top++;
+		}
+		if (IsAddBottomSpace())
+		{
+			lprc->bottom--;
+		}
+	}
+
 	virtual void AlignControls()
 	{
 		StreatchButton();
@@ -2035,16 +2378,11 @@ public:
 			if (wnd.IsWindow())
 			{
 				CRect rc;
-				GetButtonDrawRect(i, rc);
+				GetToolButtonRect(i, rc);
 				wnd.MoveWindow(&rc);
 			}
 		}
 	}
-	virtual void GetButtonDrawRect(int nIndex, CRect& rc)
-	{
-		GetItemRect(nIndex, rc);
-	}
-	//
 	void SetButtonText(UINT nID, LPCTSTR lpszText)
 	{
 		SetButtonInfo(nID, TBIF_TEXT , 0, 0, lpszText, 0, 0, 0, NULL);
@@ -2060,6 +2398,7 @@ public:
 #define WIZ_BTNS_EX_DEFAULT_BUTTON		0x0002
 #define WIZ_BTNS_EX_TITLE_BUTTON		0x0004
 #define WIZ_BTNS_EX_SPACE_BUTTON		0x0008
+#define WIZ_BTNS_EX_COLOR_BUTTON		0x0010
 
 const UINT WIZ_UM_TOOLBAR_DROPDOWN_MENU		= ::RegisterWindowMessage(_T("WIZ_UM_TOOLBAR_DROPDOWN_MENU"));
 
@@ -2088,6 +2427,7 @@ public:
 		MESSAGE_HANDLER(WM_LBUTTONDOWN, OnLButtonDown)
 		MESSAGE_HANDLER(WM_ERASEBKGND, OnEraseBackground)
 		MESSAGE_HANDLER(WM_SIZE, OnSize)
+		MESSAGE_HANDLER(WIZ_UM_SKIN_CHANGED, OnSkinChanged)
 		MESSAGE_HANDLER(WIZ_UM_TOOLBAR_DROPDOWN_MENU, OnToolbarDropdownMenu)
 		REFLECTED_NOTIFY_CODE_HANDLER(TBN_DROPDOWN, OnTbnDropDown)
 		REFLECTED_NOTIFY_CODE_HANDLER(TTN_NEEDTEXTA, OnToolTipNotify)
@@ -2105,8 +2445,11 @@ protected:
 	int m_nDropDown;
 	//
 	std::map<UINT, UINT> m_mapButtonExStyle;
+	std::map<UINT, COLORREF> m_mapButtonColor;
 	//
 	int m_nHighlightPos;
+	//
+	CString m_strSkinName;
 public:
 	static DWORD GetWndStyle(DWORD dwStyle)
 	{
@@ -2160,6 +2503,51 @@ public:
 		//
 		return 1;   // no background painting needed
 	}
+
+	CWizSkin::WizButtonState GetButtonState(int nIndex)
+	{
+		TBBUTTON button;
+		GetButton(nIndex, &button);
+		//
+		if (0 == (button.fsState & TBSTATE_ENABLED))
+			return CWizSkin::wizbsDisabled;
+		else if (0 != (button.fsState & TBSTATE_PRESSED) 
+			|| 0 != (button.fsState & TBSTATE_CHECKED)
+			|| m_nDropDown == nIndex)
+			return CWizSkin::wizbsDown;
+		else if (GetHotItem() == nIndex)
+			return CWizSkin::wizbsHot;
+		else
+			return CWizSkin::wizbsNormal;
+	}
+	//
+	CWizSkin::WizToolButtonDropDownState GetButtonDropDownState(int nIndex)
+	{
+		TBBUTTON button;
+		GetButton(nIndex, &button);
+		//
+		if (button.fsStyle & BTNS_DROPDOWN)
+		{
+			return CWizSkin::wizddsDropDown;
+		}
+		else if (button.fsStyle & BTNS_WHOLEDROPDOWN)
+		{
+			return CWizSkin::wizddsWholeDropDown;
+		}
+		else
+		{
+			return CWizSkin::wizddsNone;
+		}
+	}
+
+	BOOL IsButtonSep(int index)
+	{
+		ATLASSERT(index >= 0 && index < GetButtonCount());
+		TBBUTTON button;
+		GetButton(index, &button);
+		return button.fsStyle == BTNS_SEP;
+	}
+
 	void DoPaint( CDCHandle dcPaint )
 	{
 		T* pT = static_cast<T*>(this);
@@ -2180,8 +2568,18 @@ public:
 		//
 		for (int i = 0; i < nButtonCount; i++)
 		{
-			DrawButton(dcPaint, i, i == nHot, il, ilDisabled);
+			CWizSkin::WizButtonState state = GetButtonState(i);
+			if (i != nHot)
+			{
+				DrawToolButton(dcPaint, i, state, GetButtonDropDownState(i), il, ilDisabled);
+			}
 		}
+		//
+		if (nHot >= 0 && nHot < nButtonCount)
+		{
+			DrawToolButton(dcPaint, nHot, GetButtonState(nHot), GetButtonDropDownState(nHot),  il, ilDisabled);
+		}
+
 		//
 		dcPaint.RestoreDC(nDC);
 	}
@@ -2195,45 +2593,7 @@ public:
 		return TRUE;
 	}
 	//
-	virtual void GetButtonDrawRect(int nIndex, CRect& rc)
-	{
-		GetItemRect(nIndex, &rc);
-		//
-		rc.DeflateRect(1, 0);
-		rc.top += 1;
-		//
-		if (0 == nIndex)
-		{
-			rc.left += 2;
-		}
-	}
-	//
-	virtual void DrawButtonBackground(CDCHandle dc, int nIndex, BOOL bHot) = 0;
-	virtual void DrawBackground(CDCHandle dc, const CRect& rc) = 0;
-	//
 
-	/*
-	//为了兼容linux的wine。wine在这里有一个bug：////
-	//TB_GETSTRING （unicode版本TB_GETSTRINGW）的时候，对字体长度计算有错误，导致无法正确返回unicode字符串。增加缓冲区可以解决这个问题。////
-	*/
-	/*
-	int _GetString(int nString, _CSTRING_NS::CString& str) const
-	{
-		ATLASSERT(::IsWindow(m_hWnd));
-		int nLength = (int)(short)LOWORD(::SendMessage(m_hWnd, TB_GETSTRING, MAKEWPARAM(0, nString), NULL));
-		if(nLength != -1)
-		{
-			int nBufferLength = nLength * 4 + 1;
-			LPTSTR lpstr = str.GetBufferSetLength(nBufferLength);
-			if(lpstr != NULL)
-				nLength = (int)::SendMessage(m_hWnd, TB_GETSTRING, MAKEWPARAM(nBufferLength, nString), (LPARAM)lpstr);
-			else
-				nLength = -1;
-			str.ReleaseBuffer();
-		}
-		return nLength;
-	}
-	*/
 	CString GetButtonTextByCommand(UINT nCommand)
 	{
 		TCHAR szButtonText[MAX_PATH] = {0};
@@ -2246,92 +2606,94 @@ public:
 		GetButtonInfo(nCommand, &tbi);
 		return CString(szButtonText);
 	}
-	virtual void DrawButton(CDCHandle dc, int nIndex, BOOL bHot, CImageList& il, CImageList& ilDisabled)
+	CString GetButtonTextByIndex(int nIndex)
+	{
+		TBBUTTON button;
+		GetButton(nIndex, &button);
+		return GetButtonTextByCommand(button.idCommand);
+	}
+	//
+	//
+	virtual void DrawBackground(CDCHandle dc, const CRect& rc) = 0;
+	virtual void DrawToolButtonBackground(CDCHandle dc, int nIndex, UINT nFlags, CWizSkin::WizButtonState state, CWizSkin::WizToolButtonDropDownState stateDropDown) = 0;
+	virtual void DrawToolButton(CDCHandle dc, int nIndex, CWizSkin::WizButtonState state, CWizSkin::WizToolButtonDropDownState stateDropDown, CImageList& il, CImageList& ilDisabled)
 	{
 		TBBUTTON button;
 		GetButton(nIndex, &button);
 		//
 		UINT nExStyle = GetButtonExStyle(button.idCommand);
 		//
+		BOOL bDrawText = (0 != (button.fsStyle & BTNS_SHOWTEXT));
+		BOOL bDrawImage = !il.IsNull() && button.iBitmap >= 0;
+		//
 		if (0 == (nExStyle & WIZ_BTNS_EX_TITLE_BUTTON)
 			&& 0 == (nExStyle & WIZ_BTNS_EX_SPACE_BUTTON))
 		{
-			DrawButtonBackground(dc, nIndex, bHot);
+			UINT nFlags = 0;
+			if (bDrawText)
+				nFlags |= CWizSkin::wizbbText;
+			if (bDrawImage)
+				nFlags |= CWizSkin::wizbbImage;
+			//
+			DrawToolButtonBackground(dc, nIndex, nFlags, state, stateDropDown);
 		}
 		//
 		if (button.fsStyle & BTNS_SEP)
 			return;
 		//
 		CRect rc;
-		GetButtonDrawRect(nIndex, rc);
-		//
-		BOOL bDrawText = (0 != (button.fsStyle & BTNS_SHOWTEXT));
-		BOOL bDrawImage = !il.IsNull() && button.iBitmap >= 0;
-		//
-		CRect rcText;
-		CRect rcImage;
+		GetToolButtonRect(nIndex, rc);
 		//
 		CString strText = GetButtonTextByCommand(button.idCommand);
 		//
+		int nTextWidth = 0;
 		if (bDrawText)
 		{
 			BOOL bBold = (GetButtonExStyle(button.idCommand) & WIZ_BTNS_EX_BOLD_BUTTON) ? TRUE : FALSE;
 			dc.SelectFont(bBold ? m_fontBold : m_font);
+			//
+			CSize szText;
+			dc.GetTextExtent(strText, -1, &szText);
+			nTextWidth = szText.cx + 4;
 		}
+		//
+		int nImageWidth = 0;
+		if (bDrawImage)
+		{
+			nImageWidth = 16 + 4;
+		}
+		//
+		CRect rcText;
+		CRect rcImage;
 		//
 		if (bDrawText && bDrawImage)
 		{
-			CSize size;
-			dc.GetTextExtent(strText, -1, &size);
-			size.cx += 2;
-			//
-			int x = rc.left + (rc.Width() - size.cx - 18) / 2;
-			rcImage = CRect(x, rc.top, x + 18, rc.bottom);
-			rcText = CRect(x + 18, rc.top, x + 18 + size.cx, rc.bottom);
+			int x = rc.left + (rc.Width() - nTextWidth - nImageWidth) / 2;
+			rcImage = CRect(x, rc.top, x + nImageWidth, rc.bottom);
+			rcText = CRect(x + nImageWidth, rc.top, x + nImageWidth + nTextWidth, rc.bottom);
 		}
 		else if (bDrawText)
 		{
-			CSize size;
-			dc.GetTextExtent(strText, -1, &size);
-			//
-			int x = rc.left + (rc.Width() - size.cx) / 2;
-			rcText = CRect(x, rc.top, x + size.cx, rc.bottom);
+			int x = rc.left + (rc.Width() - nTextWidth) / 2;
+			rcText = CRect(x, rc.top, x + nTextWidth, rc.bottom);
 		}
 		else if (bDrawImage)
 		{
-			int x = rc.left + (rc.Width() - 18) / 2;
-			rcImage = CRect(x, rc.top, x + 18, rc.bottom);
+			int x = rc.left + (rc.Width() - nImageWidth) / 2;
+			rcImage = CRect(x, rc.top, x + nImageWidth, rc.bottom);
 		}
 		else
 		{
 			//ATLASSERT(FALSE);
 		}
 		//
-		if (button.fsStyle & BTNS_DROPDOWN)
+		int nDropDownWidth = WizGetSkin()->GetDropDownArrowWidth();
+		//
+		if (CWizSkin::wizddsDropDown == stateDropDown
+			|| CWizSkin::wizddsWholeDropDown == stateDropDown)
 		{
-			rcText.MoveToX(rcText.left - 8);
-			rcImage.MoveToX(rcImage.left - 8);
-			//
-			CRect rcDropDown = rc;
-			rcDropDown.left = rcDropDown.right - 16;
-			rcDropDown.right -= 2;
-			DrawDropDownArrow(dc, rcDropDown);
-		}
-		else if (button.fsStyle & BTNS_WHOLEDROPDOWN)
-		{
-			rcText.MoveToX(rcText.left - 4);
-			rcImage.MoveToX(rcImage.left - 4);
-			//
-			CRect rcDropDown = bDrawText ? rcText : rcImage;
-			//
-			rcDropDown.MoveToX(rcDropDown.right);
-			rcDropDown.right = rcDropDown.left + 8;
-			if (rcDropDown.right > rc.right)
-			{
-				rcDropDown.right = rc.right;
-			}
-			//
-			DrawDropDownArrow(dc, rcDropDown);
+			rcText.MoveToX(rcText.left - nDropDownWidth / 2);
+			rcImage.MoveToX(rcImage.left - nDropDownWidth / 2);
 		}
 		//
 		if (bDrawImage)
@@ -2369,60 +2731,28 @@ public:
 			//
 			if (nExStyle & WIZ_BTNS_EX_TITLE_BUTTON)
 			{
-				dc.SetTextColor(::GetSysColor(COLOR_GRAYTEXT));
+				dc.SetTextColor(WizGetSkin()->GetToolBarButtonTextColor(CWizSkin::wizbsDisabled));
 			}
 			else
 			{
-				dc.SetTextColor(button.fsState & TBSTATE_ENABLED ? ::GetSysColor(COLOR_WINDOWTEXT) : ::GetSysColor(COLOR_GRAYTEXT));
+				dc.SetTextColor(GetToolButtonTextColor(nIndex, state));
 			}
 			//
 			dc.SetBkMode(TRANSPARENT);
 			dc.DrawText(strText, -1, &rcText, DT_CENTER | DT_SINGLELINE | DT_VCENTER);
 		}
+		//
+		if (IsColorButton(button.idCommand))
+		{
+			CRect rcBar = bDrawImage ? rcImage : rcText;
+			rcBar.top = rcBar.bottom - 2;
+			rcBar.bottom = rcBar.top + 3;
+			dc.FillSolidRect(&rcBar, GetButtonColor(button.idCommand));
+		}
 	}
-
-	virtual void DrawDropDownArrow(CDCHandle dc, const CRect& rc)
+	virtual COLORREF GetToolButtonTextColor(int nIndex, CWizSkin::WizButtonState state)
 	{
-		CPen pen;
-		pen.CreatePen(PS_SOLID, 1, ::GetSysColor(COLOR_WINDOWTEXT));
-		dc.SelectPen(pen);
-		//
-		CBrush brush;
-		brush.CreateSolidBrush(::GetSysColor(COLOR_WINDOWTEXT));
-		dc.SelectBrush(brush);
-		//
-		CPoint ptCenter = rc.CenterPoint();
-		//
-		POINT arrayPt[3] = 
-		{
-			{ptCenter.x - 2, ptCenter.y -1},
-			{ptCenter.x + 2, ptCenter.y - 1},
-			{ptCenter.x, ptCenter.y + 1}
-		};
-		//
-		dc.Polygon(arrayPt, 3);
-	}
-	virtual void DrawSplitterLine(CDCHandle dc, const CRect& rc, UINT nLine)
-	{
-		static COLORREF rgbOuter = RGB( 217, 217, 217);
-		static COLORREF rgbInner = RGB( 250, 250, 251);
-		//
-		int nSplitter = rc.right - 16;
-		//
-		if (nLine & 0x01)
-		{
-			dc.FillSolidRect(CRect(nSplitter, rc.top + 1, nSplitter + 1, rc.bottom - 1), rgbInner);
-		}
-		//
-		if (nLine & 0x02)
-		{
-			dc.FillSolidRect(CRect(nSplitter + 1, rc.top + 1, nSplitter + 2, rc.bottom - 1), rgbOuter);
-		}
-		//
-		if (nLine & 0x04)
-		{
-			dc.FillSolidRect(CRect(nSplitter + 2, rc.top + 1, nSplitter + 3, rc.bottom - 1), rgbInner);
-		}
+		return WizGetSkin()->GetToolBarButtonTextColor(state);
 	}
 	//
 	LRESULT OnLButtonDown(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
@@ -2444,7 +2774,7 @@ public:
 			if (button.fsStyle & BTNS_DROPDOWN)
 			{
 				CRect rcItem;
-				GetItemRect(nButton, &rcItem);
+				GetToolButtonRect(nButton, &rcItem);
 				rcItem.left = rcItem.right - 15;
 				//
 				if (rcItem.PtInRect(pt))
@@ -2459,7 +2789,7 @@ public:
 		if (-1 != m_nDropDown)
 		{
 			CRect rcItem;
-			GetItemRect(nButton, &rcItem);
+			GetToolButtonRect(nButton, &rcItem);
 			//
 			InvalidateRect(&rcItem);
 			//
@@ -2468,6 +2798,7 @@ public:
 		//
 		return lRet;
 	}
+
 	LRESULT OnToolbarDropdownMenu(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 	{
 		CWindow parent = GetParent();
@@ -2480,10 +2811,10 @@ public:
 		return 0;
 	}
 	//
-	void ShowDropDownMenu(UINT nID)
+	void ShowDropDownMenu(UINT nButtonID, UINT nMenuID)
 	{
 		CMenu menu;
-		if (!menu.LoadMenu(nID))
+		if (!menu.LoadMenu(nMenuID))
 			return;
 		//
 		WizTranslationsTranslateMenu(menu);
@@ -2493,21 +2824,19 @@ public:
 		if (!subMenu)
 			return;
 		//
-		int nIndex = CommandToIndex(nID);
+		int nIndex = CommandToIndex(nButtonID);
 		if (-1 == nIndex)
 			return;
 		//
 		CRect rc;
-		GetItemRect(nIndex, rc);
+		GetToolButtonRect(nIndex, rc);
 		ClientToScreen(&rc);
 		//
-		CWindow parent = GetParent();
-		if (parent.IsWindow())
-		{
-			parent.SendMessage(WIZ_UM_TOOLBAR_DROPDOWN_MENU, nID, (LPARAM)subMenu.m_hMenu);
-		}
+		SendMessage(WIZ_UM_TOOLBAR_DROPDOWN_MENU, nMenuID, (LPARAM)subMenu.m_hMenu);
 		//
 		subMenu.TrackPopupMenu(0, rc.left, rc.bottom, m_hWnd);
+		//
+		InvalidateButton(nIndex);
 	}
 	//
 	LRESULT OnTbnDropDown(int idCtrl, LPNMHDR pnmh, BOOL& bHandled)
@@ -2516,8 +2845,16 @@ public:
 		//
 		int nID = pToolBar->iItem;
 		//
-		ShowDropDownMenu(nID);
+		ShowDropDownMenu(nID, nID);
 		//
+		return 0;
+	}
+	
+	LRESULT OnSkinChanged(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
+	{
+		bHandled = FALSE;
+		//
+		SetSkinName(m_strSkinName);
 		return 0;
 	}
 
@@ -2532,6 +2869,11 @@ public:
 		//
 		return lRet;
 	}
+
+	virtual void SetSkinName(LPCTSTR lpszSkinName)
+	{
+	}
+	//
 	virtual int GetRowHeight()
 	{
 		CSize sz;
@@ -2546,7 +2888,7 @@ public:
 		for (int i = 0; i < nCount; i++)
 		{
 			CRect rc;
-			GetItemRect(i, rc);
+			GetToolButtonRect(i, rc);
 			nWidth += rc.Width();
 		}
 		return nWidth + 4;
@@ -2559,7 +2901,7 @@ public:
 		//
 		CSize sz;
 		GetButtonSize(sz);
-		return sz.cy * GetRows() + 3;
+		return sz.cy * GetRows();
 	}
 	virtual int GetHeight()
 	{
@@ -2597,6 +2939,16 @@ public:
 		SetPadding(nPadding, 0);
 	}
 	//
+	void InvalidateButton(int nIndex)
+	{
+		if (nIndex < 0)
+			return;
+		//
+		CRect rc;
+		GetToolButtonRect(nIndex, &rc);
+		InvalidateRect(&rc);
+	}
+	//
 	void SetButtonExStyle(UINT nID, UINT nExStyle)
 	{
 		m_mapButtonExStyle[nID] = nExStyle;
@@ -2606,7 +2958,7 @@ public:
 			if (-1 != nButton)
 			{
 				CRect rcItem;
-				GetItemRect(nButton, &rcItem);
+				GetToolButtonRect(nButton, &rcItem);
 				//
 				InvalidateRect(&rcItem);
 			}
@@ -2619,6 +2971,20 @@ public:
 			return 0;
 		//
 		return it->second;
+	}
+	//
+	void SetButtonColor(UINT nID, COLORREF cr)
+	{
+		m_mapButtonColor[nID] = cr;
+		InvalidateButton(CommandToIndex(nID));
+	}
+	COLORREF GetButtonColor(UINT nID)
+	{
+		return m_mapButtonColor[nID];
+	}
+	BOOL IsColorButton(UINT nID)
+	{
+		return (GetButtonExStyle(nID) & WIZ_BTNS_EX_COLOR_BUTTON) ? TRUE : FALSE;
 	}
 	//
 	LRESULT OnToolTipNotify(int idCtrl, LPNMHDR pNMHDR, BOOL& bHandled)
@@ -2708,16 +3074,6 @@ class CWizToolBarCtrl
 };
 
 
-class CWizVistaToolBarCtrl 
-	: public CWizToolBarCtrlBaseExImpl<CWizVistaToolBarCtrl>
-{
-public:
-	virtual void DrawButtonBackground(CDCHandle dc, int nIndex, BOOL bHot);
-	virtual void DrawBackground(CDCHandle dc, const CRect& rc);
-};
-
-
-
 template<class T, class TSettings>
 class CWizWindowState
 {
@@ -2782,22 +3138,24 @@ public:
 		//
 		if (pT->GetStyle() & WS_MAXIMIZE)
 		{
-			settings.SetBool(m_strWindowStateSection, _T("Maximized"), TRUE);
+			settings.SetBool(m_strWindowStateSection, _T("Maximized"), TRUE, 0);
 		}
 		else if (pT->GetStyle() & WS_MINIMIZE)
 		{
 		}
 		else
 		{
-			settings.SetBool(m_strWindowStateSection, _T("Maximized"), FALSE);
+			settings.SetBool(m_strWindowStateSection, _T("Maximized"), FALSE, WIZ_SETTINGS_MANUAL_SAVE);
 			//
 			CRect rc;
 			pT->GetWindowRect(&rc);
 			//
-			settings.SetInt(m_strWindowStateSection, _T("Left"), rc.left);
-			settings.SetInt(m_strWindowStateSection, _T("Top"), rc.top);
-			settings.SetInt(m_strWindowStateSection, _T("Right"), rc.right);
-			settings.SetInt(m_strWindowStateSection, _T("Bottom"), rc.bottom);
+			settings.SetInt(m_strWindowStateSection, _T("Left"), rc.left, WIZ_SETTINGS_MANUAL_SAVE);
+			settings.SetInt(m_strWindowStateSection, _T("Top"), rc.top, WIZ_SETTINGS_MANUAL_SAVE);
+			settings.SetInt(m_strWindowStateSection, _T("Right"), rc.right, WIZ_SETTINGS_MANUAL_SAVE);
+			settings.SetInt(m_strWindowStateSection, _T("Bottom"), rc.bottom, WIZ_SETTINGS_MANUAL_SAVE);
+			//
+			settings.Save();
 		}
 	}
 	//
@@ -2830,7 +3188,8 @@ public:
 	HWND CreateEx(HWND hWndParent, LPRECT lprc, UINT nMenuResourceID, LPCTSTR lpszIconFileName, UINT nToolBarID);
 };
 
-class CWizSimpleToggleButton : public CWizSimpleToolBar
+class CWizSimpleToggleButton 
+	: public CWizSimpleToolBar
 {
 public:
 	BEGIN_MSG_MAP(CWizToolBarCtrlBase)
@@ -2846,20 +3205,6 @@ public:
 	BOOL GetCheck();
 	void SetCheck(BOOL b);
 	void UpdateStatus();
-};
-
-class CWizFlatToolBarCtrl 
-	: public CWizToolBarCtrlBaseExImpl<CWizFlatToolBarCtrl >
-{
-public:
-	CWizFlatToolBarCtrl(COLORREF crBackground);
-protected:
-	COLORREF m_crBackground;
-	BOOL m_bDrawShadow;
-public:
-	virtual void DrawButtonBackground(CDCHandle dc, int nIndex, BOOL bHot);
-	virtual void DrawBackground(CDCHandle dc, const CRect& rc);
-	void SetDrawShadow(BOOL b);
 };
 
 
@@ -3630,6 +3975,7 @@ template <class T>
 class CWizAtlListCtrlBase 
 	: public CSortListViewCtrlImpl<T> 
 	, public CDoubleBufferImpl<T >
+	, public CWizSkinCustomItem
 
 {
 public:
@@ -3646,6 +3992,11 @@ public:
 		WizCreateUIFont(m_font, FALSE);
 		WizCreateUIFont(m_fontBold, TRUE);
 	}
+	//
+	enum
+	{
+		m_cchCmpTextMax = 1024, // overrideable
+	};
 	//
 	typedef CSortListViewCtrlImpl<T>  _baseClass1;
 	typedef CDoubleBufferImpl<T> _baseClass2;
@@ -3673,10 +4024,14 @@ public:
 		MESSAGE_HANDLER(WM_RBUTTONDOWN, OnRButtonDown)
 		MESSAGE_HANDLER(WM_RBUTTONUP, OnRButtonUp)
 		MESSAGE_HANDLER(WM_KEYUP, OnKeyUp)
+		MESSAGE_HANDLER(WM_SETFOCUS, OnSetFocus)
+		MESSAGE_HANDLER(WM_KILLFOCUS, OnKillFocus)
+		MESSAGE_HANDLER(WIZ_UM_SKIN_CHANGED, OnSkinChanged)
 		REFLECTED_NOTIFY_CODE_HANDLER(LVN_DELETEITEM, OnDeleteItem)
 		REFLECTED_NOTIFY_CODE_HANDLER(LVN_ITEMCHANGING, OnItemChanging)
 		CHAIN_MSG_MAP(_baseClass1)
 		CHAIN_MSG_MAP(_baseClass2)
+		DEFAULT_REFLECTION_HANDLER()
 	END_MSG_MAP()
 public:
 	LRESULT OnCreate(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
@@ -3741,6 +4096,32 @@ public:
 		return lRet;
 	}
 	
+
+	LRESULT OnSetFocus(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
+	{
+		LRESULT lRet = DefWindowProc(uMsg, wParam, lParam);
+		//
+		Invalidate();
+		//
+		return lRet;
+	}
+
+	LRESULT OnKillFocus(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
+	{
+		LRESULT lRet = DefWindowProc(uMsg, wParam, lParam);
+		//
+		Invalidate();
+		//
+		return lRet;
+	}
+	LRESULT OnSkinChanged(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
+	{
+		bHandled = FALSE;
+		//
+		SetSkinName(m_strSkinName);
+		//
+		return 0;
+	}
 	LRESULT OnContextMenu(UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM lParam, BOOL& bHandled)
 	{
 		UINT xPos = GET_X_LPARAM(lParam); 
@@ -3760,6 +4141,7 @@ public:
 		//
 		return 0;
 	}
+
 	LRESULT OnDeleteItem(int nCtrlID, LPNMHDR pNMHDR, BOOL& bHandled)
 	{
 		NMLISTVIEW* pNMListView = (NMLISTVIEW *)pNMHDR;
@@ -3791,6 +4173,11 @@ public:
 	{
 		CHeaderCtrl header = GetHeader();
 		return header.GetItemCount();
+	}
+
+	BOOL SubclassWindow(HWND hWnd)
+	{
+		return _baseClass1::SubclassWindow( hWnd ) ? OnInitControl() : FALSE;
 	}
 public:
 	virtual void OnDeleteItemData(LPARAM lParam)
@@ -3825,6 +4212,36 @@ public:
 	{
 	}
 	//
+	BOOL IsItemVisible(int nItem, const CRect& rcClient, const CRect& rcUpdate)
+	{
+		CRect rc;
+		GetItemRect(nItem, &rc, LVIR_BOUNDS);
+		//
+		if (rc.bottom < rcClient.top)
+			return FALSE;
+		if (rc.top > rcClient.bottom)
+			return FALSE;
+		if (rc.right < rcClient.left)
+			return FALSE;
+		if (rc.left > rcClient.right)
+			return FALSE;
+		//
+		if (rcUpdate.IsRectEmpty())
+			return TRUE;
+		//
+		if (rc.bottom < rcUpdate.top)
+			return FALSE;
+		if (rc.top > rcUpdate.bottom)
+			return FALSE;
+		if (rc.right < rcUpdate.left)
+			return FALSE;
+		if (rc.left > rcUpdate.right)
+			return FALSE;
+		//
+		return TRUE;
+	}
+	//
+	//
 	void DoPaint( CDCHandle dcPaint )
 	{
 		int nColumnCount = GetColumnCount();
@@ -3840,6 +4257,10 @@ public:
 			return;
 		//
 		int nDC = dcPaint.SaveDC();
+		//
+		CRect rcClient;
+		GetClientRect(&rcClient);
+		dcPaint.FillSolidRect(&rcClient, GetCustomWindowBackgroundColor());
 		//
 		dcPaint.SelectFont(m_font);
 		//
@@ -3861,7 +4282,7 @@ public:
 		HIMAGELIST hImageListLarge = GetImageList(LVSIL_NORMAL);
 		HIMAGELIST hImageListSmall = GetImageList(LVSIL_SMALL);
 		//
-		DWORD dwView = GetView();
+		DWORD dwView = GetViewType();
 		//
 		int nFirst = GetTopIndex();
 		if (nFirst < 0)
@@ -3870,20 +4291,43 @@ public:
 		//
 		CRect rcUpdate;
 		dcPaint.GetClipBox(&rcUpdate);
+		dcPaint.SetBkMode(TRANSPARENT);
 		//
 		ATLTRACE(_T("Update Rect: left=%d, top=%d, width=%d, height=%d\n"), rcUpdate.left, rcUpdate.top, rcUpdate.Width(), rcUpdate.Height());
 		//
 		if (!rcUpdate.IsRectEmpty())
 		{
-			int nItem = HitTest(rcUpdate.TopLeft(), NULL);
-			if (nItem >= 0)
-				nFirst = nItem;
-			//
-			nLast = nFirst + rcUpdate.Height() / CalItemHeight() + 2;
+			if (GetView() == LV_VIEW_DETAILS)
+			{
+				int nItem = HitTest(rcUpdate.TopLeft(), NULL);
+				if (nItem >= 0)
+					nFirst = nItem;
+				//
+				nLast = nFirst + rcUpdate.Height() / CalItemHeight() + 2;
+			}
+			else
+			{
+				/*
+				CPoint pt = rcUpdate.BottomRight();
+				pt.x -= ::GetSystemMetrics(SM_CXVSCROLL) - 2;
+				int nItem2 = HitTest(pt, NULL);
+				if (nItem2 >= 0)
+				{
+					nLast = nItem2 + 2;
+				}
+				else
+				{
+					nLast = nItemCount;
+				}
+				*/
+			}
 		}
 		//
 		for (int iItem = nFirst; iItem <= nLast && iItem < nItemCount; iItem++)
 		{
+			if (!IsItemVisible(iItem, rcClient, rcUpdate))
+				continue;
+			//
 			DWORD_PTR dwData = GetItemData(iItem);
 			//
 			CRect rcItem;
@@ -3892,7 +4336,7 @@ public:
 			GetItemRect(iItem, &rcIcon, LVIR_ICON);
 			//
 			UINT nItemState = GetItemState(iItem, LVIS_SELECTED | LVIS_FOCUSED);
-			DrawBackground(dcPaint, iItem, nItemState, rcItem, dwData);
+			DrawItemBackground(dcPaint, iItem, nItemState, rcItem, dwData);
 			//
 			if (LVS_REPORT == dwView)
 			{
@@ -3929,34 +4373,29 @@ public:
 				CRect rcSubItem;
 				GetItemRect(iItem, &rcSubItem, LVIR_LABEL);
 				//
-				DrawSubItemText(dcPaint, iItem, 0, nItemState, rcSubItem, LVCFMT_LEFT, dwData);
+				if (hImageListLarge && LVS_ICON == dwView)
+				{
+					DrawSubItemText(dcPaint, iItem, 0, nItemState, rcSubItem, LVCFMT_CENTER, dwData);
+				}
+				else
+				{
+					DrawSubItemText(dcPaint, iItem, 0, nItemState, rcSubItem, LVCFMT_LEFT, dwData);
+				}
 			}
 		}
 		//
 		dcPaint.RestoreDC(nDC);
 	}
-	virtual void DrawBackground(CDCHandle dc, int nItem, UINT nItemState, CRect& rcItem, DWORD_PTR dwData)
+	virtual void DrawItemBackground(CDCHandle dc, int nItem, UINT nItemState, CRect& rcItem, DWORD_PTR dwData)
 	{
 		BOOL bSelected = (nItemState & LVIS_SELECTED) == LVIS_SELECTED;
-		BOOL bFocus = (nItemState & LVIS_FOCUSED) == LVIS_FOCUSED;
+		CWizSkin::WizItemState state = CWizSkin::CalItemState(m_hWnd, bSelected, FALSE);
 		//
-		if (bSelected)
+		COLORREF cr = GetItemBackgroundColor(nItem, nItemState, dwData);
+		if (cr != (COLORREF)-1)
 		{
-			static COLORREF crSelected = GetItemBackgroundColor(nItem, nItemState, dwData);
-			dc.FillSolidRect(&rcItem, crSelected);
+			dc.FillSolidRect(&rcItem, cr);
 		}
-		//
-		if (bFocus)
-		{
-			CRect rcFocusedItem = rcItem;
-			rcFocusedItem.DeflateRect(1, 1);
-			dc.DrawFocusRect(&rcFocusedItem);
-		}
-#ifdef WINCE
-		dc.SelectPen(m_penBottomLine);
-		dc.MoveTo(rcItem.left, rcItem.bottom - 1);
-		dc.LineTo(rcItem.right, rcItem.bottom - 1);
-#endif
 	}
 	virtual void DrawItemIcon(CDCHandle dc, HIMAGELIST hImageList, int nItem, CRect& rcIcon)
 	{
@@ -3984,7 +4423,7 @@ public:
 		GetItemText(nItem, nSubItem, strText);
 		//
 		CRect rcText = rcSubItem;
-		rcText.DeflateRect(4, 2);
+		rcText.DeflateRect(2, 0);
 		//
 		dc.SetTextColor(GetItemTextColor(nItem, nSubItem, nItemState, dwData));
 		//
@@ -3995,7 +4434,7 @@ public:
 			nTextAlign = DT_CENTER;
 		//
 		DWORD dwFlags = DT_END_ELLIPSIS | nTextAlign;
-		if (LVS_ICON != GetView())
+		if (LVS_ICON != GetViewType())
 		{
 			dwFlags |= DT_VCENTER | DT_SINGLELINE;
 		}
@@ -4010,30 +4449,14 @@ public:
 	virtual COLORREF GetItemTextColor(int nItem, int nSubItem, UINT nItemState, DWORD_PTR dwData)
 	{
 		BOOL bSelected = (nItemState & LVIS_SELECTED) == LVIS_SELECTED;
-		if (bSelected)
-		{
-			static COLORREF crBackground = GetSysColor(COLOR_HIGHLIGHTTEXT);
-			return crBackground;
-		}
-		else
-		{
-			static COLORREF crBackground = GetSysColor(COLOR_WINDOWTEXT);
-			return crBackground;
-		}
+		CWizSkin::WizItemState state = CWizSkin::CalItemState(m_hWnd, bSelected, FALSE);
+		return GetCustomItemTextColor(state);
 	}
 	virtual COLORREF GetItemBackgroundColor(int nItem, UINT nItemState, DWORD_PTR dwData)
 	{
 		BOOL bSelected = (nItemState & LVIS_SELECTED) == LVIS_SELECTED;
-		if (bSelected)
-		{
-			static COLORREF crBackground = GetSysColor(COLOR_HIGHLIGHT);
-			return crBackground;
-		}
-		else
-		{
-			static COLORREF crBackground = GetSysColor(COLOR_WINDOW);
-			return crBackground;
-		}
+		CWizSkin::WizItemState state = CWizSkin::CalItemState(m_hWnd, bSelected, FALSE);
+		return GetCustomItemColor(state);
 	}
 	virtual BOOL IsTextBold(int nItem, int nSubItem, DWORD_PTR dwData)
 	{
@@ -4340,189 +4763,17 @@ public:
 
 
 
-template <class T>
-class CWizListCtrlImpl 
-	: public CWizAtlListCtrlBase<T>
-{
-public:
-	typedef CWizAtlListCtrlBase<T> _baseClass;
-	//
-	DECLARE_WND_SUPERCLASS(NULL, _baseClass::GetWndClassName())
-public:
-	CWizListCtrlImpl(void)
-	{
-	}
-public:
-	BEGIN_MSG_MAP(CWizListCtrlImpl)
-		CHAIN_MSG_MAP(CWizAtlListCtrlBase<T>)
-		CHAIN_MSG_MAP(_baseClass)
-		DEFAULT_REFLECTION_HANDLER()
-	END_MSG_MAP()
-public:
-	BOOL SubclassWindow(HWND hWnd)
-	{
-		return _baseClass::SubclassWindow( hWnd ) ? OnInitControl() : FALSE;
-	}
-public:
-};
-
-
-class CWizListCtrl : public CWizListCtrlImpl<CWizListCtrl>
+class CWizListCtrl 
+	: public CWizAtlListCtrlBase<CWizListCtrl>
 {
 public:
 	DECLARE_WND_SUPERCLASS(_T("Wiz_ListCtrl"), GetWndClassName())
 };
 
-
-
-template <class T>
-class CWizVistaListCtrlImpl 
-	: public CWizAtlListCtrlBase<T>
-{
-public:
-	typedef CWizAtlListCtrlBase<T> _baseClass;
-	DECLARE_WND_SUPERCLASS(NULL, _baseClass::GetWndClassName())
-public:
-	CWizVistaListCtrlImpl(void)
-	{
-	}
-public:
-	BEGIN_MSG_MAP(CWizVistaListCtrlImpl)
-		MESSAGE_HANDLER(WM_SETFOCUS, OnSetFocus)
-		MESSAGE_HANDLER(WM_KILLFOCUS, OnKillFocus)
-		CHAIN_MSG_MAP(_baseClass)
-		DEFAULT_REFLECTION_HANDLER()
-	END_MSG_MAP()
-protected:
-public:
-	static DWORD GetWndExStyle(DWORD dwExStyle)
-	{
-		return dwExStyle;
-	}
-	BOOL SubclassWindow(HWND hWnd)
-	{
-		return _baseClass::SubclassWindow( hWnd ) ? OnInitControl() : FALSE;
-	}
-	LRESULT OnSetFocus(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
-	{
-		LRESULT lRet = DefWindowProc(uMsg, wParam, lParam);
-		//
-		Invalidate();
-		//
-		return lRet;
-	}
-
-	LRESULT OnKillFocus(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
-	{
-		LRESULT lRet = DefWindowProc(uMsg, wParam, lParam);
-		//
-		Invalidate();
-		//
-		return lRet;
-	}
-protected:
-	virtual void DrawBackground(CDCHandle dc, int nItem, UINT nItemState, CRect& rcItem, DWORD_PTR dwData)
-	{
-		BOOL bSelected = (nItemState & LVIS_SELECTED) == LVIS_SELECTED;
-		BOOL bFocus = (nItemState & LVIS_FOCUSED) == LVIS_FOCUSED;
-		//
-		CPoint pt;
-		GetCursorPos(&pt);
-		ScreenToClient(&pt);
-		//
-		//BOOL bHot = rcItem.PtInRect(pt);
-		BOOL bHot = FALSE;
-		//
-		UINT nState = 0;
-		if (bSelected)
-		{
-			nState |= wizStateSelected;
-		}
-		if (bHot)
-		{
-			nState |= wizStateHot;
-		}
-		if (bFocus)
-		{
-			nState |= wizStateFocused;
-		}
-
-		WizDrawItemBackground(m_hWnd, dc, rcItem, nState, GetItemBackgroundColor(nItem, nItemState, dwData));
-	}
-	virtual COLORREF GetItemTextColor(int nItem, int nSubItem, UINT nItemState, DWORD_PTR dwData)
-	{
-		static COLORREF cr = GetSysColor(COLOR_WINDOWTEXT);
-		return cr;
-	}
-	virtual BOOL OnInitControl()
-	{
-		SetExtendedListViewStyle(LVS_EX_FULLROWSELECT | LVS_EX_ONECLICKACTIVATE | LVS_EX_UNDERLINEHOT | LVS_EX_UNDERLINECOLD );
-		//
-		ResetItemHeight();
-		//
-		return TRUE;
-	}
-};
-
-
-class CWizVistaListCtrl : public CWizVistaListCtrlImpl<CWizVistaListCtrl>
-{
-public:
-	DECLARE_WND_SUPERCLASS(_T("Wiz_ListCtrl"), GetWndClassName())
-	//
-	enum
-	{
-		m_cchCmpTextMax = 1024, // overrideable
-	};
-};
 
 #endif	//__ATLCTRLX_H__
 
 
-
-const UINT WIZ_UM_TASKPANELITEMCALHEIGHT = ::RegisterWindowMessage(_T("WizTaskPanelItemCalHeight"));
-const UINT WIZ_UM_TASKPANELUPDATELAYOUT = ::RegisterWindowMessage(_T("WizTaskPanelUpdateLayout"));
-const UINT WIZ_UM_TASKPANELQUERYUPDATELAYOUT = ::RegisterWindowMessage(_T("WizTaskPanelQueryUpdateLayout"));
-const UINT WIZ_UM_TASKPANELENSUREVISIBLE = ::RegisterWindowMessage(_T("WizTaskPanelEnsureVisible"));
-
-
-template <class T>
-class CWizTaskPanelItemActiveX
-{
-	BEGIN_MSG_MAP(CWizTaskPanelItemActiveX)
-		MESSAGE_HANDLER(WIZ_UM_TASKPANELITEMCALHEIGHT, OnTaskPanelItemCalHeight)
-		MESSAGE_HANDLER(WIZ_UM_TASKPANELQUERYUPDATELAYOUT, OnForwardMessageToParent)
-		MESSAGE_HANDLER(WIZ_UM_TASKPANELENSUREVISIBLE, OnForwardMessageToParent)
-		MESSAGE_HANDLER(WM_MOUSEWHEEL, OnForwardMessageToParent)
-	END_MSG_MAP()
-	//
-	LRESULT OnTaskPanelItemCalHeight(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& /*bHandled*/)
-	{
-		T* pT = static_cast<T*>(this);
-		CComPtr<IOleWindow> spOleWindow;
-		HRESULT hRet = pT->QueryControl(IID_IOleWindow, (void**)&spOleWindow);
-		if (spOleWindow)
-		{
-			HWND hwnd = NULL;
-			spOleWindow->GetWindow(&hwnd);
-			//
-			if (::IsWindow(hwnd))
-			{
-				return ::SendMessage(hwnd, WIZ_UM_TASKPANELITEMCALHEIGHT, wParam, lParam);
-			}
-		}
-		return 400;
-	}
-	LRESULT OnForwardMessageToParent(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& /*bHandled*/)
-	{
-		T* pT = static_cast<T*>(this);
-		if (WIZ_UM_TASKPANELQUERYUPDATELAYOUT == uMsg)
-		{
-			wParam = (WPARAM)pT->m_hWnd;
-		}
-		return ::SendMessage(pT->GetParent(), uMsg, wParam, lParam);
-	}
-};
 
 
 template <class T>
@@ -4570,7 +4821,7 @@ public:
 		return hLastItem;
 	}
 
-	HTREEITEM GetPrevItem(HTREEITEM hItem)
+	HTREEITEM GetPrevItemEx(HTREEITEM hItem)
 	{
 		if (!hItem)
 			return NULL;
@@ -4582,7 +4833,7 @@ public:
 		{
 			while (pT->ItemHasChildren(hPrevItem))
 			{
-				hPrevItem = GetLastChildItem(treectrl, hPrevItem);
+				hPrevItem = GetLastChildItem(hPrevItem);
 			}
 		}
 		else
@@ -4591,7 +4842,7 @@ public:
 		}
 		return hPrevItem;
 	}
-	HTREEITEM GetNextItem(HTREEITEM hItem)
+	HTREEITEM GetNextItemEx(HTREEITEM hItem)
 	{
 		if (!hItem)
 			return NULL;
@@ -4626,7 +4877,7 @@ public:
 		while (hNextItem)
 		{
 			nCount++;
-			nCount += GetChildItemCount(treectrl, hNextItem);
+			nCount += GetChildItemCount(hNextItem);
 			hNextItem = pT->GetNextSiblingItem(hNextItem);
 		}
 		return nCount;
@@ -4640,7 +4891,7 @@ public:
 		while (hItem)
 		{
 			nCount++;
-			nCount += GetChildItemCount(treectrl, hItem);
+			nCount += GetChildItemCount(hItem);
 			hItem = pT->GetNextSiblingItem(hItem);
 		}
 		return nCount;
@@ -4652,10 +4903,10 @@ public:
 		HTREEITEM hRootItem = pT->GetChildItem(TVI_ROOT);
 		if (!hRootItem)
 			return NULL;
-		HTREEITEM hItem = GetLastChildItem(treectrl, hRootItem);
+		HTREEITEM hItem = GetLastChildItem(hRootItem);
 		while (hItem && NULL != pT->GetChildItem(hItem))
 		{
-			hItem = GetLastChildItem(treectrl, hItem);
+			hItem = GetLastChildItem(*pT, hItem);
 		}
 		return hItem;
 	}
@@ -4673,6 +4924,20 @@ public:
 		pT->Invalidate();
 	}
 	//
+	void SelectAndMakeItemVisible(HTREEITEM hItem)
+	{
+		T* pT = static_cast<T*>(this);
+		//
+		HTREEITEM hParent = pT->GetParentItem(hItem);
+		if (hParent)
+		{
+			pT->Expand(hParent,TVE_EXPAND);
+		}
+		//
+		pT->EnsureVisible(hItem);
+		pT->SelectItem(hItem);
+	}
+	//
 	void ExpandAllItems(UINT nCode)
 	{
 		T* pT = static_cast<T*>(this);
@@ -4685,7 +4950,7 @@ public:
 				pT->Expand(hItem, nCode);
 			}
 			//
-			hItem = GetNextItem(hItem);
+			hItem = pT->GetNextItemEx(hItem);
 		}
 	}
 	void ExpandAllItemsWithChildren(HTREEITEM hItemParent, UINT nCode)
@@ -5028,7 +5293,7 @@ inline void CWizTreeCtrlWithState<T>::SaveState(CWizTreeCtrlStateBase<T>& state)
 			state.SaveItemState(*this, hItem, pT->GetItemState(hItem, TVIS_EXPANDED) == TVIS_EXPANDED, hSelectedItem == hItem);
 		}
 		//
-		hItem = GetNextItem(hItem);
+		hItem = GetNextItemEx(hItem);
 	}
 	//
 	POINT pt;
@@ -5062,7 +5327,7 @@ inline void CWizTreeCtrlWithState<T>::RestoreState(CWizTreeCtrlStateBase<T>& sta
 			pT->SelectItem(hItem);
 		}
 		//
-		hItem = GetNextItem(hItem);
+		hItem = GetNextItemEx(hItem);
 	}
 	//
 	POINT pt = state.GetScrollState();
@@ -5095,42 +5360,38 @@ private:
 };
 
 
-#define WIZ_TVIS_EX_SPLIT_ITEM		0x01
+#define WIZ_TVIS_EX_SPLIT_ITEM			0x01
+#define WIZ_TVIS_EX_DECREASE_INDENT		0x02
 
 #define ID_TIMER_EXPAND_ITEM_FOR_DRAG_AND_DROP		10000
 #define ID_TIMER_SCROLL_FOR_DRAG_AND_DROP		10001
 
+#define TVN_SELCHANGED_EX		1000
+
+
 template <class T>
 class CWizTreeCtrlBase
 	: public CWizTreeCtrlWithState<T>
+	, public CWizSkinCustomItem
 {
 public:
 	CWizTreeCtrlBase()
+		: m_hItemCommand(NULL)
+		, m_bBoldRootItem(TRUE)
+		, m_nDrawTextFlags(DT_LEFT | DT_SINGLELINE | DT_VCENTER | DT_NOPREFIX)
+		, m_hOldDropItem(NULL)
+		, m_bScrolling(FALSE)
 	{
 		WizCreateUIFont(m_fontTreeFont);
 		WizCreateUIFont(m_fontTreeFontBold, WIZUIFONT_BOLD);
 		WizCreateUIFont(m_fontTreeFontSmall, WIZUIFONT_SMALL);
 		//
 		CreateButtons();
-		m_hItemCommand = NULL;
-		//
-		m_penSplitterLine.CreatePen(PS_SOLID, 1, RGB(0xD6, 0xE5, 0xF5));
-		//
-		m_crBackgroundColor = GetSysColor(COLOR_WINDOW);
-		//
-		m_bBoldRootItem = TRUE;
-		//
-		m_nDrawTextFlags = DT_LEFT | DT_SINGLELINE | DT_VCENTER | DT_NOPREFIX;
-		//
-		m_hOldDropItem = NULL;
-		//
-		m_bScrolling = FALSE;
 	}
 	~CWizTreeCtrlBase()
 	{
 	}
 protected:
-	//
 	BOOL m_bBoldRootItem;
 	//
 	CFont m_fontTreeFont;
@@ -5143,7 +5404,6 @@ protected:
 	//
 	std::map<HTREEITEM, UINT> m_mapItemExtStates;
 	//
-	COLORREF m_crBackgroundColor;
 	UINT m_nDrawTextFlags;
 	//
 	HTREEITEM m_hOldDropItem;
@@ -5151,13 +5411,14 @@ protected:
 public:
 	static DWORD GetWndStyle(DWORD dwStyle)
 	{
-		return WS_CHILD | WS_VISIBLE | WS_CLIPCHILDREN | TVS_SHOWSELALWAYS 
-			| TVS_HASBUTTONS | TVS_HASLINES | TVS_LINESATROOT;
+		return WS_CHILD | WS_VISIBLE | WS_CLIPCHILDREN 
+			| TVS_FULLROWSELECT | TVS_HASBUTTONS | TVS_SHOWSELALWAYS | TVS_TRACKSELECT | TVS_LINESATROOT
+			| TVS_NOHSCROLL ;
 	}
 
 	virtual int CalItemHeight()
 	{
-		return ::GetSystemMetrics(SM_CYMENU) + 4;
+		return ::GetSystemMetrics(SM_CYMENU) + 2;
 	}
 	virtual void ResetItemHeight()
 	{
@@ -5223,31 +5484,35 @@ public:
 		//
 		SetItemStateEx(hItem, nState);
 	}
-	//
-	void SetBackgroundColor(COLORREF cr)
-	{
-		m_crBackgroundColor = cr;
-		//
-		T* pT = static_cast<T*>(this);
-		if (pT->IsWindow())
-		{
-			pT->Invalidate();
-		}
-	}
+	//////////////////////////////////////////////////////
+
 
 	BEGIN_MSG_MAP(CWizTreeCtrlBase)
 		MESSAGE_HANDLER(WM_CREATE, OnCreate)
 		MESSAGE_HANDLER(WM_DESTROY, OnDestroy)
 		MESSAGE_HANDLER(WM_HSCROLL, OnHScroll)
-		MESSAGE_HANDLER(WM_MOUSEWHEEL, OnMouseWheel)
 		MESSAGE_HANDLER(WM_CONTEXTMENU, OnContextMenu)
 		MESSAGE_HANDLER(WM_RBUTTONDOWN, OnRButtonDown)
 		MESSAGE_HANDLER(WM_TIMER, OnTimer)
+		MESSAGE_HANDLER(WIZ_UM_SKIN_CHANGED, OnSkinChanged)
 		REFLECTED_NOTIFY_CODE_HANDLER(TVN_DELETEITEM, OnDeleteItem)
 		REFLECTED_NOTIFY_CODE_HANDLER(TVN_SELCHANGING, OnSelChanging)
 		REFLECTED_NOTIFY_CODE_HANDLER(TVN_GETINFOTIP, OnGetInfoTip)
 	END_MSG_MAP()
 
+	//////////////////////////////////
+	LRESULT OnSkinChanged(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
+	{
+		bHandled = FALSE;
+		//
+		T* pT = static_cast<T*>(this);
+		//
+		SetSkinName(m_strSkinName);
+		//
+		return 0;
+	}
+	
+	///////////////////////////
 	LRESULT OnCreate(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 	{
 		T* pT = static_cast<T*>(this);
@@ -5277,7 +5542,7 @@ public:
 	{
 		NMTREEVIEW* pNMTreeView = (NMTREEVIEW *)pNMHDR;
 		//
-		OnDeleteItemData(pNMTreeView->itemOld.lParam);
+		OnDeleteItemData(pNMTreeView->itemOld.hItem, pNMTreeView->itemOld.lParam);
 		pNMTreeView->itemOld.lParam = 0;
 		//
 		std::map<HTREEITEM, UINT>::const_iterator it = m_mapItemExtStates.find(pNMTreeView->itemOld.hItem);
@@ -5307,7 +5572,7 @@ public:
 		
 		T* pT = static_cast<T*>(this);
 		//
-		pT->SetTimer(ID_TIMER_SCROLL_FOR_DRAG_AND_DROP, 500, NULL);
+		pT->SetTimer(ID_TIMER_SCROLL_FOR_DRAG_AND_DROP, 200, NULL);
 		ATLTRACE(_T("StartTimer ID_TIMER_SCROLL_FOR_DRAG_AND_DROP\n"));
 	}
 	void StopScrollTimer()
@@ -5328,9 +5593,52 @@ public:
 	virtual void ScrollDown()
 	{
 		T* pT = static_cast<T*>(this);
-		pT->GetParent().SendMessage(WM_VSCROLL, MAKEWPARAM(SB_LINEDOWN, 0), 0);
+		pT->SendMessage(WM_VSCROLL, MAKEWPARAM(SB_LINEDOWN, 0), 0);
 	}
 	//
+	BOOL IsItemImageVisible(HTREEITEM hItem)
+	{
+		T* pT = static_cast<T*>(this);
+		static HIMAGELIST hImage = pT->GetImageList();
+		//
+		if (hImage)
+		{
+			int nImage = -1;
+			int nSelectedImage = -1;
+			pT->GetItemImage(hItem, nImage, nSelectedImage);
+			if (nImage >= 0 && nImage < SHRT_MAX)
+			{
+				return TRUE;
+			}
+		}
+		//
+		return FALSE;
+	}
+
+	//
+	LRESULT OnGetItemRect(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& /*bHandled*/)
+	{
+		T* pT = static_cast<T*>(this);
+		//
+		RECT* prc = (RECT*)lParam;
+		HTREEITEM hItem = *((HTREEITEM*)prc);
+		LRESULT lRet = pT->DefWindowProc(uMsg, wParam, lParam);
+		//
+		UINT nStateEx = GetItemStateEx(hItem);
+		if (nStateEx & WIZ_TVIS_EX_DECREASE_INDENT)
+		{
+			prc->left -= pT->GetIndent();
+		}
+		//
+		static HIMAGELIST hImage = pT->GetImageList();
+		if (hImage && !IsItemImageVisible(hItem))
+		{
+			prc->left -= pT->GetIndent();
+		}
+
+		//
+		return lRet;
+	}
 	LRESULT OnTimer(UINT /*uMsg*/, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 	{
 		bHandled = FALSE;
@@ -5338,6 +5646,8 @@ public:
 		UINT nID = (UINT)wParam;
 		if (nID == ID_TIMER_EXPAND_ITEM_FOR_DRAG_AND_DROP)
 		{
+			bHandled = TRUE;
+			//
 			CPoint pos;
 			GetCursorPos(&pos);
 			//
@@ -5355,6 +5665,8 @@ public:
 		}
 		else if (nID == ID_TIMER_SCROLL_FOR_DRAG_AND_DROP)
 		{
+			bHandled = TRUE;
+			//
 			ATLTRACE(_T("OnTimer ID_TIMER_SCROLL_FOR_DRAG_AND_DROP\n"));
 			//
 			CPoint pos;
@@ -5465,15 +5777,6 @@ public:
 		return lRet;
 	}
 	//
-	LRESULT OnMouseWheel(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
-	{
-		T* pT = static_cast<T*>(this);
-		LRESULT lRet = pT->DefWindowProc(uMsg, wParam, lParam);
-
-		pT->Invalidate();
-		//
-		return lRet;
-	}
 	LRESULT OnContextMenu(UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM lParam, BOOL& bHandled)
 	{
 		UINT xPos = GET_X_LPARAM(lParam); 
@@ -5555,7 +5858,7 @@ public:
 	//
 	void CreateButtons()
 	{
-		m_ilButtons.Create(8, 16, ILC_COLOR32 | ILC_MASK, 2, 2);
+		m_ilButtons.Create(16, 16, ILC_COLOR32 | ILC_MASK, 2, 2);
 		COLORREF crBackground = RGB(255, 0, 255);
 		for (int i = 0; i < 2; i++)
 		{
@@ -5564,9 +5867,9 @@ public:
 			CDC dcMem;
 			CClientDC dc(::GetDesktopWindow());
 			dcMem.CreateCompatibleDC(dc.m_hDC);
-			bmp.CreateCompatibleBitmap(dc.m_hDC, 8, 16);
+			bmp.CreateCompatibleBitmap(dc.m_hDC, 16, 16);
 			HBITMAP hbmOld = dcMem.SelectBitmap(bmp);
-			RECT rc = {0, 0, 8, 16};
+			RECT rc = {0, 0, 16, 16};
 			//
 			dcMem.FillSolidRect(&rc, crBackground);
 			//
@@ -5600,6 +5903,7 @@ public:
 		CRect rect(rc);
 		//
 		POINT ptCenter = rect.CenterPoint();
+		ptCenter.x++;
 		CRect rcImage(ptCenter.x - 2, ptCenter.y - 2, ptCenter.x + 3, ptCenter.y + 3);
 		//
 		CPoint pts[3];
@@ -5648,10 +5952,64 @@ public:
 		pDC->SelectBrush(hOldBrush);
 		pDC->SelectPen(hOldPen);
 	}
+	//
+	CRect GetItemButtonRect(HTREEITEM hItem)
+	{
+		T* pT = static_cast<T*>(this);
+		//
+		CRect rcItemText;
+		pT->GetItemRect(hItem, &rcItemText, TRUE);
+		//
+		if (IsSplitItem(hItem))
+		{
+			return CRect();
+		}
+		else
+		{
+			CRect rcButton;
+			//
+			CImageList il = pT->GetImageList(TVSIL_NORMAL);
+			CSize szImage;
+			if (il.m_hImageList)
+			{
+				il.GetIconSize(szImage);
+			}
+			//
+			int nIndent = pT->GetIndent();
+			//
+			if (il.m_hImageList
+				&& IsItemImageVisible(hItem))
+			{
+				CRect rcImage = rcItemText;
+				//
+				rcImage.right = rcItemText.left - 2;
+				rcImage.left = rcImage.right - szImage.cx;
+				rcImage.top = rcImage.CenterPoint().y - szImage.cy / 2;
+				//
+				rcButton = rcImage;
+				rcButton.right = rcImage.left - 2;
+				rcButton.left = rcButton.right - 16;
+			}
+			else
+			{
+				rcButton = rcItemText;
+				//
+				rcButton.right = rcItemText.left;
+				rcButton.left = rcButton.right - 16;
+				rcButton.top = rcButton.CenterPoint().y - 16 / 2;
+			}
+			return rcButton;
+		}
+	}
 
 	void DoPaint( CDCHandle dcPaint )
 	{
 		T* pT = static_cast<T*>(this);
+		//
+		if (m_penSplitterLine.IsNull())
+		{
+			m_penSplitterLine.CreatePen(PS_SOLID, 1, GetCustomSecondLineColor());
+		}
 		//
 		CRect rcUpdate;
 		dcPaint.GetClipBox(&rcUpdate);
@@ -5674,7 +6032,7 @@ public:
 		//
 		int nDC = dcPaint.SaveDC();
 		//
-		dcPaint.FillSolidRect(rcClient, m_crBackgroundColor);
+		dcPaint.FillSolidRect(rcClient, GetCustomWindowBackgroundColor());
 		//
 		dcPaint.SetBkMode(TRANSPARENT);
 		//
@@ -5693,7 +6051,7 @@ public:
 		//
 		int nIndent = pT->GetIndent();
 		//
-		BOOL bDrawButtons = (pT->GetStyle() & TVS_HASBUTTONS) ? TRUE : FALSE;
+		BOOL bDrawButtons = (pT->GetWindowLong(GWL_STYLE) & TVS_HASBUTTONS) ? TRUE : FALSE;
 		//
 		while (hItem && iVisibleCount--)
 		{
@@ -5728,9 +6086,11 @@ public:
 				rcItemBack.left = 0;
 				rcItemBack.right = rcClient.right;
 				//
-				BOOL bItemSelected = (pT->GetItemState(hItem, TVIS_SELECTED) == TVIS_SELECTED);
+				UINT nItemState = pT->GetItemState(hItem, TVIS_SELECTED | TVIS_DROPHILITED);
+				//
+				BOOL bItemSelected = (nItemState & TVIS_SELECTED) ? TRUE : FALSE;
 				BOOL bSelected = (bItemSelected && !m_hItemCommand) || (hItem == m_hItemCommand);
-				BOOL bDragHighlight = (pT->GetItemState(hItem, TVIS_DROPHILITED) == TVIS_DROPHILITED);
+				BOOL bDragHighlight = (nItemState & TVIS_DROPHILITED) ? TRUE : FALSE;
 				//BOOL bHot = rcItemBack.PtInRect(ptCursor);
 				BOOL bHot = FALSE;
 				//
@@ -5741,7 +6101,7 @@ public:
 				//
 				rcItemText.left += GetItemTextIndent(hItem);
 				//
-				DrawItemText(dcPaint, hItem, rcItemText, strText);
+				DrawItemText(dcPaint, hItem, rcItemText, strText, bHot);
 				//
 				CString strExtText = GetItemExtText(hItem);
 				if (!strExtText.IsEmpty())
@@ -5752,31 +6112,32 @@ public:
 					CRect rcItemExtText = rcItemText;
 					rcItemExtText.left += szText.cx + 4;
 					//
-					DrawItemExtText(dcPaint, hItem, rcItemExtText, strExtText);
+					DrawItemExtText(dcPaint, hItem, rcItemExtText, strExtText, bHot);
 				}
 				//
 				CRect rcButton;
 				//
-				if (il.m_hImageList)
+				if (il.m_hImageList
+					&& IsItemImageVisible(hItem))
 				{
 					CRect rcImage = rcItemText;
 					//
-					rcImage.right = rcItemText.left - 3;
+					rcImage.right = rcItemText.left - 2;
 					rcImage.left = rcImage.right - szImage.cx;
 					rcImage.top = rcImage.CenterPoint().y - szImage.cy / 2;
 					//
 					DrawItemImage(dcPaint, il, hItem, rcImage.TopLeft());
 					//
 					rcButton = rcImage;
-					rcButton.left -= nIndent;
-					rcButton.right -= nIndent;
+					rcButton.left -= 16;
+					rcButton.right -= 16;
 				}
 				else
 				{
 					rcButton = rcItemText;
 					//
-					rcButton.right = rcItemText.left - 3;
-					rcButton.left = rcButton.right - (nIndent - 3);
+					rcButton.right = rcItemText.left;
+					rcButton.left = rcButton.right - 16;
 					rcButton.top = rcButton.CenterPoint().y - 16 / 2;
 				}
 				//
@@ -5799,6 +6160,23 @@ public:
 		dcPaint.RestoreDC(nDC);
 	}
 public:
+	CWizSkin::WizItemState GetItemSkinState(HTREEITEM hItem, BOOL bHot)
+	{
+		T* pT = static_cast<T*>(this);
+		//
+		UINT nState = pT->GetItemState(hItem, TVIS_SELECTED | TVIS_DROPHILITED);
+		bool bSelected = (0 != (nState & TVIS_SELECTED));
+		if (!bSelected)
+		{
+			bool bDropTarget = (0 != (nState & TVIS_DROPHILITED));
+			if (bDropTarget)
+				return CWizSkin::wizisSelectedNoFocus;
+		}
+		//
+		CWizSkin::WizItemState state = CWizSkin::CalItemState(pT->m_hWnd, bSelected, bHot);
+		return state;
+	}
+	//
 	virtual void SetItemTextFont(CDCHandle dcPaint, HTREEITEM hItem)
 	{
 		T* pT = static_cast<T*>(this);
@@ -5813,58 +6191,40 @@ public:
 			dcPaint.SelectFont(m_fontTreeFontBold);
 		}
 	}
-	virtual COLORREF GetItemTextColor(HTREEITEM hItem)
+	virtual COLORREF GetItemTextColor(HTREEITEM hItem, BOOL bHot)
 	{
-		T* pT = static_cast<T*>(this);
-		//
-		if (pT->GetItemState(hItem, TVIS_SELECTED) == TVIS_SELECTED)
-		{
-			if (pT->m_hWnd == ::GetFocus())
-			{
-				static COLORREF color = ::GetSysColor(COLOR_HIGHLIGHTTEXT);
-				return color;
-			}
-			else
-			{
-				static COLORREF color = ::GetSysColor(COLOR_WINDOWTEXT);
-				return color;
-			}
-		}
-		else
-		{
-			static COLORREF color = ::GetSysColor(COLOR_WINDOWTEXT);
-			return color;
-		}
+		CWizSkin::WizItemState state = GetItemSkinState(hItem, bHot);
+		return GetCustomItemTextColor(state);
 	}
-	virtual COLORREF GetItemTextBackgroundColor(HTREEITEM hItem)
+	virtual COLORREF GetItemTextBackgroundColor(HTREEITEM hItem, BOOL bHot)
 	{
-		T* pT = static_cast<T*>(this);
-		if (pT->GetItemState(hItem, TVIS_SELECTED) == TVIS_SELECTED)
+		CWizSkin::WizItemState state = GetItemSkinState(hItem, bHot);
+		if (state != CWizSkin::wizisNormal)
 		{
-			if (pT->m_hWnd == ::GetFocus())
-			{
-				static COLORREF color = ::GetSysColor(COLOR_HIGHLIGHT);
-				return color;
-			}
-			else
-			{
-				static COLORREF color = ::GetSysColor(COLOR_BTNFACE);
-				return color;
-			}
+			COLORREF cr = GetCustomItemColor(state);
+			return cr;
 		}
-		else
-		{
-			return (COLORREF)-1;
-		}
+		return -1;
 	}
 	virtual void DrawItemBackground(CDCHandle dcPaint, HTREEITEM hItem, CRect& rcItemBack, BOOL bSelected, BOOL bHot)
 	{
+		/*
+		CWizSkin::WizItemState state = GetItemSkinState(hItem, bHot);
+		if (state != CWizSkin::wizisNormal)
+		{
+			if (GetWindowLong(GWL_STYLE) & TVS_FULLROWSELECT)
+			{
+				COLORREF cr = GetCustomItemColor(state);
+				dcPaint.FillSolidRect(&rcItemBack, cr);
+			}
+		}
+		*/
 	}
-	virtual void DrawItemText(CDCHandle dcPaint, HTREEITEM hItem, CRect& rcItemText, LPCTSTR lpszText)
+	virtual void DrawItemText(CDCHandle dcPaint, HTREEITEM hItem, CRect& rcItemText, LPCTSTR lpszText, BOOL bHot)
 	{
-		dcPaint.SetTextColor(GetItemTextColor(hItem));
+		dcPaint.SetTextColor(GetItemTextColor(hItem, bHot));
 		//
-		COLORREF crBackground = GetItemTextBackgroundColor(hItem);
+		COLORREF crBackground = GetItemTextBackgroundColor(hItem, bHot);
 		if ((COLORREF)-1 == crBackground)
 		{
 			dcPaint.SetBkMode(TRANSPARENT);
@@ -5877,10 +6237,17 @@ public:
 		//
 		dcPaint.DrawText(lpszText, -1, &rcItemText, m_nDrawTextFlags);
 	}
-	virtual void DrawItemExtText(CDCHandle dcPaint, HTREEITEM hItem, CRect& rcItemExtText, LPCTSTR lpszExtText)
+	virtual void DrawItemExtText(CDCHandle dcPaint, HTREEITEM hItem, CRect& rcItemExtText, LPCTSTR lpszExtText, BOOL bHot)
 	{
-		static COLORREF crExtTextColor = GetSysColor(COLOR_BTNSHADOW);
-		dcPaint.SetTextColor(crExtTextColor);
+		CWizSkin::WizItemState state = GetItemSkinState(hItem, bHot);
+		if (state == CWizSkin::wizisNormal)
+		{
+			dcPaint.SetTextColor(GetCustomSecondLineColor());
+		}
+		else
+		{
+			dcPaint.SetTextColor(GetCustomItemTextColor(state));
+		}
 		//
 		dcPaint.SelectFont(m_fontTreeFontSmall);
 		dcPaint.DrawText(lpszExtText, -1, &rcItemExtText,  DT_LEFT | DT_SINGLELINE | DT_VCENTER);
@@ -5895,6 +6262,7 @@ public:
 		il.Draw(dcPaint, nImage, pt, ILD_TRANSPARENT);
 	}
 public:
+
 	virtual void GetCommandItems(std::vector<HTREEITEM>& arrayItem)
 	{
 		T* pT = static_cast<T*>(this);
@@ -5945,7 +6313,7 @@ public:
 	{
 		return 0;
 	}
-	virtual void OnDeleteItemData(LPARAM lParam)
+	virtual void OnDeleteItemData(HTREEITEM hItem, LPARAM lParam)
 	{
 	}
 	//
@@ -6045,73 +6413,47 @@ public:
 		//
 		return nVisible;
 	}
-		
-	void MakeSelectedItemVisibleInTaskPanel()
-	{
-		T* pT = (T *)this;
-		//
-		HTREEITEM hItem = pT->GetSelectedItem();
-		if (!hItem)
-			return;
-		//
-		MakeItemVisibleInTaskPanel(hItem); 
-	}
-	void MakeItemVisibleInTaskPanel(HTREEITEM hItem)
-	{
-		if (!hItem)
-			return;
-		//
-		T* pT = (T *)this;
-		//
-		CRect rc;
-		pT->GetItemRect(hItem, &rc, FALSE);
-		//
-		::SendMessage(pT->GetParent(), WIZ_UM_TASKPANELENSUREVISIBLE, (WPARAM)pT->m_hWnd, (LPARAM)&rc);
-	}
 };
+
 
 
 template <class T>
 class CWizTreeCtrlImpl 
-	: public ATL::CWindowImpl< T, CTreeViewCtrl, ATL::CControlWinTraits>
+	: public ATL::CWindowImpl< T, CTreeViewCtrlEx, ATL::CControlWinTraits>
 	, public CDoubleBufferImpl<CWizTreeCtrlImpl<T> >
 	, public CWizTreeCtrlBase<T>
 {
 public:
-	CWizTreeCtrlImpl()
-	{
-	}
-	
-	~CWizTreeCtrlImpl()
-	{
-	}
 	static DWORD GetWndStyle(DWORD dwStyle)
 	{
-		return WS_CHILD | WS_VISIBLE | WS_CLIPCHILDREN | TVS_HASBUTTONS | TVS_SHOWSELALWAYS;
+		return CWizTreeCtrlBase<T>::GetWndStyle(dwStyle);
 	}
-public:
-	BEGIN_MSG_MAP(CWizTreeCtrlImpl)
-		CHAIN_MSG_MAP(CDoubleBufferImpl<CWizTreeCtrlImpl> )
-		CHAIN_MSG_MAP(CWizTreeCtrlBase<T>)
-		DEFAULT_REFLECTION_HANDLER()
-	END_MSG_MAP()
 
 public:
 	BOOL SubclassWindow( HWND hWnd )
 	{
-		return CWindowImpl< T, CTreeViewCtrl >::SubclassWindow( hWnd ) ? OnInitControl() : FALSE;
+		return CWindowImpl< T, CTreeViewCtrlEx >::SubclassWindow( hWnd ) ? OnInitControl() : FALSE;
 	}
+
 	void DoPaint( CDCHandle dcPaint )
 	{
-		CWizTreeCtrlBase::DoPaint(dcPaint);
-	}	
+		CWizTreeCtrlBase<T>::DoPaint(dcPaint);
+	}
+
+	BEGIN_MSG_MAP(CWizTreeCtrlImpl)
+		CHAIN_MSG_MAP(CDoubleBufferImpl< CWizTreeCtrlImpl >)
+		CHAIN_MSG_MAP( CWizTreeCtrlBase<T>)
+		DEFAULT_REFLECTION_HANDLER()
+	END_MSG_MAP()
 };
 
-class CWizTreeCtrl : public CWizTreeCtrlImpl<CWizTreeCtrl>
+class CWizTreeCtrl 
+	: public CWizTreeCtrlImpl<CWizTreeCtrl>
 {
 public:
-	DECLARE_WND_SUPERCLASS(_T("Wiz_TreeCtrl"), GetWndClassName())
+	DECLARE_WND_SUPERCLASS(_T("CWizTreeCtrl"), GetWndClassName())
 };
+
 
 
 
@@ -6293,9 +6635,6 @@ class CAtlWizDropSource
 public:
 	CAtlWizDropSource()
 	{
-		m_bInitialized = FALSE;
-		m_nFormat = 0;
-		m_hData = NULL;
 		m_dwLastEffect = 0;
 	}
 	virtual ~CAtlWizDropSource()
@@ -6306,6 +6645,38 @@ public:
 		COM_INTERFACE_ENTRY(IDataObject)
 		COM_INTERFACE_ENTRY(IDropSource)
 	END_COM_MAP()
+	//
+
+	HGLOBAL WizCopyGlobalMemory(HGLOBAL hDest, HGLOBAL hSource)
+	{
+		ATLASSERT(hSource != NULL);
+
+		// make sure we have suitable hDest
+		ULONG_PTR nSize = ::GlobalSize(hSource);
+		if (hDest == NULL)
+		{
+			hDest = ::GlobalAlloc(GMEM_SHARE|GMEM_MOVEABLE, nSize);
+			if (hDest == NULL)
+				return NULL;
+		}
+		else if (nSize > ::GlobalSize(hDest))
+		{
+			// hDest is not large enough
+			return NULL;
+		}
+
+		// copy the bits
+		LPVOID lpSource = ::GlobalLock(hSource);
+		LPVOID lpDest = ::GlobalLock(hDest);
+		ATLASSERT(lpDest != NULL);
+		ATLASSERT(lpSource != NULL);
+		Checked::memcpy_s(lpDest, (ULONG)::GlobalSize(hDest), lpSource, (ULONG)nSize);
+		::GlobalUnlock(hDest);
+		::GlobalUnlock(hSource);
+
+		// success -- return hDest
+		return hDest;
+	}
 
 	// IDataObject
 	STDMETHODIMP SetData ( FORMATETC* pformatetc, STGMEDIUM* pmedium, BOOL fRelease )
@@ -6317,7 +6688,8 @@ public:
 		if (!pformatetcIn || !pmedium)
 			return E_INVALIDARG;
 		//
-		if (pformatetcIn->cfFormat != m_nFormat)
+		std::map<UINT, HANDLE>::const_iterator it = m_mapData.find(pformatetcIn->cfFormat);
+		if (it == m_mapData.end())
 			return DV_E_FORMATETC;
 		//
 		if (pformatetcIn->dwAspect != DVASPECT_CONTENT)
@@ -6332,7 +6704,7 @@ public:
 		memset(pmedium, 0, sizeof(STGMEDIUM));
 		//
 		pmedium->tymed = TYMED_HGLOBAL;
-		pmedium->hGlobal = m_hData;
+		pmedium->hGlobal = WizCopyGlobalMemory(NULL, it->second);
 		pmedium->pUnkForRelease = NULL;
 		//
 		return S_OK;
@@ -6350,16 +6722,21 @@ public:
 
 		// Fill in m_vecSupportedFormats with the formats that the caller has
 		// put in this object
-		FORMATETC format;
-		ZeroMemory(&format, sizeof(FORMATETC));
-		//
-		format.cfFormat = m_nFormat;
-		format.dwAspect = DVASPECT_CONTENT;
-		format.lindex = -1;
-		format.tymed = TYMED_HGLOBAL;
-		//
 		m_arrayFormats.clear();
-		m_arrayFormats.push_back(format);
+		for (std::map<UINT, HANDLE>::const_iterator it = m_mapData.begin();
+			it != m_mapData.end();
+			it++)
+		{
+			FORMATETC format;
+			ZeroMemory(&format, sizeof(FORMATETC));
+			//
+			format.cfFormat = it->first;
+			format.dwAspect = DVASPECT_CONTENT;
+			format.lindex = -1;
+			format.tymed = TYMED_HGLOBAL;
+			//
+			m_arrayFormats.push_back(format);
+		}
 		//
 		// Init the enumerator, passing it our vector of supported FORMATETCs.
 		hr = pImpl->Init ( GetUnknown(), m_arrayFormats);
@@ -6377,7 +6754,8 @@ public:
 		if (!pformatetc)
 			return E_INVALIDARG;
 		//
-		if (pformatetc->cfFormat != m_nFormat)
+		std::map<UINT, HANDLE>::const_iterator it = m_mapData.find(pformatetc->cfFormat);
+		if (it == m_mapData.end())
 			return DV_E_FORMATETC;
 		//
 		if (pformatetc->dwAspect != DVASPECT_CONTENT)
@@ -6444,37 +6822,21 @@ public:
 	//
 public:
 private:
-	BOOL m_bInitialized;
-	UINT m_nFormat;
-	HANDLE m_hData;
 	DWORD m_dwLastEffect;
+	std::map<UINT, HANDLE> m_mapData;
 	std::vector<FORMATETC> m_arrayFormats;
 public:
 	// Operations
-	BOOL Init (UINT nFormat, HANDLE hData)
+	BOOL Add (UINT nFormat, HANDLE hData)
 	{
-		ATLASSERT(!m_bInitialized);
-		ATLASSERT(!m_nFormat);
-		ATLASSERT(!m_hData);
-		if (m_bInitialized || m_nFormat || m_hData)
-			return FALSE;
-		//
-		m_nFormat = nFormat;
-		m_hData = hData;
-		//
-		ATLASSERT(m_nFormat);
-		ATLASSERT(m_hData);
-		if (!m_nFormat || !m_hData)
-			return FALSE;
-		//
-		m_bInitialized = TRUE;
+		m_mapData[nFormat] = hData;
 		//
 		return TRUE;
 	}
 
 	HRESULT DoDragDrop ( DWORD dwOKEffects, DWORD* pdwEffect )
 	{
-		if ( !m_bInitialized )
+		if (m_mapData.empty())
 			return E_FAIL;
 
 		CComQIPtr<IDropSource> pDropSrc = this;
@@ -6532,7 +6894,7 @@ public:
 interface IWizAtlDropTargetEx
 {
 	virtual STDMETHODIMP OnDragLeave() = 0;
-	virtual STDMETHODIMP OnDragOver(DWORD grfKeyState, POINTL pt, DWORD *pdwEffect) = 0;
+	virtual STDMETHODIMP OnDragOver(IDataObject *pDataObj, DWORD grfKeyState, POINTL pt, DWORD *pdwEffect) = 0;
 	virtual STDMETHODIMP OnDrop(IDataObject *pDataObj, DWORD grfKeyState, POINTL pt, DWORD *pdwEffect) = 0;
 };
 
@@ -6552,6 +6914,8 @@ protected:
 	std::set<UINT> m_setFormats;
 	IWizAtlDropTargetEx* m_pTarget;
 	DWORD m_dwEffect;
+	//
+	CComPtr<IDataObject> m_spDataObject;
 public:
     STDMETHODIMP DragEnter(IDataObject *pDataObj, DWORD grfKeyState, POINTL pt, DWORD *pdwEffect)
 	{
@@ -6561,6 +6925,8 @@ public:
 		//
 		if (!m_pTarget)
 			return S_OK;
+		//
+		m_spDataObject = pDataObj;
 		//
 		CWizAtlDataObject data(pDataObj);
 		//
@@ -6605,7 +6971,7 @@ public:
 		if (!m_pTarget)
 			return S_OK;
 		//
-		return m_pTarget->OnDragOver(grfKeyState, pt, pdwEffect);
+		return m_pTarget->OnDragOver(m_spDataObject, grfKeyState, pt, pdwEffect);
 	}
     
 	STDMETHODIMP DragLeave( void)
@@ -7234,7 +7600,7 @@ public:
 		}
 		//
 		TSettings settings;
-		settings.SetStr(m_strSectionName, m_strKeyName, strText);
+		settings.SetStr(m_strSectionName, m_strKeyName, strText, 0);
 	}
 	//
 	static CString GetHotKeyFromSettings(LPCTSTR lpszSection, LPCTSTR lpszKey, LPCTSTR lpszDef)
@@ -7244,6 +7610,519 @@ public:
 	}
 };
 
+
+
+
+class CWizCommandToolBar
+	: public CWizToolBarCtrlBaseExImpl<CWizCommandToolBar>
+{
+public:
+	CWizCommandToolBar()
+	{
+		m_nWindowStyle = WS_CHILD | WS_VISIBLE | WS_CLIPCHILDREN | WS_CLIPSIBLINGS | CCS_NODIVIDER | CCS_NORESIZE | CCS_NOPARENTALIGN | TBSTYLE_TOOLTIPS | TBSTYLE_LIST | TBSTYLE_FLAT;
+		m_bButtonBorder = FALSE;
+		m_nForceTopBorder = -1;
+		::WizCreateUIFont(m_fontDropdown, 0, _T("Wingdings 3"), -8);
+	}
+
+	BEGIN_MSG_MAP(CWizCommandToolBar)
+		MESSAGE_HANDLER(TB_GETITEMRECT, OnGetItemRect)
+		MESSAGE_HANDLER(WM_MOUSEMOVE, OnMouseMove)
+		MESSAGE_HANDLER(WM_MOUSELEAVE, OnMouseLeave)
+		MESSAGE_HANDLER(WIZ_UM_TOOLBAR_GET_BACKGROUND, OnToolbarGetBackground)
+		CHAIN_MSG_MAP(CWizToolBarCtrlBaseExImpl<CWizCommandToolBar>)
+	END_MSG_MAP()
+protected:
+	BOOL m_bButtonBorder;
+	int m_nForceTopBorder;
+	UINT m_nWindowStyle;
+private:
+	CPen m_penBorder;
+	CFont m_fontDropdown;
+public:
+	void SetButtonBorder(BOOL b)
+	{
+		m_bButtonBorder = b;
+		if (IsWindow())
+		{
+			Invalidate();
+		}
+	}
+	void SetForceTopBorder(BOOL b)
+	{
+		m_nForceTopBorder = b ? 1 : 0;
+		if (IsWindow())
+		{
+			Invalidate();
+		}
+	}
+
+public:
+	LRESULT OnGetItemRect(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
+	{
+		LRESULT lRet = DefWindowProc(uMsg, wParam, lParam);
+		if (m_bButtonBorder)
+		{
+			LPRECT lprc = (LPRECT)lParam;
+			ATLASSERT(lprc);
+			if (lprc)
+			{
+				UINT nIndex = (UINT)wParam;
+				if (nIndex > 0)
+				{
+					RECT rcLeft;
+					DefWindowProc(uMsg, (WPARAM)(nIndex - 1), (LPARAM)&rcLeft);
+					//
+					lprc->left = rcLeft.right - 1;
+				}
+			}
+		}
+		return lRet;
+	}
+	//
+	LRESULT ProcessMouseMessage(UINT uMsg, WPARAM wParam, LPARAM lParam)
+	{
+		int nOldHotItem = GetHotItem();
+		//
+		LRESULT lRet = DefWindowProc(uMsg, wParam, lParam);
+		if (m_bButtonBorder)
+		{
+			int nNewHotItem = (int)GetHotItem();
+			if (nNewHotItem != nOldHotItem)
+			{
+				if (nOldHotItem >= 0)
+				{
+					InvalidateButton(nOldHotItem);
+				}
+				if (nNewHotItem >= 0)
+				{
+					InvalidateButton(nNewHotItem);
+				}
+			}
+		}
+		return lRet;
+	}
+	//
+	LRESULT OnMouseMove(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
+	{
+		return ProcessMouseMessage(uMsg, wParam,lParam);
+	}
+	LRESULT OnMouseLeave(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
+	{
+		return ProcessMouseMessage(uMsg, wParam,lParam);
+	}
+	LRESULT OnToolbarGetBackground(UINT /*uMsg*/, WPARAM wParam, LPARAM lParam, BOOL& /*bHandled*/)
+	{
+		COLORREF* pcr = (COLORREF *)lParam;
+		if (!pcr)
+			return FALSE;
+		//
+		*pcr = GetBackgroundColor();
+
+		return TRUE;
+	}
+	virtual void GetToolButtonRect(int nIndex, RECT *lprc)
+	{
+		GetItemRect(nIndex, lprc);
+		//
+		if (IsAddTopSpace())
+		{
+			lprc->top ++;
+		}
+		if (IsDrawTopBorder())
+		{
+			lprc->top ++;
+		}
+	}
+	
+	virtual void DrawBackground(CDCHandle dc, const CRect& rc)
+	{
+		dc.FillSolidRect(&rc, GetBackgroundColor());
+		//
+		if (IsDrawTopBorder())
+		{
+			CRect rcBorder = rc;
+			rcBorder.bottom = rcBorder.top + 1;
+			dc.FillSolidRect(&rcBorder, GetBorderColor());
+		}
+	}
+	//
+	virtual void DrawToolButtonBackground(CDCHandle dc, int nIndex, UINT nFlags, CWizSkin::WizButtonState state, CWizSkin::WizToolButtonDropDownState stateDropDown)
+	{
+		CRect rcButton;
+		GetToolButtonRect(nIndex, rcButton);
+		//
+		if (IsButtonSep(nIndex))
+		{
+			if (!m_bButtonBorder)
+			{
+				CRect rcLine = rcButton;
+				rcLine.left = rcLine.CenterPoint().x;
+				rcLine.right = rcLine.left + 1;
+				//
+				rcLine.top +=  2;
+				rcLine.bottom -= 2;
+				//
+				dc.FillSolidRect(&rcLine, GetToolButtonBorderColor(CWizSkin::wizbsNormal));
+			}
+			return;
+		}
+		//
+		int nButtonCount = GetButtonCount();
+		//
+		BOOL bLeftSep = FALSE;
+		BOOL bRightSep = FALSE;
+		//
+		int nLeft = nIndex - 1;
+		int nRight = nIndex + 1;
+		//
+		if (nLeft >= 0 && nLeft < nButtonCount)
+		{
+			bLeftSep = IsButtonSep(nLeft);
+		}
+		//
+		if (nRight >= 0 && nRight < nButtonCount)
+		{
+			bRightSep = IsButtonSep(nRight);
+		}
+		//
+		BOOL bLeft = (nIndex == 0 || bLeftSep);
+		BOOL bRight = (nIndex == nButtonCount - 1 || bRightSep);
+		//
+		if (m_bButtonBorder)
+		{
+			nFlags |= CWizSkin::wizbbBorder;
+		}
+		//
+		COLORREF crBorder = GetToolButtonBorderColor(state);
+		COLORREF crFill = GetToolButtonBackgroundColor(state);
+		COLORREF crText = GetToolButtonTextColor(nIndex, state);
+		//
+		WizGetSkin()->DrawToolButtonBackgroundCustomColor(dc, rcButton, GetButtonTextByIndex(nIndex), nFlags, crBorder, crFill, crText, state, stateDropDown, bLeft, bRight);
+	}
+	//
+	virtual BOOL IsDrawTopBorder()
+	{
+		if (-1 == m_nForceTopBorder)
+		{
+			return !m_bButtonBorder && WizGetSkin()->GetDrawToolBarTopBorder() ;
+		}
+		else
+		{
+			return m_nForceTopBorder == 1;
+		}
+	}
+	virtual COLORREF GetBorderColor()
+	{
+		return WizGetSkin()->GetToolBarBorderColor();
+	}
+	virtual COLORREF GetBackgroundColor()
+	{
+		return WizGetSkin()->GetToolBarColor();
+	}
+	//
+	virtual COLORREF GetToolButtonBorderColor(CWizSkin::WizButtonState state)
+	{
+		return WizGetSkin()->GetToolBarButtonBorderColor(state);
+	}
+	virtual COLORREF GetToolButtonBackgroundColor(CWizSkin::WizButtonState state)
+	{
+		return WizGetSkin()->GetToolBarButtonColor(state);
+	}
+	virtual COLORREF GetToolButtonTextColor(int nIndex, CWizSkin::WizButtonState state)
+	{
+		return WizGetSkin()->GetToolBarButtonTextColor(state);
+	}
+	//
+	//
+	BOOL CreateEx(HWND hWndParent)
+	{
+		if (!Create(hWndParent, rcDefault, NULL, m_nWindowStyle, 0))
+			return FALSE;
+		//
+		ATLASSERT(IsWindow());
+		//
+		SetExtendedStyle(GetExtendedStyle() | /*TBSTYLE_EX_MIXEDBUTTONS | */TBSTYLE_EX_DRAWDDARROWS);
+		SetButtonStructSize();
+		//
+		AutoSetButtonSize();
+		//
+		return TRUE;
+	}
+	//
+};
+
+class CWizCustomCommandToolBar 
+	: public CWizCommandToolBar
+{
+public:
+	CWizCustomCommandToolBar()
+	{
+		Init();
+	}
+	void Init()
+	{
+		m_crBar = COLORREF(-1);
+		m_crBorder = COLORREF(-1);
+		m_bSkinDrawTopBorder = FALSE;
+		//
+		for (int i = 0; i < 4; i++)
+		{
+			m_crBackground[i] = COLORREF(-1);
+			m_crButtonText[i] = COLORREF(-1);
+			m_crButtonBorder[i] = COLORREF(-1);
+		}
+	}
+private:
+	BOOL m_bSkinDrawTopBorder;
+	COLORREF m_crBar;
+	COLORREF m_crBorder;
+
+	COLORREF m_crBackground[4];
+	COLORREF m_crButtonBorder[4];
+	COLORREF m_crButtonText[4];
+	//
+	COLORREF GetToolButtonCustomBackgroundColor(CWizSkin::WizButtonState state)
+	{
+		return m_crBackground[state];
+	}
+	COLORREF GetToolButtonCustomBorderColor(CWizSkin::WizButtonState state)
+	{
+		return m_crButtonBorder[state];
+	}
+	COLORREF GetToolButtonCustomTextColor(CWizSkin::WizButtonState state)
+	{
+		return m_crButtonText[state];
+	}
+	//
+protected:
+	virtual void SetSkinName(LPCTSTR lpszSkinName)
+	{
+		Init();
+		//
+		CWizToolBarCtrlBaseExImpl::SetSkinName(lpszSkinName);
+		//
+		CString strName(lpszSkinName);
+		if (strName.IsEmpty())
+		{
+			m_bSkinDrawTopBorder = WizGetSkin()->GetDrawToolBarTopBorder();
+			return;
+		}
+		//
+		m_crBar = WizGetSkin()->GetCustomColor(lpszSkinName, CWizSkin::crToolBar, -1);
+		m_crBorder = WizGetSkin()->GetCustomColor(lpszSkinName, CWizSkin::crToolBarBorder, -1);
+		m_bSkinDrawTopBorder = WizGetSkin()->GetBool(CString(lpszSkinName) + _T("_DrawToolBarBorderTop"), WizGetSkin()->GetDrawToolBarTopBorder());
+		//
+		for (int i = 0; i < 4; i++)
+		{
+			m_crBackground[i] = WizGetSkin()->GetCustomColor(lpszSkinName, CWizSkin::WizSkinColorType(CWizSkin::crToolBarButtonNormal + i), -1);
+		}
+		for (int i = 0; i < 4; i++)
+		{
+			m_crButtonBorder[i] = WizGetSkin()->GetCustomColor(lpszSkinName, CWizSkin::WizSkinColorType(CWizSkin::crToolBarButtonBorderNormal + i), -1);
+		}
+		for (int i = 0; i < 4; i++)
+		{
+			m_crButtonText[i] = WizGetSkin()->GetCustomColor(lpszSkinName, CWizSkin::WizSkinColorType(CWizSkin::crToolBarButtonTextNormal + i), -1);
+		}
+	}
+public:
+	virtual BOOL IsDrawTopBorder()
+	{
+		if (-1 == m_nForceTopBorder)
+		{
+			return !m_bButtonBorder && m_bSkinDrawTopBorder;
+		}
+		else
+		{
+			return m_nForceTopBorder == 1;
+		}
+
+	}
+	virtual COLORREF GetBorderColor()
+	{
+		if (m_crBorder != (COLORREF)-1)
+			return m_crBorder;
+		return CWizCommandToolBar::GetBorderColor();
+	}
+
+	virtual COLORREF GetBackgroundColor()
+	{
+		if (m_crBar != (COLORREF)-1)
+			return m_crBar;
+		return CWizCommandToolBar::GetBackgroundColor();
+	}
+	//
+	virtual COLORREF GetToolButtonBackgroundColor(CWizSkin::WizButtonState state)
+	{
+		COLORREF cr = GetToolButtonCustomBackgroundColor(state);
+		if (cr != (COLORREF)-1)
+			return cr;
+		//
+		return CWizCommandToolBar::GetToolButtonBackgroundColor(state);
+	}
+	virtual COLORREF GetToolButtonBorderColor(CWizSkin::WizButtonState state)
+	{
+		COLORREF cr = GetToolButtonCustomBorderColor(state);
+		if (cr != (COLORREF)-1)
+			return cr;
+		//
+		return CWizCommandToolBar::GetToolButtonBorderColor(state);
+	}
+	virtual COLORREF GetToolButtonTextColor(int index, CWizSkin::WizButtonState state)
+	{
+		COLORREF cr = GetToolButtonCustomTextColor(state);
+		if (cr != (COLORREF)-1)
+			return cr;
+		//
+		return CWizCommandToolBar::GetToolButtonTextColor(index, state);
+	}
+	//
+	void SetBackgroundColor(COLORREF cr)
+	{
+		m_crBar = cr;
+	}
+	//
+	BOOL CreateEx(HWND hWndParent, LPCTSTR lpszSkinName)
+	{
+		m_strSkinName = lpszSkinName;
+		SetSkinName(lpszSkinName);
+		//
+		return CWizCommandToolBar::CreateEx(hWndParent);
+	}
+
+};
+//
+
+
+
+class CWizFlatToolBarCtrl 
+	: public CWizCustomCommandToolBar
+{
+public:
+	CWizFlatToolBarCtrl();
+protected:
+	COLORREF m_crShadow;
+	BOOL m_bDrawShadow;
+public:
+	virtual void SetSkinName(LPCTSTR lpszSkinName);
+	virtual void DrawBackground(CDCHandle dc, const CRect& rc);
+	virtual int GetMinHeight();
+	void SetDrawShadow(BOOL b);
+};
+
+
+class CWizButtonBar
+	: public CWizCustomCommandToolBar 
+{
+public:
+	BOOL CreateEx(HWND hWndParent, UINT nButtonID, UINT nButtonStyle, BOOL bShowText, LPCTSTR lpszSkinName)
+	{
+		if (!CWizCustomCommandToolBar::CreateEx(hWndParent, lpszSkinName))
+			return FALSE;
+		//
+		m_bButtonBorder = TRUE;
+		//
+		ATLASSERT(IsWindow());
+		//
+		AddToolButton(nButtonID, nButtonStyle, bShowText);
+		//
+		AutoSetButtonSize();
+		//
+		return TRUE;
+	}
+};
+
+
+template <class TEdit>
+class CWizEditBar
+	: public CWizCustomCommandToolBar
+{
+public:
+	CWizEditBar()
+		:m_editContainer(CControlWinTraits::GetWndStyle(0))
+	{
+	}
+
+protected:
+	CWizToolBarEditContainer<TEdit, true> m_editContainer;
+public:
+	TEdit& GetEditControl() { return m_editContainer.m_edit; }
+public:
+	BOOL CreateEx(HWND hWndParent, UINT nEditID, LPCTSTR lpszSkinName, int nWidth)
+	{
+		if (!CWizCustomCommandToolBar::CreateEx(hWndParent, lpszSkinName))
+			return FALSE;
+		//
+		m_bButtonBorder = TRUE;
+		//
+		ATLASSERT(IsWindow());
+		//
+		SetExtendedStyle(GetExtendedStyle() | /*TBSTYLE_EX_MIXEDBUTTONS | */TBSTYLE_EX_DRAWDDARROWS);
+		SetButtonStructSize();
+		//
+		SetButtonSize(22, 24);
+		//
+		m_editContainer.Create(m_hWnd, rcDefault, NULL, 0, 0U, nEditID);
+		m_editContainer.SetAlwaysBorder(TRUE);
+		//
+		AddControl(nEditID, nWidth, m_editContainer);
+		//
+		AutoSetButtonSize();
+		AlignControls();
+		//
+		if (lpszSkinName && *lpszSkinName)
+		{
+			m_editContainer.m_crBorderHot = WizGetSkin()->GetCustomColor(lpszSkinName, CWizSkin::crToolBarEditBorderHot, -1);
+		}
+		//
+		return TRUE;
+	}
+	//
+	CString GetEditText()
+	{
+		return m_editContainer.GetEditText();
+	}
+	//
+	BOOL IsFocused()
+	{
+		return m_editContainer.m_edit.m_hWnd == ::GetFocus();
+	}
+};
+
+
+class CWizSkinHeaderCtrl 
+	: public CWindowImpl<CWizSkinHeaderCtrl, CHeaderCtrl>
+	, public CDoubleBufferImpl<CWizSkinHeaderCtrl>
+{
+public:
+	CWizSkinHeaderCtrl();
+private:
+	CString m_strSkinName;
+	COLORREF m_crBackground;
+	COLORREF m_crBackgroundHot;
+	BOOL m_bMouseOver;
+	BOOL m_bAsc;
+	CFont m_font;
+public:
+
+	BEGIN_MSG_MAP(CWizSkinHeaderCtrl)
+		MESSAGE_HANDLER(WM_MOUSEMOVE, OnMouseMove)
+		MESSAGE_HANDLER(WM_MOUSELEAVE, OnMouseLeave)
+		MESSAGE_HANDLER(WIZ_UM_SKIN_CHANGED, OnSkinChanged)
+		CHAIN_MSG_MAP(CDoubleBufferImpl<CWizSkinHeaderCtrl >)
+	END_MSG_MAP()
+	//
+	LRESULT OnMouseMove(UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM lParam, BOOL& bHandled);
+	LRESULT OnMouseLeave(UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*lParam*/, BOOL& /*bHandled*/);
+	LRESULT OnSkinChanged(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
+	BOOL StartTrackMouseLeave();
+	BOOL IsMouseHover() const;
+	void DoPaint( CDCHandle dcPaint );
+	void SetSkinName(LPCTSTR lpszSkinName);
+	void SetAsc(BOOL b);
+	void SetText(LPCTSTR lpszText);
+};
 
 
 #endif //_WIZUIBASE_H_

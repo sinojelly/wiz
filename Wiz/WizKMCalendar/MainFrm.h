@@ -14,12 +14,12 @@ class CMainFrame
 	, public CIdleHandler
 	, public IMonthCalendarViewEvents
 	, public IWizCalendarViewEvents
-	, public CWizWindowState<CMainFrame, CWizKMSettings>
+	, public CWizWindowState<CMainFrame, CWizKMSettingsEx>
 {
 public:
 	CMainFrame(LPCTSTR lpszCommandLine);
 	//
-	typedef CWizWindowState<CMainFrame, CWizKMSettings> CMainFrameWindowState;
+	typedef CWizWindowState<CMainFrame, CWizKMSettingsEx> CMainFrameWindowState;
 	//
 	DECLARE_FRAME_WND_CLASS(NULL, IDR_MAINFRAME)
 public:
@@ -31,7 +31,7 @@ private:
 	UINT m_nMessageCalendarEventModified;
 
 public:
-	CWizKMToolBar m_toolbar;
+	CWizCommandToolBar m_toolbar;
 	CWizKMSplitterWindow m_splitter;
 	//
 	CMonthCalendarView m_leftview;

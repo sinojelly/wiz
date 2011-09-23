@@ -438,6 +438,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\Globals\WizKMSettings.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\..\WizGlobals\WizMisc.cpp"
 				>
 			</File>
