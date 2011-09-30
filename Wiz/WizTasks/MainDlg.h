@@ -102,6 +102,8 @@ private:
 	//
 	void CheckEmptyTodoList();
 	void CheckDefaultTodoList();
+	//
+	void ShowCurrentTodoLists();
 private:
 	static CMainDlg* m_spMainDlg;
 public:

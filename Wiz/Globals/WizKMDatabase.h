@@ -515,7 +515,7 @@ inline BOOL WizKMCalendarTagsGetAllTagsName(CWizKMDatabase* pDatabase, CWizStdSt
 {
 	CString strTagName = WizKMCalendarTagsGetRootTagName(pDatabase);
 	//
-	CComPtr<IWizTag> spTag = pDatabase->GetRootTagByName(strTagName, TRUE);
+	CComPtr<IWizTag> spTag = pDatabase->GetRootTagByName(strTagName, FALSE);
 	if (!spTag)
 		return FALSE;
 	//

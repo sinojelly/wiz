@@ -355,6 +355,9 @@ public:
 		if (IsDocking())
 			return;
 		//
+		if (GetDlgState() == state)
+			return;
+		//
 		if (stateTopMost == state)
 		{
 			m_bPinDesk = false;

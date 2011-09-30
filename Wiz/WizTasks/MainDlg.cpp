@@ -147,23 +147,8 @@ LRESULT CMainDlg::OnInitDialog(UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*lParam
 	//
 	WizRegisterShowDesktopEvents(m_hWnd);
 	//
-	for (CTodoDlgArray::const_iterator it = m_arrayTodoList.begin();
-		it != m_arrayTodoList.end();
-		it++)
-	{
-		CTodoDlg* pDlg = *it;
-		if (!pDlg)
-		{
-			ATLASSERT(FALSE);
-			continue;
-		}
-		//
-		if (!pDlg->IsWindow())
-			continue;
-		//
-		pDlg->BringWindowToTopEx();
-	}	
-	//
+	ShowCurrentTodoLists();
+
 	//
 	return TRUE;
 }
@@ -187,6 +172,7 @@ LRESULT CMainDlg::OnDestroy(UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*lParam*/,
 	return 0;
 }
 
+
 LRESULT CMainDlg::OnQueryEndSession(UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*lParam*/, BOOL& /*bHandled*/)
 {
 	RemoveIcon();
@@ -196,7 +182,6 @@ LRESULT CMainDlg::OnQueryEndSession(UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*l
 
 void CMainDlg::DestroyAllRemindEvent()
 {
-	/*
 	for (CRemindEventDlgArray::const_iterator it = m_arrayRemindEvent.begin();
 		it != m_arrayRemindEvent.end();
 		it++)
@@ -211,12 +196,10 @@ void CMainDlg::DestroyAllRemindEvent()
 	}
 	//
 	m_arrayRemindEvent.clear();
-	*/
 }
 
 void CMainDlg::DestroyAllTodoLists()
 {
-	/*
 	try
 	{
 		for (CTodoDlgArray::const_iterator it = m_arrayTodoList.begin();
@@ -240,7 +223,28 @@ void CMainDlg::DestroyAllTodoLists()
 	catch (...)
 	{
 	}
-	*/
+}
+
+
+
+void CMainDlg::ShowCurrentTodoLists()
+{
+	for (CTodoDlgArray::const_iterator it = m_arrayTodoList.begin();
+		it != m_arrayTodoList.end();
+		it++)
+	{
+		CTodoDlg* pDlg = *it;
+		if (!pDlg)
+		{
+			ATLASSERT(FALSE);
+			continue;
+		}
+		//
+		if (!pDlg->IsWindow())
+			continue;
+		//
+		pDlg->BringWindowToTopEx();
+	}	
 }
 
 void CMainDlg::CheckEmptyTodoList()
@@ -267,6 +271,8 @@ void CMainDlg::CheckDefaultTodoList()
 	WizKMGetTodo2Documents(&m_db, WizKMTodoGetInboxLocation(), arrayAllTodoList);
 	ATLASSERT(!arrayAllTodoList.empty());
 	//
+	CComPtr<IWizDocument> spDocumentDefault;
+	//
 	bool hasDefault = false;
 	for (CWizDocumentArray::const_iterator it = arrayAllTodoList.begin();
 		it != arrayAllTodoList.end();
@@ -282,6 +288,10 @@ void CMainDlg::CheckDefaultTodoList()
 				ATLASSERT(FALSE);
 				CWizKMDatabase::SetDocumentParam(spDocument, _T("DefaultTodoList"), LPCTSTR(_T("0")));
 			}
+			else
+			{
+				spDocumentDefault = spDocument;
+			}
 			hasDefault = true;
 		}
 	}
@@ -291,10 +301,15 @@ void CMainDlg::CheckDefaultTodoList()
 		CComPtr<IWizDocument> spDocument = * arrayAllTodoList.begin();
 		CWizKMDatabase::SetDocumentParam(spDocument, _T("DefaultTodoList"), LPCTSTR(_T("1"))); 
 		//
+		spDocumentDefault = spDocument;
+	}
+	//
+	if (spDocumentDefault)
+	{
 		if (m_db.GetMeta(_T("WizTasks"), _T("Update")) != _T("1"))
 		{
 			WIZTODODATAEX::CWizTodoDataExArray arrayData;
-			WizKMAddUncompletedToTodoData(&m_db, spDocument, ::WizGetCurrentTime(), arrayData);
+			WizKMAddUncompletedToTodoData(&m_db, spDocumentDefault, ::WizGetCurrentTime(), arrayData);
 			m_db.SetMeta(_T("WizTasks"), _T("Update"), _T("1"));
 		}
 	}
@@ -874,6 +889,8 @@ void CMainDlg::ProcessCommandLine(LPCTSTR lpszCommandLine, BOOL bPrompt /*= FALS
 	if (strCommand.IsEmpty() && bPrompt)
 	{
 		ShowBalloon(WizFormatString0(IDS_WIZTODO), WizFormatString0(IDS_WIZTODO_IS_RUNNING), 10);
+		//
+		ShowCurrentTodoLists();
 	}
 	else if (strCommand == _T("edit_todolist"))
 	{
