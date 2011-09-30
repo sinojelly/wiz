@@ -289,15 +289,12 @@ inline BOOL WizKMTodoDataMoveCompletedTasks(WIZTODODATAEX::CWizTodoDataExArray& 
 
 inline BOOL WizKMAddUncompletedToTodoData(CWizKMDatabase* pDatabase, CComPtr<IWizDocument>& spDocument, const COleDateTime& t, WIZTODODATAEX::CWizTodoDataExArray& arrayData)
 {
-	if (spDocument)
-	{
-		if (WizKMDocumentGetCollectedUncompletedTasks(spDocument))
-			return FALSE;
-	}
+	if (!spDocument)
+		return FALSE;
 	//
 	BOOL bRet = FALSE;
 	int nCount = 0;
-	for (int i = 1; i <= 60; i++)
+	for (int i = 0; i <= 60; i++)
 	{
 		COleDateTimeSpan ts(i, 0, 0, 0);
 		COleDateTime tDoc = t - ts;
@@ -313,7 +310,7 @@ inline BOOL WizKMAddUncompletedToTodoData(CWizKMDatabase* pDatabase, CComPtr<IWi
 		{
 			nCount++;
 			//
-			if (!WizKMDocumentGetRemovedUncompletedTasks(spDocumentOld))
+			//if (!WizKMDocumentGetRemovedUncompletedTasks(spDocumentOld))
 			{
 				WIZTODODATAEX::CWizTodoDataExArray arrayDataOld;
 				//
@@ -327,7 +324,7 @@ inline BOOL WizKMAddUncompletedToTodoData(CWizKMDatabase* pDatabase, CComPtr<IWi
 					}
 				}
 				//
-				WizKMDocumentSetRemovedUncompletedTasks(spDocumentOld, TRUE);
+				//WizKMDocumentSetRemovedUncompletedTasks(spDocumentOld, TRUE);
 			}
 		}
 		//
@@ -337,16 +334,6 @@ inline BOOL WizKMAddUncompletedToTodoData(CWizKMDatabase* pDatabase, CComPtr<IWi
 	//
 	if (bRet)
 	{
-		if (!spDocument)
-		{
-			spDocument = WizKMCreateTodoDocument(pDatabase, t, FALSE);
-			if (!spDocument)
-			{
-				TOLOG(_T("Failed to create document!"));
-				return FALSE;
-			}
-		}
-		//
 		ATLASSERT(spDocument);
 		//
 		CComPtr<IWizTodoItemCollection> spColl = WizDataArrayToTodoItemCollection(arrayData);

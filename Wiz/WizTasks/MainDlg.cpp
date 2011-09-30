@@ -306,11 +306,12 @@ void CMainDlg::CheckDefaultTodoList()
 	//
 	if (spDocumentDefault)
 	{
-		if (m_db.GetMeta(_T("WizTasks"), _T("Update")) != _T("1"))
+		if (m_db.GetMeta(_T("WizTasks"), _T("Update4")) != _T("1"))
 		{
 			WIZTODODATAEX::CWizTodoDataExArray arrayData;
+			WizDocumentGetTodoData(spDocumentDefault, arrayData);
 			WizKMAddUncompletedToTodoData(&m_db, spDocumentDefault, ::WizGetCurrentTime(), arrayData);
-			m_db.SetMeta(_T("WizTasks"), _T("Update"), _T("1"));
+			m_db.SetMeta(_T("WizTasks"), _T("Update4"), _T("1"));
 		}
 	}
 }
