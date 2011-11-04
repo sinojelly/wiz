@@ -41,9 +41,16 @@ BEGIN
         MENUITEM SEPARATOR
         MENUITEM "Help",                        ID_CALENDAR_HELP
         MENUITEM SEPARATOR
-        MENUITEM "Background",                  ID_CALENDAR_BACKGROUND
+        POPUP "Background"
+        BEGIN
+            MENUITEM "None",                        ID_BACKGROUND_NONE
+            MENUITEM "Sticky note",                 ID_BACKGROUND_NOTE
+            MENUITEM "Todo list",                   ID_BACKGROUND_TODOLIST
+            MENUITEM "Journal",                     ID_BACKGROUND_JOURNAL
+        END
+        MENUITEM "Copy background text",        ID_BACKGROUND_COPYTEXT
         MENUITEM SEPARATOR
-        MENUITEM "Options",                     ID_CALENDAR_OPTIONS
+        MENUITEM "Options...",                  ID_CALENDAR_OPTIONS
     END
 END
 

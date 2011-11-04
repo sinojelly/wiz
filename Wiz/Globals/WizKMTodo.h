@@ -313,6 +313,20 @@ inline BOOL WizTodoDataArrayToHtmlText(const WIZTODODATAEX::CWizTodoDataExArray&
 	return TRUE;
 }
 
+inline BOOL WizTodoDataArrayToPlainText(const WIZTODODATAEX::CWizTodoDataExArray& arrayData, CWizStrBufferAlloc& ba)
+{
+	for (WIZTODODATAEX::CWizTodoDataExArray::const_iterator it = arrayData.begin();
+		it != arrayData.end();
+		it++)
+	{
+		CString strText = it->strText;
+		ba.Append(strText + _T("\r\n"));
+		//
+		WizTodoDataArrayToPlainText(it->arrayChild, ba);
+	}
+	//
+	return TRUE;
+}
 
 inline BOOL WizTodoDataArrayToHtmlText(const WIZTODODATAEX::CWizTodoDataExArray& arrayData, LPCTSTR lpszTitle, LPCTSTR lpszXmlFileName, CString& strText)
 {

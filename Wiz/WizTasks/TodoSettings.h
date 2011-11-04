@@ -32,17 +32,17 @@ inline BOOL SetDoubleClickAction(LPCTSTR lpszButtonName)
 	return WizKMGetSettings().SetStr(SECTION_TODO, _T("DoubleClickAction"), lpszButtonName, 0);
 }
 
-inline BOOL SetVisibleTodoLists(const CWizStdStringArray& arrayGUID)
+inline BOOL SetVisibleTodoLists(CWizKMDatabase& db, const CWizStdStringArray& arrayGUID)
 {
 	CString strGUIDs;
 	::WizStringArrayToText(arrayGUID, strGUIDs, _T(";"));
 	//
-	return WizKMGetSettings().SetStr(SECTION_TODO, _T("VisibleTodoLists"), strGUIDs, 0);
+	return db.SetMeta(SECTION_TODO, _T("VisibleTodoLists"), strGUIDs);
 }
 
-inline BOOL GetVisibleTodoLists(CWizStdStringArray& arrayGUID)
+inline BOOL GetVisibleTodoLists(CWizKMDatabase& db, CWizStdStringArray& arrayGUID)
 {
-	CString strGUIDs = WizKMGetSettings().GetStr(SECTION_TODO, _T("VisibleTodoLists"));
+	CString strGUIDs = db.GetMeta(SECTION_TODO, _T("VisibleTodoLists"));
 	//
 	return ::WizSplitTextToArray(strGUIDs, _T(';'), arrayGUID);
 }

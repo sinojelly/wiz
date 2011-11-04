@@ -139,6 +139,7 @@ COleDateTime WizGetFileCreatedTime(LPCTSTR lpszFileName);
 CString WizIntToStr(int n);
 CString WizInt64ToStr(__int64 n);
 CString WizDateToLocalString(const COleDateTime& t);
+CString WizDateToLocalStringYearMonth(const COleDateTime& t);
 CString WizDateToLocalStringLongDate(const COleDateTime& t);
 CString WizTimeToLocalString(const COleDateTime& t, BOOL bNoSec = FALSE);
 CString WizDateTimeToLocalString(const COleDateTime& t, BOOL bNoSec = FALSE);

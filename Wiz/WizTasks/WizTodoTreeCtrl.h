@@ -1492,82 +1492,9 @@ public:
 	{
 		m_pTodoDlg = p;
 	}
+	//
+	void OnTodoLinkClicked(HTREEITEM hItem);
 
-	void OnTodoLinkClicked(HTREEITEM hItem)
-	{
-		if (!hItem)
-			return;
-		//
-		if (!m_pDatabase)
-			return;
-		//
-		WIZTODODATA* pData = GetItemTodo(hItem);
-		if (!pData)
-			return;
-		//
-		CString strDocumentGUID;
-		//
-		if (pData->arrayLinkedDocumentGUID.empty())
-		{
-			ATLASSERT(FALSE);
-			return;
-		}
-		else if (pData->arrayLinkedDocumentGUID.size() == 1)
-		{
-			strDocumentGUID = pData->arrayLinkedDocumentGUID[0];
-		}
-		else
-		{
-			//
-			CMenu menu;
-			if (!menu.CreatePopupMenu())
-				return;
-			//
-			for (CWizStdStringArray::const_iterator it = pData->arrayLinkedDocumentGUID.begin();
-				it != pData->arrayLinkedDocumentGUID.end();
-				it++)
-			{
-				CComPtr<IWizDocument> spDocument = m_pDatabase->GetDocumentByGUID(*it);
-				if (!spDocument)
-					continue;
-				//
-				CString strTitle = CWizKMDatabase::GetDocumentTitle(spDocument);
-				if (strTitle.GetLength() > 50)
-				{
-					strTitle = strTitle.Left(50) + _T("...");
-				}
-				//
-				menu.AppendMenu(MF_STRING, ID_TODO_LINK_BEGIN + int(it - pData->arrayLinkedDocumentGUID.begin()), strTitle);
-			}
-			//
-			menu.AppendMenu(MF_SEPARATOR);
-			menu.AppendMenu(MF_STRING, ID_TODOITEM_CREATELINK, WizFormatString0(IDS_EDIT_LINK));
-
-			//
-			CPoint pt;
-			GetCursorPos(&pt);
-			//
-			UINT nID = menu.TrackPopupMenu(TPM_NONOTIFY | TPM_RETURNCMD, pt.x, pt.y, m_hWnd, NULL);
-			if (0 == nID)
-				return;
-			//
-			int nIndex = nID - ID_TODO_LINK_BEGIN;
-			//
-			if (nIndex < 0 || nIndex >= int(pData->arrayLinkedDocumentGUID.size()))
-			{
-				PostMessage(WM_COMMAND, MAKEWPARAM(nID, 0), 0);
-				return;
-			}
-			//
-			strDocumentGUID = pData->arrayLinkedDocumentGUID[nIndex];
-		}
-		//
-		CComPtr<IWizDocument> spDocument = m_pDatabase->GetDocumentByGUID(strDocumentGUID);
-		if (!spDocument)
-			return;
-		//
-		WizKMViewDocumentEx(spDocument);
-	}
 };
 
 

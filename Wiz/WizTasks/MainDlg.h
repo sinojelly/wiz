@@ -20,6 +20,8 @@ typedef std::list<CTodoDlg*> CTodoDlgArray;
 typedef std::vector<CRemindEventDlg*> CRemindEventDlgArray;
 typedef std::set<CString> CReminderEventGUISSet;
 typedef std::map<UINT, CComPtr<IWizDocument> > CDocumentMenuIDMap;
+typedef std::map<HWND, CComPtr<IWizDocument> > CDocumentWindowMap;
+
 
 #define UM_PROCESS_COMMANDLINE		(WM_USER + 3001)
 #define UM_REFRESH_EVENTS			(WM_USER + 3002)
@@ -53,6 +55,7 @@ private:
 	CTodoDlgArray m_arrayTodoList;
 	CRemindEventDlgArray m_arrayRemindEvent;
 	CDocumentMenuIDMap m_mapDocumentMenuID;
+	CDocumentWindowMap m_mapDocumentWindow;
 	//
 	CWizEventArray m_arrayEvent;
 	CReminderEventGUISSet m_setReminded;
@@ -69,6 +72,8 @@ private:
 	UINT m_nSyncMinutes;
 	//
 	BOOL m_bSuspend;
+	//
+	CComPtr<IWizCommonUI> m_spCommonUI;
 	//
 	CWizHotKeyHelper m_hotkeys;
 public:
@@ -103,7 +108,9 @@ private:
 	void CheckEmptyTodoList();
 	void CheckDefaultTodoList();
 	//
-	void ShowCurrentTodoLists();
+	BOOL ShowCurrentTodoLists();
+	//
+	CComPtr<IWizCommonUI> GetCommonUI();
 private:
 	static CMainDlg* m_spMainDlg;
 public:
@@ -119,6 +126,9 @@ public:
 	static BOOL ReadCommandLineToReg(CString& strCommandLine, BOOL bClear);
 	//
 	void ProcessCommandLine(LPCTSTR lpszCommandLine, BOOL bPrompt = FALSE);
+	//
+	void ViewDocument(LPCTSTR lpszDocumentGUID);
+	void ViewDocument(IWizDocument* pDocument);
 public:
 	BEGIN_MSG_MAP(CMainDlg)
 		MESSAGE_HANDLER(WM_INITDIALOG, OnInitDialog)

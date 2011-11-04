@@ -158,6 +158,27 @@ LRESULT CWizKMCalendarView::OnContextMenu(UINT /*uMsg*/, WPARAM /*wParam*/, LPAR
 	submenu.CheckMenuItem(ID_CALENDAR_WEEK, GetView() == viewtypeWeek ? nChecked : nUnchecked);
 	submenu.CheckMenuItem(ID_CALENDAR_DAY, GetView() == viewtypeDay ? nChecked : nUnchecked);
 	//
+	UINT nID = 0;
+	//
+	WizKMMonthViewCellBackgroundTextType eType = GetBackgroundTextType();
+	switch (eType)
+	{
+	case textNone:
+		nID = ID_BACKGROUND_NONE;
+		break;
+	case textNote:
+		nID = ID_BACKGROUND_NOTE;
+		break;
+	case textTodoList:
+		nID = ID_BACKGROUND_TODOLIST;
+		break;
+	case textJournal:
+		nID = ID_BACKGROUND_JOURNAL;
+		break;
+	}
+	submenu.CheckMenuRadioItem(ID_BACKGROUND_NONE, ID_BACKGROUND_JOURNAL, nID, MF_BYCOMMAND);
+
+	//
 	CPoint pt;
 	GetCursorPos(&pt);
 	submenu.TrackPopupMenu(0, pt.x, pt.y, WizGetMainFrame()->m_hWnd);
@@ -254,6 +275,73 @@ CString CWizKMMonthViewCellBackgroundTextMap::GetKey(const COleDateTime& t)
 	return strDate;
 }
 
+
+void CWizKMMonthViewCellBackgroundTextMap::InitMonthTodoList(const COleDateTime& t)
+{
+	CWizKMDatabase* pDatabase = WizGetDatabase();
+	if (!pDatabase)
+		return;
+	//
+	//按照标题和月份收集////
+	CString strCompletedTitle = WizFormatString1(_T("[%1]"), WizDateToLocalStringYearMonth(t));
+	//
+	CString strCompletedLocation = WizKMTodoGetCompletedLocation();
+	//
+	CString sql = WizFormatString2(_T("DOCUMENT_TITLE like %1 and DOCUMENT_LOCATION='%2'"), ::WizStringToSQL(strCompletedTitle + _T("%")), strCompletedLocation);
+    
+    CWizDocumentArray arrayDocument;
+    HRESULT hr = pDatabase->GetDocumentsBySQL(CComBSTR(sql), arrayDocument);
+	if (arrayDocument.empty())
+		return;
+	//
+	COleDateTime tStart(t.GetYear(), t.GetMonth(), t.GetDay(), 0, 0, 0);
+	COleDateTime tEnd = tStart + COleDateTimeSpan(1, 0, 0, 0);
+	//
+	std::map<CString, WIZTODODATAEX::CWizTodoDataExArray> mapData;
+	//
+	for (CWizDocumentArray::const_iterator itDocument = arrayDocument.begin();
+		itDocument != arrayDocument.end();
+		itDocument++)
+	{
+		CComPtr<IWizDocument> spDocument = *itDocument;
+		//
+		WIZTODODATAEX::CWizTodoDataExArray arrayData;
+		WizDocumentGetTodoData(spDocument, arrayData);
+		//
+		for (WIZTODODATAEX::CWizTodoDataExArray::const_iterator itData = arrayData.begin();
+			itData != arrayData.end();
+			itData++)
+		{
+			const WIZTODODATAEX& data = *itData;
+			//
+			COleDateTime t = data.tCompleted;
+			CString strKey = GetKey(t);
+			//
+			WIZTODODATAEX::CWizTodoDataExArray& arrayRet = mapData[strKey];
+			//
+			arrayRet.push_back(data);
+		}
+    }
+	//
+	COleDateTime tCurr(t.GetYear(), t.GetMonth(), 1, 0, 0, 0);
+	while (1)
+	{
+		CString strKey = GetKey(tCurr);
+		//
+		WIZTODODATAEX::CWizTodoDataExArray& arrayCurr = mapData[strKey];
+		//
+		CWizStrBufferAlloc ba;
+		WizTodoDataArrayToPlainText(arrayCurr, ba);
+		//
+		operator [] (strKey) = ba.GetBuffer();
+		//
+		tCurr += COleDateTimeSpan(1, 0, 0, 0);
+		//
+		if (tCurr.GetMonth() != t.GetMonth())
+			break;
+	}
+}
+
 CString CWizKMMonthViewCellBackgroundTextMap::GetBackgroundText(WizKMMonthViewCellBackgroundTextType eType, const COleDateTime& t)
 {
 	if (textNone == eType)
@@ -274,6 +362,9 @@ CString CWizKMMonthViewCellBackgroundTextMap::GetBackgroundText(WizKMMonthViewCe
 	//
 	if (textTodoList == eType)
 	{
+		InitMonthTodoList(t);
+		//
+		/*
 		for (int i = 0; i < 31; i++)
 		{
 			COleDateTime tDay = tMonthBegin + COleDateTimeSpan(i, 0, 0, 0);
@@ -291,11 +382,12 @@ CString CWizKMMonthViewCellBackgroundTextMap::GetBackgroundText(WizKMMonthViewCe
 			if (itBackground == end() || itBackground->second.IsEmpty())
 			{
 				CString strText = CWizKMDatabase::GetDocumentText(spDocument, 0);
-				strText.Replace(_T("\r\n\r\n"), _T("\r\n"));
+				strText.Replace(_T("\r\n\r\n"), _T("\n"));
 				strText.Replace(_T("\n\n"), _T("\n"));
 				operator [] (strKey) = strText;
 			}
 		}
+		*/
 	}
 	else if (textJournal == eType)
 	{

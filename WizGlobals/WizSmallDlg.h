@@ -999,10 +999,7 @@ public:
 				if (0 == (pPos->flags & SWP_NOSIZE)
 					|| 0 == (pPos->flags & SWP_NOMOVE))
 				{
-					if (!IsDocking())
-					{
-						SavePos();
-					}
+					SavePos();
 				}
 			}
 		}

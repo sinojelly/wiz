@@ -51,8 +51,9 @@ CMainFrame* CMainFrame::GetMainFrame()
 BOOL CMainFrame::OpenDatabase()
 {
 	CString strDatabasePath = ::WizGetCommandLineValue(m_strCommandLine, _T("DatabasePath"));
+	CString strPassword = WizGetCommandLineValue(m_strCommandLine, _T("Password"));
 	//
-	if (!m_db.DefaultOpen(strDatabasePath))
+	if (!m_db.DefaultOpen(strDatabasePath, strPassword))
 	{
 		TOLOG(_T("Failed to open database!"));
 		return FALSE;
@@ -395,5 +396,63 @@ LRESULT CMainFrame::OnOptions(WORD /*wNotifyCode*/, WORD /*wID*/, HWND /*hWndCtl
 	m_view.Invalidate();
 	//
 	//
+	return 0;
+}
+
+BOOL WizSetClipboardText(HWND hwnd, LPCTSTR lpszText)
+{
+    if (hwnd == NULL) 
+        return FALSE; 
+ 
+    // Open the clipboard, and empty it. 
+ 
+    if (!OpenClipboard(hwnd)) 
+        return FALSE; 
+	//
+	EmptyClipboard(); 
+ 
+    // Get a pointer to the structure for the selected label. 
+ 
+	size_t cch = _tcslen(lpszText);
+
+    HGLOBAL hglbCopy = GlobalAlloc(GMEM_MOVEABLE, 
+        (cch + 1) * sizeof(TCHAR)); 
+	//
+    if (hglbCopy == NULL) 
+    { 
+        CloseClipboard(); 
+        return FALSE; 
+    } 
+
+    // Lock the handle and copy the text to the buffer. 
+
+    LPTSTR  lptstrCopy = (LPTSTR)GlobalLock(hglbCopy); 
+    memcpy(lptstrCopy, lpszText, 
+        cch * sizeof(TCHAR)); 
+    lptstrCopy[cch] = (TCHAR) 0;    // null character 
+    GlobalUnlock(hglbCopy); 
+
+    // Place the handle on the clipboard. 
+#ifdef _UNICODE
+	SetClipboardData(CF_UNICODETEXT, hglbCopy); 
+#else
+    SetClipboardData(CF_TEXT, hglbCopy); 
+#endif
+	// Close the clipboard. 
+ 
+    CloseClipboard(); 
+ 
+    return TRUE; 
+}
+
+LRESULT CMainFrame::OnBackgroundCopytext(WORD /*wNotifyCode*/, WORD /*wID*/, HWND /*hWndCtl*/, BOOL& /*bHandled*/)
+{
+	// TODO: Add your command handler code here
+	CString strText = m_view.GetMonthViewBackgroundText(m_view.GetSelectedTime());
+	if (!strText.IsEmpty())
+	{
+		WizSetClipboardText(m_hWnd, strText);
+	}
+
 	return 0;
 }

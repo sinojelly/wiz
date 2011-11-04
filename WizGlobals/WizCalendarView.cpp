@@ -1073,8 +1073,6 @@ void CWizCalendarView::DrawMonthCell(CDCHandle dc, const COleDateTime& t, const 
 		dc.SetTextColor(GetSysColor(COLOR_BTNSHADOW));
 		dc.DrawText(strBackgroundText, -1, &rcBackgroundText, DT_LEFT | DT_TOP | DT_WORDBREAK | DT_END_ELLIPSIS);
 	}
-	//
-
 }
 
 void CWizCalendarView::Resize()

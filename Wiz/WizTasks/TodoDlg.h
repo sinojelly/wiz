@@ -34,8 +34,6 @@ private:
 	CWizVistaIconButton m_btnNew;
 	CWizTodoTreeCtrl m_wndList;
 	CString m_strInitTitle;
-	//
-
 public:
 
 BEGIN_MSG_MAP(CTodoDlg)
@@ -99,6 +97,8 @@ public:
 	BOOL OnModifyDocument(LPCTSTR lpszGUID);
 	//
 	void InitNewTodoList();
+	//
+	BOOL IsEditing() { return m_wndList.GetEditControl() == ::GetFocus() && m_hWnd == ::GetForegroundWindow(); }
 public:
 
 	LRESULT OnCreate(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);

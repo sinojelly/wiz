@@ -89,6 +89,7 @@ public:
 		COMMAND_ID_HANDLER(ID_BACKGROUND_JOURNAL, OnBackgroundJournal)
 		COMMAND_ID_HANDLER(ID_CALENDAR_OPTIONS, OnOptions)
 		REFLECT_NOTIFICATIONS()
+		COMMAND_ID_HANDLER(ID_BACKGROUND_COPYTEXT, OnBackgroundCopytext)
 		CHAIN_MSG_MAP(CUpdateUI<CMainFrame>)
 		CHAIN_MSG_MAP(CMainFrameWindowState)
 		CHAIN_MSG_MAP(CFrameWindowImpl<CMainFrame>)
@@ -113,4 +114,5 @@ public:
 	LRESULT OnBackgroundJournal(WORD /*wNotifyCode*/, WORD /*wID*/, HWND /*hWndCtl*/, BOOL& /*bHandled*/);
 	LRESULT OnOptions(WORD /*wNotifyCode*/, WORD /*wID*/, HWND /*hWndCtl*/, BOOL& /*bHandled*/);
 	LRESULT OnCloseWindowForAutoUpdate(UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*lParam*/, BOOL& /*bHandled*/);
-};
+	LRESULT OnBackgroundCopytext(WORD /*wNotifyCode*/, WORD /*wID*/, HWND /*hWndCtl*/, BOOL& /*bHandled*/);
+	};

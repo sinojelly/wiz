@@ -620,6 +620,21 @@ CString WizDateToLocalString(const COleDateTime& t)
 	return CString(szBuffer);
 }
 
+
+
+CString WizDateToLocalStringYearMonth(const COleDateTime& t)
+{
+	SYSTEMTIME st;
+	t.GetAsSystemTime(st);
+	//
+	TCHAR szBuffer[MAX_PATH] = {0};
+	GetDateFormat(GetThreadLocale(), DATE_YEARMONTH, &st, NULL, szBuffer, MAX_PATH);
+	//
+	return CString(szBuffer);
+}
+
+
+
 CString WizDateToLocalStringLongDate(const COleDateTime& t)
 {
 	SYSTEMTIME st;

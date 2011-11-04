@@ -41,7 +41,9 @@ LRESULT CTodoDlg::OnCreate(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandl
 	m_btnMenu.SetIcon(IDI_ICON_MENU_BUTTON);
 	m_btnClose.SetIcon(IDI_ICON_CLOSE_BUTTON);
 	//
-	//ModifyStyleEx(0, WS_EX_LAYERED, 0);
+	ModifyStyle(0, WS_MAXIMIZEBOX, 0);
+	ModifyStyleEx(0, WS_EX_LAYERED, 0);
+	SetTransparentPercent(m_nTransparentPercent);
 	//
 	SetTimer(TIMER_ID_SAVE, 1000 * 10, NULL);
 	//
@@ -222,6 +224,9 @@ void CTodoDlg::Close()
 
 BOOL CTodoDlg::SavePos()
 {
+	if (m_bIniting)
+		return FALSE;
+	//
 	if (!m_spDocument)
 		return FALSE;
 	if (!IsWindow())
@@ -229,17 +234,29 @@ BOOL CTodoDlg::SavePos()
 	if (!m_pDatabase)
 		return FALSE;
 	//
-	if (IsDocking())
-		return TRUE;
-	//
 	CRect rc;
 	GetWindowRect(&rc);
 	//
 	CWizKMDocumentParamLine line;
+	//
+	if (IsDocking())
+	{
+		//use old pos
+		CWizKMDocumentParamLine lineOld(m_pDatabase->GetMeta(_T("TodoPos"), CWizKMDatabase::GetObjectGUID(m_spDocument.p)));
+		//
+		rc.left = lineOld.GetInt(_T("l"), rc.left);
+		rc.top = lineOld.GetInt(_T("t"), rc.top);
+		rc.right = lineOld.GetInt(_T("r"), rc.right);
+		rc.bottom = lineOld.GetInt(_T("b"), rc.bottom);
+	}
+	//
 	line.AddInt(_T("l"), rc.left);
 	line.AddInt(_T("t"), rc.top);
 	line.AddInt(_T("r"), rc.right);
 	line.AddInt(_T("b"), rc.bottom);
+	//
+	line.AddInt(_T("dock"), GetCurrentDock());
+	line.AddBool(_T("autohide"), IsAutoHide());
 	//
 	return m_pDatabase->SetMeta(_T("TodoPos"), CWizKMDatabase::GetObjectGUID(m_spDocument.p), line.GetLine());
 }
@@ -301,6 +318,19 @@ BOOL CTodoDlg::LoadPos()
 	}
 	//
 	SetWindowPos(NULL, rc, SWP_NOZORDER | SWP_NOACTIVATE);
+	//
+	UINT nDock = line.GetInt(_T("dock"), APPBAR_DOCKING_NONE);
+	if (nDock >= APPBAR_DOCKING_LEFT
+		&& nDock <= APPBAR_DOCKING_BOTTOM)
+	{
+		Dock(nDock);
+		//
+		BOOL bAutoHide = line.GetBool(_T("autohide"), FALSE);
+		if (bAutoHide)
+		{
+			SetAutoHide(bAutoHide ? true : false);
+		}
+	}
 	//
 	return TRUE;
 }
@@ -435,8 +465,33 @@ BOOL CTodoDlg::SetDocument(IWizDocument* pDocument)
 	//
 	m_spDocument = pDocument;
 	//
-	////SetDocument只会调用一次，Load回调用多次（例如刷新），因此收集操作放在这里，每次启动程序的时候收集////
-	MoveCompletedTodoItems();
+	if (m_spDocument)
+	{
+		CString strGUID = CWizKMDatabase::GetObjectGUID<IWizDocument>(m_spDocument);
+		CString strKey = CString(_T("_")) + ::WizMd5StringNoSpace(strGUID);
+		//
+		CString strMeta = _T("WizTasksMCT");
+		CString strLast = m_pDatabase->GetMeta(strMeta, strKey);
+		//
+		COleDateTime t(2011,1,1, 0, 0, 0);
+		if (!strLast.IsEmpty())
+		{
+			WizStringToDateTime(strLast, t);
+		}
+		//
+		COleDateTime tCurr = ::WizGetCurrentTime();
+		//
+		if (t.GetDay() != tCurr.GetDay()
+			|| t.GetMonth() != tCurr.GetMonth()
+			|| t.GetYear() != tCurr.GetYear()
+			)
+		{
+			////SetDocument只会调用一次，Load回调用多次（例如刷新），因此收集操作放在这里，每次启动程序的时候收集////
+			MoveCompletedTodoItems();
+			//
+			m_pDatabase->SetMeta(strMeta, strKey, ::WizDateTimeToString(tCurr));
+		}
+	}
     //  
 	BOOL bRet = Load();
 	//
@@ -488,6 +543,9 @@ bool hasCompletedItem(IWizDocument *document)
 
 void CTodoDlg::MoveCompletedTodoItems()
 {
+	if (!m_spDocument)
+		return;
+	//
 	////不要收集已完成的任务列表////
 	if (WizKMIsCompletedTodoList(m_spDocument))
 		return;
@@ -496,31 +554,28 @@ void CTodoDlg::MoveCompletedTodoItems()
 	{
 		return;
 	}
-
-    CComQIPtr<IWizDocument> spCompleted;
-    CWizDocumentArray arrayDocument;
-
-    CString title; 
+	//
+	//
+	//按照标题和月份收集////
+	//
     COleDateTime tNow = COleDateTime::GetCurrentTime();
-	CString monthString;
-	monthString.Format(_T("%4d%02d"), tNow.GetYear(), tNow.GetMonth());
-    title.Format(_T("%s%s"), WizFormatString0(IDS_TASKS), monthString);
-
-    CString sql;
-    sql.Format(_T("DOCUMENT_TITLE='%s'"), title);
+	CString strDocumentTitle = ::CWizKMDatabase::GetDocumentTitle(m_spDocument);
+	CString strCompletedTitle = WizFormatString2(_T("[%1] %2"), WizDateToLocalStringYearMonth(tNow), strDocumentTitle);
+	//
+	CString strCompletedLocation = WizKMTodoGetCompletedLocation();
+	//
+	CString sql = WizFormatString2(_T("DOCUMENT_TITLE=%1 and DOCUMENT_LOCATION='%2'"), ::WizStringToSQL(strCompletedTitle), strCompletedLocation);
     
+    CComQIPtr<IWizDocument> spCompleted;
+	//
+    CWizDocumentArray arrayDocument;
     HRESULT hr = m_pDatabase->GetDocumentsBySQL(CComBSTR(sql), arrayDocument);
     if (FAILED(hr) || arrayDocument.empty())
     {
-        spCompleted = WizKMCreateTodo2Document(m_pDatabase, WizKMTodoGetCompletedLocation(), CComBSTR(title));
+        spCompleted = WizKMCreateTodo2Document(m_pDatabase, strCompletedLocation, CComBSTR(strCompletedTitle));
 		ATLASSERT(spCompleted);
 		if (!spCompleted)
 			return;
-		//
-		
-		////需要设置为已完成的任务列表////
-		//
-		WizKMSetCompletedTodoList(spCompleted, TRUE);
 		//
 		//CWizKMDatabase::SetDocumentParam(pCompleted, "TasksCompleted", monthString);  
 		// jelly: 先不用这种方案。用户如果改名，估计希望后续任务不再存储到该列表。
@@ -530,6 +585,9 @@ void CTodoDlg::MoveCompletedTodoItems()
     {
         spCompleted = arrayDocument[0];
     }
+	//
+	////需要设置为已完成的任务列表////
+	WizKMSetCompletedTodoList(spCompleted, TRUE);
 	//
     m_pDatabase->GetDatabase()->MoveCompletedTodoItems(m_spDocument, spCompleted);
 }

@@ -34,10 +34,10 @@ public:
 		//
 		return TRUE;
 	}
-	BOOL DefaultOpen(LPCTSTR lpszPath)
+	BOOL DefaultOpen(LPCTSTR lpszPath, LPCTSTR lpszPassword = _T(""))
 	{
 		CString strErr;
-		if (!Open(lpszPath, _T(""), 0, strErr))
+		if (!Open(lpszPath, lpszPassword, 0, strErr))
 		{
 			WizMessageBox(strErr);
 			TOLOG(strErr);

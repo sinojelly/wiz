@@ -54,7 +54,9 @@ CMainDlg::~CMainDlg()
 
 BOOL CMainDlg::OpenDatabase()
 {
-	if (!m_db.DefaultOpen(WizGetCommandLineValue(m_strCommandLine, _T("DatabasePath"))))
+	CString strDatabase = WizGetCommandLineValue(m_strCommandLine, _T("DatabasePath"));
+	CString strPassword = WizGetCommandLineValue(m_strCommandLine, _T("Password"));
+	if (!m_db.DefaultOpen(strDatabase, strPassword))
 	{
 		return FALSE;
 	}
@@ -76,6 +78,18 @@ CMainDlg* CMainDlg::GetMainDlg()
 BOOL CMainDlg::PreTranslateMessage(MSG* pMsg)
 {
 	HWND hWnd = pMsg->hwnd;
+	//
+	for (std::map<HWND, CComPtr<IWizDocument> >::const_iterator it= m_mapDocumentWindow.begin();
+		it != m_mapDocumentWindow.end();
+		it++)
+	{
+		HWND hwndEditor = it->first;
+		//
+		if (WizIsOwnerWindow(hwndEditor, hWnd))
+		{
+			return (BOOL)::SendMessage(hwndEditor, WM_FORWARDMSG, 0, (LPARAM)pMsg);
+		}
+	}
 	//
 	for (CTodoDlgArray::const_iterator it= m_arrayTodoList.begin();
 		it != m_arrayTodoList.end();
@@ -166,7 +180,11 @@ LRESULT CMainDlg::OnDestroy(UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*lParam*/,
 	DestroyAllTodoLists();
 	DestroyAllRemindEvent();
 	//
-
+	if (m_spCommonUI)
+	{
+		m_spCommonUI->ClearDocumentWindow();
+	}
+	//
 	WizDestroyShowDesktopEventsWindow();
 
 	return 0;
@@ -227,8 +245,9 @@ void CMainDlg::DestroyAllTodoLists()
 
 
 
-void CMainDlg::ShowCurrentTodoLists()
+BOOL CMainDlg::ShowCurrentTodoLists()
 {
+	BOOL bRet = FALSE;
 	for (CTodoDlgArray::const_iterator it = m_arrayTodoList.begin();
 		it != m_arrayTodoList.end();
 		it++)
@@ -242,9 +261,16 @@ void CMainDlg::ShowCurrentTodoLists()
 		//
 		if (!pDlg->IsWindow())
 			continue;
+		if ((0 == (pDlg->GetStyle() & WS_VISIBLE))
+			&& !pDlg->GetDocument())
+			continue;
+			
 		//
 		pDlg->BringWindowToTopEx();
-	}	
+		bRet = TRUE;
+	}
+	//
+	return bRet;
 }
 
 void CMainDlg::CheckEmptyTodoList()
@@ -397,12 +423,12 @@ void CMainDlg::SaveTodoListsStatus()
 	{
 	}
 	//
-	::SetVisibleTodoLists(arrayGUID);
+	::SetVisibleTodoLists(m_db, arrayGUID);
 }
 void CMainDlg::LoadTodoListsStatus()
 {
 	CWizStdStringArray arrayGUID;
-	if (!GetVisibleTodoLists(arrayGUID))
+	if (!GetVisibleTodoLists(m_db, arrayGUID))
 		return;
 	//
 	CString strTodoInboxLocation = WizKMTodoGetInboxLocation();
@@ -837,12 +863,22 @@ void CMainDlg::OnSyncEnd(int nExitCode, UINT nFlags)
 		it++)
 	{
 		CTodoDlg* pTodoDlg = *it;
-		if (pTodoDlg 
-			&& pTodoDlg->IsWindow()
-			&& !pTodoDlg->IsModified())
-		{
-			pTodoDlg->Refresh();
-		}
+		//
+		if (!pTodoDlg )
+			continue;
+		//
+		if (!pTodoDlg->IsWindow())
+			continue;
+		//
+		BOOL bEditing = pTodoDlg->IsEditing();
+		if (bEditing)
+			continue;
+		//
+		BOOL bModified = pTodoDlg->IsModified();
+		if (bModified)
+			continue;
+		//
+		pTodoDlg->Refresh();
 	}
 }
 
@@ -891,7 +927,10 @@ void CMainDlg::ProcessCommandLine(LPCTSTR lpszCommandLine, BOOL bPrompt /*= FALS
 	{
 		ShowBalloon(WizFormatString0(IDS_WIZTODO), WizFormatString0(IDS_WIZTODO_IS_RUNNING), 10);
 		//
-		ShowCurrentTodoLists();
+		if (!ShowCurrentTodoLists())
+		{
+			PostMessage(WM_COMMAND, MAKEWPARAM(ID_TRAY_SHOW_ALL_TODOLISTS, 0), 0);
+		}
 	}
 	else if (strCommand == _T("edit_todolist"))
 	{
@@ -903,14 +942,7 @@ void CMainDlg::ProcessCommandLine(LPCTSTR lpszCommandLine, BOOL bPrompt /*= FALS
 		if (!spDocument)
 			return;
 		//
-		/*
-		CreateTodoDlg();
-		//
-		m_pTodoDlg->SetDocument(spDocument);
-		m_pTodoDlg->BringWindowToTopEx();
-		m_pTodoDlg->CenterWindow(GetDesktopWindow());
-		m_pTodoDlg->SetInfoModified(FALSE);
-		*/
+		ShowTodoList(spDocument);
 	}
 }
 
@@ -1104,4 +1136,57 @@ LRESULT CMainDlg::OnTrayShowCompletedTodoLists(WORD /*wNotifyCode*/, WORD /*wID*
 	SaveTodoListsStatus();
 
 	return 0;
+}
+void CMainDlg::ViewDocument(LPCTSTR lpszDocumentGUID)
+{
+	CComPtr<IWizDocument> spDocument = m_db.GetDocumentByGUID(lpszDocumentGUID);
+	if (!spDocument)
+		return;
+	//
+	ViewDocument(spDocument);
+}
+void CMainDlg::ViewDocument(IWizDocument* pDocument)
+{
+	if (!pDocument)
+		return;
+	//
+	for (std::map<HWND, CComPtr<IWizDocument> >::const_iterator it = m_mapDocumentWindow.begin();
+		it != m_mapDocumentWindow.end();
+		it++)
+	{
+		HWND hwnd = it->first;
+		if (!::IsWindow(hwnd))
+			continue;
+		//
+		CComPtr<IWizDocument> spOld = it->second;
+		if (!spOld)
+			continue;
+		//
+		if (0 == CWizKMDatabase::GetObjectName<IWizDocument>(spOld).CompareNoCase(CWizKMDatabase::GetObjectName<IWizDocument>(pDocument)))
+		{
+			::BringWindowToTop(hwnd);
+			::SetForegroundWindow(hwnd);
+			::ShowWindow(hwnd, SW_SHOW);
+			return;
+		}
+	}
+	//
+	CComPtr<IWizCommonUI> spCommonUI = GetCommonUI();
+	if (!spCommonUI)
+		return;
+	//
+	LONGLONG nWindowHandle = 0;
+	spCommonUI->EditDocument(NULL, NULL, pDocument, CComBSTR(L""), &nWindowHandle);
+	//
+	m_mapDocumentWindow[HWND(nWindowHandle)] = pDocument;
+}
+
+CComPtr<IWizCommonUI> CMainDlg::GetCommonUI()
+{
+	if (!m_spCommonUI)
+	{
+		m_spCommonUI = ::WizKMCreateCommonUI();
+	}
+	//
+	return m_spCommonUI;
 }

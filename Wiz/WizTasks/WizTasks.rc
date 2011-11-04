@@ -172,9 +172,6 @@ BEGIN
         MENUITEM "Delete\tDel",                 ID_TODOITEM_DELETE
         MENUITEM SEPARATOR
         MENUITEM "Create Link...",              ID_TODOITEM_CREATELINK
-        MENUITEM SEPARATOR
-        MENUITEM "Delay to Tomorrow",           ID_TODOITEM_DELAYTOTOMORROW
-        MENUITEM "Delay to...",                 ID_TODOITEM_DELAYTO
     END
 END
 

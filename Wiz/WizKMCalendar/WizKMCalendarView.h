@@ -21,7 +21,7 @@ public:
 	virtual CString GetBackgroundText(WizKMMonthViewCellBackgroundTextType eType, const COleDateTime& t);
 private:
 	CString GetKey(const COleDateTime& t);
-
+	void InitMonthTodoList(const COleDateTime& t);
 };
 
 
