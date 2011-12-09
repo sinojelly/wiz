@@ -38,7 +38,7 @@ public:
 private:
 	static CString GetRegKeyBase()
 	{
-		return CString(_T("Software\\WizBrother\\WizWindowMessage\\"));
+		return ::WizGetRegKeyRoot() + CString(_T("\\WizWindowMessage\\"));
 	}
 	CString GetRegKey(LPCTSTR lpszMessageName)
 	{

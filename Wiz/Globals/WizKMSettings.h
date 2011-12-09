@@ -70,6 +70,16 @@ BOOL WizKMSetDefaultDisplayTemplate(LPCTSTR lpszFileName);
 BOOL WizKMGetUsingDisplayTemplate();
 BOOL WizKMSetUsingDisplayTemplate(BOOL b);
 
+BOOL WizKMGetUsingImageView();
+BOOL WizKMSetUsingImageView(BOOL b);
+
+BOOL WizKMGetUsingDefaultBrowser();
+BOOL WizKMSetUsingDefaultBrowser(BOOL b);
+
+BOOL WizKMIsShowTagsAndShareView();
+BOOL WizKMSetShowTagsAndShareView(BOOL b);
+
+
 
 const LPCTSTR CALENDAR_SECTION = _T("Calendar");
 
@@ -94,6 +104,8 @@ BOOL WizKMSetUserActions(LPCTSTR lpszActionsName, LPCTSTR lpszActionValue);
 BOOL WizKMIsAutoShowAttach();
 void WizKMSetAutoShowAttach(BOOL b);
 
+BOOL WizKMIsShowAttachOnTop();
+void WizKMSetShowAttachOnTop(BOOL b);
 
 #ifdef _WIZKMDATABASE_H_
 enum WizSearchFullText { fulltextNone, fulltextWindows, fulltextGoogle, fulltextInner};
@@ -116,8 +128,6 @@ BOOL SetSyncShowResult(BOOL b);
 
 BOOL GetSyncHttpsEnabled();
 BOOL SetSyncHttpsEnabled(BOOL b);
-CString GetCachedSyncURL(LPCTSTR lpszCommand);
-BOOL SetCachedSyncURL(LPCTSTR lpszCommand, LPCTSTR lpszURL);
 
 
 CString WizKMGetLastTagsText(LPCTSTR lpszAttributeName);
@@ -169,9 +179,11 @@ void WizKMAddRecentDocuments(CWizKMDatabase* pDatabase, LPCTSTR lszDocumentGUID,
 #endif //_WIZKMDATABASE_H_
 
 #ifdef _WIZ_USE_HTML
+BOOL WizKMIsEnableDefaultCSS();
 CString WizKMGetDefaultCSSFileName();
-BOOL WizKMInsertDefaultCSSToHtml(CString& strHtml);
-BOOL WizKMInsertDefaultCSS(LPCTSTR lpszHtmlFileName);
+BOOL WizKMReplaceDefaultCSSToHtml(CString& strHtml);
+BOOL WizKMReplaceDefaultCSS(LPCTSTR lpszHtmlFileName);
+BOOL WizKMDeleteDefaultCSS(LPCTSTR lpszHtmlFileName);
 #endif //#ifdef _WIZ_USE_HTML
 
 const LPCTSTR SECTION_EXPLORER = _T("WizExplorer");
@@ -209,7 +221,7 @@ const LPCTSTR HOTKEY_NAME_CLIPSCREEN = _T("ClipScreen");
 const LPCTSTR HOTKEY_NAME_COPYCLIPBOARD = _T("CopySelection");
 const LPCTSTR HOTKEY_NAME_PASTECLIPBOARD = _T("PasteClipboard");
 const LPCTSTR HOTKEY_NAME_TRAY= _T("Tray");
-const LPCTSTR HOTKEY_NAME_DISPLAY_NOTES = _T("DisplayNotes");
+const LPCTSTR HOTKEY_NAME_DISPLAY_NOTES = _T("DisplayStickyNotes");
 
 
 const LPCTSTR HOTKEY_DEFAULT_NEWNOTE = _T("Ctrl+Alt+N");
@@ -222,6 +234,18 @@ const LPCTSTR HOTKEY_DEFAULT_DISPLAY_NOTE = _T("Ctrl+F2");
 
 BOOL IsCategoryTreeCtrlIncludeSubFolders();
 void SetCategoryTreeCtrlIncludeSubFolders(BOOL b);
+//
+BOOL IsCategoryTreeCtrlIncludeChildTags();
+void SetCategoryTreeCtrlIncludeChildTags(BOOL b);
+//
+BOOL IsCategoryTreeCtrlTagsAnd();
+void SetCategoryTreeCtrlTagsAnd(BOOL b);
+//
+BOOL IsCategoryShowHScrollBar();
+void SetCategoryShowHScrollBar(BOOL b);
+//
+BOOL IsCategorySingleExpand();
+void SetCategorySingleExpand(BOOL b);
 //
 BOOL ExplorerIsShowStatusBar(CWizKMSettings& settings);
 BOOL ExplorerSetShowStatusBar(CWizKMSettings& settings, BOOL b);
@@ -337,6 +361,9 @@ BOOL WizKMSetAutoSaveMinutes(int nMinutes);
 BOOL WizKMIsAutoSave();
 BOOL WizKMSetAutoSave(BOOL b);
 
+BOOL WizKMIsAutoLocateNote();
+BOOL WizKMSetAutoLocateNote(BOOL b);
+
 const LPCTSTR WIZKM_FOLDER_SETTINGS_SECTION_SORT	=	_T("Sort");
 const LPCTSTR WIZKM_FOLDER_SETTINGS_KEY_SORT_ORDER	=	_T("SortOrder");
 const LPCTSTR WIZKM_FOLDER_SETTINGS_KEY_SORT_BY		=	_T("SortBy");
@@ -365,21 +392,132 @@ CComPtr<IWizDocumentAttachment> WizKMGetAttachmentOfDocument(IWizDocument* pDocu
 BOOL WizKMDocumentSupportOle(LPCTSTR lpszDocumentFileType);
 CComPtr<IWizDocumentAttachment> WizKMGetAttachmentOfDocumentForOleViewing(IWizDocument* pDocument, BOOL bCheckOleConfig = TRUE);
 
-
-
-BOOL WizKMEditDocumentEx(CWizKMDatabase* pDatabase, IWizDocument* pDocument, BOOL bEditDocument);
-BOOL WizKMEditDocumentEx(IWizDocument* pDocument, BOOL bEditDocument);
-BOOL WizKMEditDocumentEx(IWizDocument* pDocument);
-BOOL WizKMViewDocumentEx(IWizDocument* pDocument);
 BOOL WizKMTrackDocument(LPCTSTR lpszDatabasePath, LPCTSTR lpszDocumentGUID, LPCTSTR lpszDocumentHtmlFileName, HANDLE hProcess, BOOL bDeleteFiles, BOOL bTextFile, BOOL bUTF8);
 BOOL WizKMExternalEditorEditDocument(const WIZKMEDITORDATA& data, IWizDocument* pDocument);
+
+BOOL WizKMViewDocumentEx(IWizDocument* pDocument, LPCTSTR lpszExtOptions = NULL);
+
 #endif //_WIZKMDATABASE_H_
+
+#ifdef __WIZDATABASEDEF_H__
+
+template <class TElementInterface, class TData>
+inline BOOL WizElementToData(TElementInterface* pElement, TData& data)
+{
+	char unnamed[0];	//general error
+	return FALSE;
+}
+
+/*
+template <class TElementInterface, class TData>
+inline BOOL WizElementToData(IWizStyle* pElement, WIZSTYLEDATA& data)
+{
+	ATLASSERT(pElement);
+	if (!pElement)
+		return FALSE;
+	//
+	CComBSTR bstrGUID;
+	pElement->get_GUID(&bstrGUID);
+	CComBSTR bstrName;
+	pElement->get_Name(&bstrName);
+	CComBSTR bstrDescription;
+	pElement->get_Description(&bstrDescription);
+	long nTextColor = 0;
+	pElement->get_TextColor(&nTextColor);
+	long nBackColor = 0;
+	pElement->get_BackColor(&nBackColor);
+	VARIANT_BOOL vbBold;
+	pElement->get_TextBold(&vbBold);
+	long nFlagIndex = 0;
+	pElement->get_FlagIndex(&nFlagIndex);
+	DATE dtModified;
+	pElement->get_DateModified(&dtModified);
+	__int64 nVersion;
+	pElement->get_Version(&nVersion);
+	//
+	data.strGUID = CString(bstrGUID);
+	data.strName = CString(bstrName);
+	data.strDescription = CString(bstrDescription);
+	data.crTextColor = nTextColor;
+	data.crBackColor = nBackColor;
+	data.nFlagIndex = nFlagIndex;
+	data.tModified = dtModified;
+	data.nVersion = nVersion;
+
+	return TRUE;
+}
+
+*/
+
+template <class TElementInterface, class TData>
+inline BOOL WizElementToData(IWizTag* pElement, WIZTAGDATA& data)
+{
+	ATLASSERT(pElement);
+	if (!pElement)
+		return FALSE;
+	//
+	CComBSTR bstrGUID;
+	pElement->get_GUID(&bstrGUID);
+	CComBSTR bstrParentGUID;
+	pElement->get_ParentGUID(&bstrParentGUID);
+	CComBSTR bstrName;
+	pElement->get_Name(&bstrName);
+	CComBSTR bstrDescription;
+	pElement->get_Description(&bstrDescription);
+	DATE dtModified;
+	pElement->get_DateModified(&dtModified);
+	__int64 nVersion;
+	pElement->get_Version(&nVersion);
+	//
+	data.strGUID = CString(bstrGUID);
+	data.strParentGUID = CString(bstrParentGUID);
+	data.strName = CString(bstrName);
+	data.strDescription = CString(bstrDescription);
+	data.tModified = dtModified;
+	data.nVersion = nVersion;
+	//
+	return TRUE;
+}
+
+
+
+template <class TCollectionInterface, class TElementInterface, class TObject, class TData>
+inline BOOL WizCollectionToDataArray(IDispatch* pCollectionDisp, std::vector<TData>& arrayData)
+{
+	std::vector<CComPtr<TElementInterface> > arrayElem;
+	if (!WizCollectionDispatchToArray<TCollectionInterface, TElementInterface>(pCollectionDisp, arrayElem))
+		return FALSE;
+	//
+	for (std::vector<CComPtr<TElementInterface> >::const_iterator it = arrayElem.begin(); it != arrayElem.end(); it++)
+	{
+		CComPtr<TElementInterface> spElem = *it;
+		//
+		TData data;
+		if (!WizElementToData<TElementInterface, TData>(spElem, data))
+		{
+			TOLOG(_T("Failed to convert element to data!"));
+			return FALSE;
+		}
+		//
+		arrayData.push_back(data);
+	}
+	//
+	return TRUE;
+}
+
+#endif //#ifdef __WIZDATABASEDEF_H__
+
 #endif	//__WizKMControls_i_h__
 
 
 BOOL WizKMIsSingleApp();
 BOOL WizKMSetSingleApp(BOOL b);
 
+BOOL WizKMIsDefaultRead();
+BOOL WizKMSetDefaultRead(BOOL b);
+
+BOOL WizKMIsDefaultInNewTab();
+BOOL WizKMSetDefaultInNewTab(BOOL b);
 
 
 
@@ -417,4 +555,3 @@ BOOL WizKMCombineDocuments(IWizDocument* pDocOld, IWizDocument* pDocNew);
 #endif	//__ATLCTRLX_H__
 
 #endif //_WIZKMSETTINGS_H_
-

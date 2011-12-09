@@ -314,13 +314,39 @@ BOOL WizKMSetDefaultDisplayTemplate(LPCTSTR lpszFileName)
 
 BOOL WizKMGetUsingDisplayTemplate()
 {
-	return WizKMGetSettings().GetBool(_T("DisplayTemplate"), _T("UseTemplate"), TRUE);
+	return WizKMGetSettings().GetBool(_T("DisplayTemplate"), _T("UseTemplate"), FALSE);
 }
 
 BOOL WizKMSetUsingDisplayTemplate(BOOL b)
-{
-	
+{	
 	return WizKMGetSettings().SetBool(_T("DisplayTemplate"), _T("UseTemplate"), b, 0);
+}
+
+BOOL WizKMGetUsingImageView()
+{
+	return WizKMGetSettings().GetBool(_T("ImageView"), _T("Enable"), TRUE);
+}
+BOOL WizKMSetUsingImageView(BOOL b)
+{
+	return WizKMGetSettings().SetBool(_T("ImageView"), _T("Enable"), b, 0);
+}
+
+BOOL WizKMGetUsingDefaultBrowser()
+{
+	return WizKMGetSettings().GetBool(_T("DocumentView"), _T("UseDefaultBrowser"), FALSE);
+}
+BOOL WizKMSetUsingDefaultBrowser(BOOL b)
+{
+	return WizKMGetSettings().SetBool(_T("DocumentView"), _T("UseDefaultBrowser"), b, 0);
+}
+
+BOOL WizKMIsShowTagsAndShareView()
+{
+	return WizKMGetSettings().GetBool(_T("WebCapture"), _T("ShowShareView"), TRUE);
+}
+BOOL WizKMSetShowTagsAndShareView(BOOL b)
+{
+	return WizKMGetSettings().SetBool(_T("WebCapture"), _T("ShowShareView"), b, 0);
 }
 
 
@@ -366,7 +392,6 @@ BOOL WizCalendarSetFirstWeek(const COleDateTime& t)
 
 CString WizKMGetUserActions(LPCTSTR lpszActionsName, LPCTSTR lpszDefActionValue /*= NULL*/)
 {
-	
 	return WizKMGetSettings().GetStr(_T("UserActions"), lpszActionsName, lpszDefActionValue ? lpszDefActionValue : WIZKM_ACTION_VALUE_NO_ACTION);
 }
 
@@ -384,6 +409,14 @@ BOOL WizKMIsAutoShowAttach()
 void WizKMSetAutoShowAttach(BOOL b)
 {
 	WizKMGetSettings().SetBool(_T("AttachmentsView"), _T("AutoShow"), b, 0);
+}
+BOOL WizKMIsShowAttachOnTop()
+{
+	return WizKMGetSettings().GetBool(_T("AttachmentsView"), _T("OnTop"), TRUE);
+}
+void WizKMSetShowAttachOnTop(BOOL b)
+{
+	WizKMGetSettings().SetBool(_T("AttachmentsView"), _T("OnTop"), b, 0);
 }
 
 
@@ -443,25 +476,21 @@ int GetSyncMinutes()
 
 BOOL SetSyncMinutes(int nMinutes)
 {
-	
 	return WizKMGetSettings().SetInt(SECTION_SYNC, _T("SyncMinutes"), nMinutes, 0);
 }
 
 BOOL GetSyncEnabled()
 {
-	
 	return WizKMGetSettings().GetBool(SECTION_SYNC, _T("SyncEnabled"), TRUE);
 }
 
 BOOL SetSyncEnabled(BOOL b)
 {
-	
 	return WizKMGetSettings().SetBool(SECTION_SYNC, _T("SyncEnabled"), b, 0);
 }
 
 BOOL IsSyncShowResult()
 {
-	
 	return WizKMGetSettings().GetBool(SECTION_SYNC, _T("ShowResult"), FALSE);
 }
 
@@ -482,18 +511,6 @@ BOOL SetSyncHttpsEnabled(BOOL b)
 {
 	
 	return WizKMGetSettings().SetBool(SECTION_SYNC, _T("Https"), b, 0);
-}
-
-CString GetCachedSyncURL(LPCTSTR lpszCommand)
-{
-	
-	return WizKMGetSettings().GetStr(SECTION_SYNC, lpszCommand, _T(""));
-}
-
-BOOL SetCachedSyncURL(LPCTSTR lpszCommand, LPCTSTR lpszURL)
-{
-	
-	return WizKMGetSettings().SetStr(SECTION_SYNC, lpszCommand, lpszURL, 0);
 }
 
 
@@ -895,7 +912,6 @@ void WizKMAddRecentDocuments(CWizKMDatabase* pDatabase, LPCTSTR lszDocumentGUID,
 
 #endif //_WIZKMDATABASE_H_
 
-
 #ifdef _WIZ_USE_HTML
 
 CString WizKMGetDefaultCSSFileName()
@@ -909,9 +925,41 @@ CString WizKMGetDefaultCSSFileName()
 	CString strSystemFileName = WizGetAppPath() + strFileName;
 	return strSystemFileName;
 }
-BOOL WizKMInsertDefaultCSSToHtml(CString& strHtml)
+
+BOOL WizKMDeleteDefaultCSSFromHtml(CString& strHtml)
 {
-	
+	int nPos = (int)WizStrStrI_Pos(strHtml, _T("wiz_custom_css"));
+	if (-1 == nPos)
+		return TRUE;
+	//
+	CString strTemp = strHtml.Left(nPos);
+	int nBegin = strTemp.ReverseFind('<');
+	if (-1 == nBegin)
+		return FALSE;
+	//
+	int nEnd = (int)WizStrStrI_Pos(strHtml, _T("</style>"), nPos);
+	if (nEnd == -1)
+		return FALSE;
+	nEnd += 8;
+	//
+	strHtml.Delete(nBegin, nEnd - nBegin);
+	//
+	return TRUE;
+}
+
+BOOL WizKMIsEnableDefaultCSS()
+{
+	CWizKMSettingsSection section;
+	WizKMGetSettings().GetSection(_T("DocumentDefaults"), section);
+	//
+	BOOL bEnableDefaultCSS = section.GetBool(_T("EnableCSS"), FALSE);
+	return bEnableDefaultCSS;
+}
+BOOL WizKMReplaceDefaultCSSToHtml(CString& strHtml)
+{
+	////先删除原有的设置////
+	WizKMDeleteDefaultCSSFromHtml(strHtml);
+	//
 	CWizKMSettingsSection section;
 	WizKMGetSettings().GetSection(_T("DocumentDefaults"), section);
 	//
@@ -941,6 +989,7 @@ BOOL WizKMInsertDefaultCSSToHtml(CString& strHtml)
 		return FALSE;
 	}
 	//
+	//
 	strCSSText.Replace(_T("/*cssFontName*/"), strFontName);
 	strCSSText.Replace(_T("/*cssFontSize*/"), strFontSize);
 	strCSSText.Replace(_T("/*cssLineHeight*/"), strLineHeight);
@@ -953,7 +1002,8 @@ BOOL WizKMInsertDefaultCSSToHtml(CString& strHtml)
 	//
 	return TRUE;
 }
-BOOL WizKMInsertDefaultCSS(LPCTSTR lpszHtmlFileName)
+
+BOOL WizKMReplaceDefaultCSS(LPCTSTR lpszHtmlFileName)
 {
 	CString strHtml;
 	if (!WizLoadUnicodeTextFromFile(lpszHtmlFileName, strHtml))
@@ -962,7 +1012,7 @@ BOOL WizKMInsertDefaultCSS(LPCTSTR lpszHtmlFileName)
 		return FALSE;
 	}
 	//
-	if (!::WizKMInsertDefaultCSSToHtml(strHtml))
+	if (!::WizKMReplaceDefaultCSSToHtml(strHtml))
 	{
 		TOLOG1(_T("Failed to insert default css to file: %1"), lpszHtmlFileName);
 		return FALSE;
@@ -976,6 +1026,29 @@ BOOL WizKMInsertDefaultCSS(LPCTSTR lpszHtmlFileName)
 	//
 	return TRUE;
 }
+BOOL WizKMDeleteDefaultCSS(LPCTSTR lpszHtmlFileName)
+{
+	CString strHtml;
+	if (!WizLoadUnicodeTextFromFile(lpszHtmlFileName, strHtml))
+	{
+		TOLOG1(_T("Failed to load template html file: %1"), lpszHtmlFileName);
+		return FALSE;
+	}
+	//
+	if (!::WizKMDeleteDefaultCSSFromHtml(strHtml))
+	{
+		return TRUE;
+	}
+	//
+	if (!WizSaveUnicodeTextToUnicodeFile(lpszHtmlFileName, strHtml))
+	{
+		TOLOG1(_T("Failed to save template html file: %1"), lpszHtmlFileName);
+		return FALSE;
+	}
+	//
+	return TRUE;
+}
+
 
 #endif //#ifdef _WIZ_USE_HTML
 
@@ -1069,11 +1142,44 @@ BOOL IsCategoryTreeCtrlIncludeSubFolders()
 }
 void SetCategoryTreeCtrlIncludeSubFolders(BOOL b)
 {
-	
 	WizKMGetSettings().SetBool(_T("CategoryTreeCtrl"), _T("IncludeSubFolders"), b, 0);
 }
 
+BOOL IsCategoryTreeCtrlIncludeChildTags()
+{
+	return WizKMGetSettings().GetBool(_T("CategoryTreeCtrl"), _T("IncludeChildTags"), FALSE);
+}
+void SetCategoryTreeCtrlIncludeChildTags(BOOL b)
+{
+	WizKMGetSettings().SetBool(_T("CategoryTreeCtrl"), _T("IncludeChildTags"), b, 0);
+}
 
+BOOL IsCategoryTreeCtrlTagsAnd()
+{
+	return WizKMGetSettings().GetBool(_T("CategoryTreeCtrl"), _T("TagsAnd"), TRUE);
+}
+void SetCategoryTreeCtrlTagsAnd(BOOL b)
+{
+	WizKMGetSettings().SetBool(_T("CategoryTreeCtrl"), _T("TagsAnd"), b, 0);
+}
+//
+BOOL IsCategoryShowHScrollBar()
+{
+	return WizKMGetSettings().GetBool(_T("CategoryTreeCtrl"), _T("HScrollBar"), FALSE);
+}
+void SetCategoryShowHScrollBar(BOOL b)
+{
+	WizKMGetSettings().SetBool(_T("CategoryTreeCtrl"), _T("HScrollBar"), b, 0);	
+}
+
+BOOL IsCategorySingleExpand()
+{
+	return WizKMGetSettings().GetBool(_T("CategoryTreeCtrl"), _T("SingleExpand"), FALSE);
+}
+void SetCategorySingleExpand(BOOL b)
+{
+	WizKMGetSettings().SetBool(_T("CategoryTreeCtrl"), _T("SingleExpand"), b, 0);	
+}
 
 //
 BOOL ExplorerIsShowStatusBar(CWizKMSettings& settings)
@@ -1575,15 +1681,25 @@ BOOL WizKMSetAutoSaveMinutes(int nMinutes)
 
 BOOL WizKMIsAutoSave()
 {
-	
 	return WizKMGetSettings().GetBool(SECTION_EDITOR, _T("AutoSaveDocument"), TRUE);
 }
 
 BOOL WizKMSetAutoSave(BOOL b)
 {
-	
 	return WizKMGetSettings().SetBool(SECTION_EDITOR, _T("AutoSaveDocument"), b, 0);
 }
+
+
+BOOL WizKMIsAutoLocateNote()
+{
+	return WizKMGetSettings().GetBool(SECTION_EXPLORER, _T("AutoLocateNote"), TRUE);
+}
+
+BOOL WizKMSetAutoLocateNote(BOOL b)
+{
+	return WizKMGetSettings().SetBool(SECTION_EXPLORER, _T("AutoLocateNote"), b, 0);
+}
+
 
 
 
@@ -1684,6 +1800,8 @@ BOOL WizKMDocumentSupportOle(LPCTSTR lpszDocumentFileType)
 		|| 0 == _tcsicmp(lpszDocumentFileType, _T(".docx"))
 		|| 0 == _tcsicmp(lpszDocumentFileType, _T(".xls"))
 		|| 0 == _tcsicmp(lpszDocumentFileType, _T(".xlsx"))
+		//|| 0 == _tcsicmp(lpszDocumentFileType, _T(".ppt"))
+		//|| 0 == _tcsicmp(lpszDocumentFileType, _T(".pptx"))
 		)
 		return TRUE;
 	//
@@ -1720,115 +1838,6 @@ CComPtr<IWizDocumentAttachment> WizKMGetAttachmentOfDocumentForOleViewing(IWizDo
 		return NULL;
 	//
 	return spAttachment;
-}
-
-
-BOOL WizKMEditDocumentEx(CWizKMDatabase* pDatabase, IWizDocument* pDocument, BOOL bEditDocument)
-{
-	if (!pDocument)
-		return FALSE;
-	//
-	CString strDatabasePath = pDatabase->GetDatabasePath();
-	CString strDocumentGUID = CWizKMDatabase::GetObjectGUID(pDocument);
-	//
-	CComBSTR bstrType;
-	pDocument->get_Type(&bstrType);
-	//
-	CString strType(bstrType);
-	strType.MakeLower();
-	//
-	if (WizKMIsEditNoteWithHtmlEditor())
-	{
-		strType.Empty();
-	}
-	//
-	if (strType == _T("note"))
-	{
-		CString strNoteExeFileName = WizGetAppPath() + _T("WizNote.exe");
-		//
-		CString strParams = WizFormatString2(_T("/Command=edit_note /DocumentGUID=%1 /DatabasePath=%2"),
-			strDocumentGUID,
-			strDatabasePath);
-		//
-		ShellExecute(NULL, _T("open"), strNoteExeFileName, strParams, NULL, SW_SHOW);
-		//
-		return TRUE;
-	}
-	else if (strType == _T("todolist"))
-	{
-		CString strNoteExeFileName = WizGetAppPath() + _T("WizNote.exe");
-		//
-		CString strParams = WizFormatString2(_T("/Command=edit_todolist /DocumentGUID=%1 /DatabasePath=%2"),
-			strDocumentGUID,
-			strDatabasePath);
-		//
-		ShellExecute(NULL, _T("open"), strNoteExeFileName, strParams, NULL, SW_SHOW);
-		//
-		return TRUE;
-	}
-	else if (strType == _T("event"))
-	{
-		CComPtr<IWizCommonUI> spCommonUI = WizKMCreateCommonUI();
-		if (!spCommonUI)
-			return FALSE;
-		//
-		VARIANT_BOOL vbRet = VARIANT_FALSE;
-		HRESULT hr = spCommonUI->EditCalendarEvent(pDocument, &vbRet);
-		return SUCCEEDED(hr);
-	}
-	else
-	{
-		if (bEditDocument)
-		{
-			CString strEditorTempPath = WizKMGetEditorTempPath();
-			CString strTempFileName = strEditorTempPath + WizIntToStr(GetTickCount()) + _T(".htm");
-			if (FAILED(pDocument->SaveToHtml(CComBSTR(strTempFileName), 0)))
-			{
-				TOLOG2(_T("Failed to save %1 to file: %2"), CWizKMDatabase::GetDocumentTitle(pDocument), strTempFileName);
-			}
-			//
-			return WizKMEditDocument(strDatabasePath, strTempFileName, strDocumentGUID);
-		}
-		else
-		{
-			CString strExeFileName = WizGetAppPath() + _T("WizViewer.exe");
-			//
-			CString strFileName = CWizKMDatabase::GetDocumentFileName(pDocument);
-			//
-			CString strParams = WizFormatString1(_T("\"%1\""), strFileName);
-			//
-			ShellExecute(NULL, _T("open"), strExeFileName, strParams, NULL, SW_SHOW);
-			//
-			return TRUE;
-		}
-	}
-}
-
-
-BOOL WizKMEditDocumentEx(IWizDocument* pDocument, BOOL bEditDocument)
-{
-	if (!pDocument)
-		return FALSE;
-	//
-	CComPtr<IDispatch> spDisp;
-	pDocument->get_Database(&spDisp);
-	//
-	CComQIPtr<IWizDatabase> spDatabase(spDisp);
-	if (!spDatabase)
-		return FALSE;
-	//
-	CWizKMDatabase db;
-	db.SetDatabase(spDatabase);
-	//
-	return WizKMEditDocumentEx(&db, pDocument, bEditDocument);
-}
-BOOL WizKMEditDocumentEx(IWizDocument* pDocument)
-{
-	return WizKMEditDocumentEx(pDocument, TRUE);
-}
-BOOL WizKMViewDocumentEx(IWizDocument* pDocument)
-{
-	return WizKMEditDocumentEx(pDocument, FALSE);
 }
 
 
@@ -1927,6 +1936,22 @@ BOOL WizKMExternalEditorEditDocument(const WIZKMEDITORDATA& data, IWizDocument* 
 	return WizKMTrackDocument(CString(bstrDatabasePath), strDocumentGUID, strTempFileName, hProcess, TRUE, data.bTextEditor, data.bUTF8Encoding);
 }
 
+BOOL WizKMViewDocumentEx(IWizDocument* pDocument, LPCTSTR lpszExtOptions /*= NULL*/)
+{
+	if (!pDocument)
+		return FALSE;
+	//
+	CComBSTR bstrZipFileName;
+	pDocument->get_FileName(&bstrZipFileName);
+	CString strZipFileName(bstrZipFileName);
+	if (!PathFileExists(strZipFileName))
+		return FALSE;
+	//
+	CString strParams = WizFormatString2(_T("/ViewZiwFile=%1 /ViewZiwFileOptions=%2"), strZipFileName, CString(lpszExtOptions));
+	ShellExecute(NULL, _T("open"), WizGetAppPath() + _T("Wiz.exe"), strParams, NULL, SW_SHOW);
+	//
+	return TRUE;
+}
 
 BOOL WizKMTrackAttachment(IWizDocumentAttachment* pAttachment, HANDLE hProcess)
 {
@@ -1956,7 +1981,6 @@ BOOL WizKMTrackAttachment(IWizDocumentAttachment* pAttachment, HANDLE hProcess)
 
 BOOL WizKMIsSingleApp()
 {
-	
 	return WizKMGetSettings().GetBool(_T("Common"), _T("SingleApp"), TRUE);
 }
 
@@ -1964,6 +1988,24 @@ BOOL WizKMSetSingleApp(BOOL b)
 {
 	
 	return WizKMGetSettings().SetBool(_T("Common"), _T("SingleApp"), b, 0);
+}
+
+BOOL WizKMIsDefaultRead()
+{
+	return WizKMGetSettings().GetBool(_T("Common"), _T("DefaultReadMode"), TRUE);
+}
+BOOL WizKMSetDefaultRead(BOOL b)
+{
+	return WizKMGetSettings().SetBool(_T("Common"), _T("DefaultReadMode"), b, 0);
+}
+
+BOOL WizKMIsDefaultInNewTab()
+{
+	return WizKMGetSettings().GetBool(_T("Common"), _T("DefaultInNewTab"), FALSE);
+}
+BOOL WizKMSetDefaultInNewTab(BOOL b)
+{
+	return WizKMGetSettings().SetBool(_T("Common"), _T("DefaultInNewTab"), b, 0);
 }
 
 
@@ -2083,6 +2125,12 @@ BOOL WizKMConvertFileToHtml(LPCTSTR lpszSrcFileName, CString& strHtmlFileName)
 #ifdef _WIZ_USE_HTML
 BOOL WizCombineHtmlText(CString& strTextTo, LPCTSTR lpszTextFrom)
 {
+	if (strTextTo.IsEmpty())
+	{
+		strTextTo = lpszTextFrom;
+		return TRUE;
+	}
+	//
 	/*
 	////强制获得正文////
 	*/
@@ -2169,7 +2217,26 @@ BOOL WizKMCombineDocuments(const CWizDocumentArray& arrayDocument, LPCTSTR lpszH
 		return FALSE;
 	}
 	//
-	CComPtr<IWizDocument> spRetDocument = arrayDocument[0];
+	CComPtr<IWizDocument> spFirstDocument = arrayDocument[0];
+	//
+	//
+	CComPtr<IWizFolder> spFolder = CWizKMDatabase::GetDocumentFolder(spFirstDocument);
+	CComPtr<IDispatch> spNewDocumentDisp;
+	spFirstDocument->CopyTo(spFolder, &spNewDocumentDisp);
+	if (!spNewDocumentDisp)
+	{
+		TOLOG(_T("Failed to copy first document!"));
+		return FALSE;
+	}
+	//
+	CComQIPtr<IWizDocument> spRetDocument = CComQIPtr<IWizDocument>(spNewDocumentDisp);
+	if (!spRetDocument)
+	{
+		TOLOG(_T("System error: no interface (IWizDocument)!"));
+		return FALSE;
+	}
+	//
+	//
 	HRESULT hr = spRetDocument->UpdateDocument(CComBSTR(strHtmlFileName), wizUpdateDocumentIncludeScript);
 	if (FAILED(hr))
 	{
@@ -2182,30 +2249,43 @@ BOOL WizKMCombineDocuments(const CWizDocumentArray& arrayDocument, LPCTSTR lpszH
 		spRetDocument->ChangeTitleAndFileName(CComBSTR(lpszTitle));
 	}
 	//
-	for (CWizDocumentArray::const_iterator it = arrayDocument.begin() + 1;
+	for (CWizDocumentArray::const_iterator it = arrayDocument.begin();
 		it != arrayDocument.end();
 		it++)
 	{
-		CWizStdStringArray arrayAttachment;
-		::CWizKMDatabase::GetDocumentAttachments(*it, arrayAttachment);
-		//
-		for (CWizStdStringArray::const_iterator itAttachment = arrayAttachment.begin();
-			itAttachment != arrayAttachment.end();
-			itAttachment++)
+		if (it != arrayDocument.begin())
 		{
-			if (PathFileExists(*itAttachment))
+			CWizStdStringArray arrayAttachment;
+			::CWizKMDatabase::GetDocumentAttachments(*it, arrayAttachment);
+			//
+			for (CWizStdStringArray::const_iterator itAttachment = arrayAttachment.begin();
+				itAttachment != arrayAttachment.end();
+				itAttachment++)
 			{
-				CComPtr<IDispatch> spAttachmentDisp;
-				hr = spRetDocument->AddAttachment(CComBSTR(*itAttachment), &spAttachmentDisp);
-				if (FAILED(hr))
+				if (PathFileExists(*itAttachment))
 				{
-					TOLOG(_T("Failed to combine attachments!"));
-					return FALSE;
+					CComPtr<IDispatch> spAttachmentDisp;
+					hr = spRetDocument->AddAttachment(CComBSTR(*itAttachment), &spAttachmentDisp);
+					if (FAILED(hr))
+					{
+						TOLOG(_T("Failed to combine attachments!"));
+						return FALSE;
+					}
 				}
 			}
 		}
+		//
 		if (bDelete)
 		{
+			CString strTagText;
+			CWizKMDatabase::GetDocumentTagsText(*it, strTagText);
+			if (!strTagText.IsEmpty())
+			{
+				CString strOldTagText;
+				CWizKMDatabase::GetDocumentTagsText(spRetDocument, strOldTagText);
+				spRetDocument->SetTagsText2(CComBSTR(strOldTagText + _T(";") + strTagText), CComBSTR(L""));
+			}
+			//
 			hr = (*it)->Delete();
 			if (FAILED(hr))
 			{
@@ -2223,6 +2303,11 @@ void WizKMGetCombineDocumentSettings(BOOL& bInsertSplitterHtml, CString& strSpli
 	bInsertSplitterHtml = settings.GetBool(g_lpszCombineDocumentsSection, _T("InsertSpliterHtml"), bInsertSplitterHtml);
 	strSplitterHtml = settings.GetStr(g_lpszCombineDocumentsSection, _T("SpliterHtml"), strSplitterHtml);
 	bDeleteDocuments = settings.GetBool(g_lpszCombineDocumentsSection, _T("DeleteDocuments"), bDeleteDocuments);
+	//
+	if (strSplitterHtml.IsEmpty())
+	{
+		strSplitterHtml = _T("<hr />");
+	}
 }
 void WizKMSetCombineDocumentSettings(BOOL bInsertSplitterHtml, LPCTSTR lpszSplitterHtml, BOOL bDeleteDocuments)
 {
@@ -2251,5 +2336,6 @@ BOOL WizKMCombineDocuments(IWizDocument* pDocOld, IWizDocument* pDocNew)
 
 #endif //_WIZ_USE_HTML
 #endif //__ATLCTRLX_H__
+
 
 

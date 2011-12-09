@@ -620,8 +620,6 @@ CString WizDateToLocalString(const COleDateTime& t)
 	return CString(szBuffer);
 }
 
-
-
 CString WizDateToLocalStringYearMonth(const COleDateTime& t)
 {
 	SYSTEMTIME st;
@@ -632,7 +630,6 @@ CString WizDateToLocalStringYearMonth(const COleDateTime& t)
 	//
 	return CString(szBuffer);
 }
-
 
 
 CString WizDateToLocalStringLongDate(const COleDateTime& t)
@@ -2463,7 +2460,7 @@ CString WizGetCompanyName()
 		return strCompanyName;
 	//
 	strCompanyName = WizGetSecuteSettings(_T("Common"), _T("CompanyName"), TRUE);
-	ATLASSERT(!strCompanyName.IsEmpty());
+	//ATLASSERT(!strCompanyName.IsEmpty());
 	//
 	return strCompanyName;
 }
@@ -3960,7 +3957,11 @@ CStringW WizStringArrayGetValue(const CWizStdStringArray& arrayText, LPCWSTR lps
 	{
 		CStringW strLine = arrayText[i];
 		if (0 == _wcsnicmp(strLine, strValueName, nValueNameLen))
-			return strLine.Right(strLine.GetLength() - nValueNameLen);
+		{
+			CString str = strLine.Right(strLine.GetLength() - nValueNameLen);
+			str.Trim();
+			return str;
+		}
 	}
 	//
 	return CStringW();
@@ -5404,7 +5405,9 @@ CString WizWebSiteEscapeAtt(LPCTSTR lpszAtt)
 
 CString WizGetRegKeyRoot()
 {
-	CString strProductName = ::WizGetProductName();
+	CString strProductName = ::WizGetInnerProductName();
+	return WizFormatString1(_T("Software\\%1"), strProductName);
+	/*
 	CString strCompanyName = ::WizGetCompanyName();
 	//
 	if (strCompanyName.IsEmpty())
@@ -5415,6 +5418,7 @@ CString WizGetRegKeyRoot()
 	{
 		return WizFormatString2(_T("Software\\%1\\%2"), strCompanyName, strProductName);
 	}
+	*/
 }
 
 
@@ -7070,6 +7074,58 @@ void WizMenuRemoveExtraSeparator(HMENU hMenu)
 		}
 		//
 		break;
+	}
+}
+
+void WizMenuChnageMenuItemText(HMENU hMenu, UINT nID, LPCTSTR lpszText)
+{
+	TCHAR szMenuText[MAX_PATH] = { 0 };
+	_tcscpy_s(szMenuText, MAX_PATH, lpszText);
+	//
+	MENUITEMINFO info;
+	ZeroMemory(&info, sizeof(MENUITEMINFO));
+	info.cbSize = sizeof(MENUITEMINFO);
+	info.fMask = MIIM_STRING;
+	info.dwTypeData = szMenuText;
+	::SetMenuItemInfo(hMenu, nID, FALSE, &info);
+}
+void WizMenuDeleteAllChild(HMENU hMenu)
+{
+	if (!IsMenu(hMenu))
+		return;
+	//
+	while (GetMenuItemCount(hMenu))
+	{
+		DeleteMenu(hMenu, 0, MF_BYPOSITION);
+	}
+}
+
+void WizMenuDeleteEx(HMENU hMenu, UINT nCommandBegin, UINT nCommandEnd)
+{
+	if (!IsMenu(hMenu))
+		return;
+	//
+	for (int i = GetMenuItemCount(hMenu) - 1; i >= 0; i--)
+	{
+		UINT nCommand = GetMenuItemID(hMenu, i);
+		if (nCommand >= nCommandBegin && nCommand <= nCommandEnd)
+		{
+			DeleteMenu(hMenu, i, MF_BYPOSITION);
+		}
+		else
+		{
+			HMENU hSubMenu = ::GetSubMenu(hMenu, i);
+			if (hSubMenu && ::IsMenu(hSubMenu))
+			{
+				WizMenuDeleteEx(hSubMenu, nCommandBegin, nCommandEnd);
+				WizMenuRemoveExtraSeparator(hSubMenu);
+				//
+				if (GetMenuItemCount(hSubMenu) == 0)
+				{
+					DeleteMenu(hMenu, i, MF_BYPOSITION);
+				}
+			}
+		}
 	}
 }
 
@@ -8835,6 +8891,7 @@ size_t WizStreamAppendStream(IStream* pStream, IStream* pStreamAppend)
 	return nSize;
 }
 
+/*
 BOOL WizStreamCopyEx(IStream* pStreamFrom, IStream* pStreamTo, size_t nSize)
 {
 	WizStreamSeekToBegin(pStreamTo);
@@ -8857,6 +8914,7 @@ BOOL WizStreamCopyEx(IStream* pStreamFrom, IStream* pStreamTo, size_t nSize)
 	//
 	return TRUE;
 }
+*/
 
 
 BOOL WizStreamSafeCopy(IStream* pStreamFrom, IStream* pStreamTo)
@@ -9176,7 +9234,21 @@ BOOL WizStringArrayGetInt(const CWizStdStringArray& arrayLine, LPCTSTR lpszKey, 
 
 BOOL WizCommandLineKeyExists(const CWizStdStringArray& arrayLine, LPCTSTR lpszKey)
 {
-	return -1 != WizFindInArrayNoCase(arrayLine, lpszKey);
+	CString strKey(lpszKey);
+	if (strKey.IsEmpty())
+		return FALSE;
+	//
+	for (CWizStdStringArray::const_iterator it = arrayLine.begin();
+		it != arrayLine.end();
+		it++)
+	{
+		CString strLine = *it;
+		//
+		if (0 == _tcsnicmp(strLine, strKey, strKey.GetLength()))
+			return TRUE;
+	}
+	//
+	return FALSE;
 }
 
 
@@ -9348,11 +9420,36 @@ BOOL CWizStrBufferAlloc::IsEmpty() const
 }
 
 
+
+CString& WizGetToolsDllPath()
+{
+	static CString str = ::WizGetAppPath();
+	return str;
+}
+void WizSetToolsDllPath(LPCTSTR lpszPath)
+{
+	if (!lpszPath || !*lpszPath)
+		return;
+	if (!PathFileExists(lpszPath))
+		return;
+	//
+	CString& str = WizGetToolsDllPath();
+	str = lpszPath;
+	WizPathAddBackslash(str);
+}
+
+CString WizGetToolsDllFileName()
+{
+	return WizGetToolsDllPath() + _T("WizTools.dll");
+
+}
+
+
 BOOL WizSimpleEncryptStringToFile(const char* lpszPassword, LPCWSTR lpszText, LPCWSTR lpszFileName)
 {
 	typedef STDMETHODIMP Type_WizToolsSimpleEncryptStringToFile(const unsigned char* lpszKey, LPCWSTR lpszText, LPCWSTR lpszFileName);
 	//
-	HMODULE hModule = LoadLibrary(WizGetAppPath() + _T("WizTools.dll"));
+	HMODULE hModule = LoadLibrary(WizGetToolsDllFileName());
 	if (!hModule)
 		return FALSE;
 	//
@@ -9374,7 +9471,7 @@ BOOL WizSimpleDecryptStringFromFile(const char* lpszPassword, LPCWSTR lpszFileNa
 {
 	typedef STDMETHODIMP Type_WizToolsSimpleDecryptStringFromFile(const unsigned char* lpszKey, LPCWSTR lpszFileName, BSTR* pbstrRet);
 	//
-	HMODULE hModule = LoadLibrary(WizGetAppPath() + _T("WizTools.dll"));
+	HMODULE hModule = LoadLibrary(WizGetToolsDllFileName());
 	if (!hModule)
 		return FALSE;
 	//
@@ -10279,6 +10376,9 @@ BOOL WizGetFileName(CString& strResultFileName, BOOL bOpen, LPCTSTR lpszFilter, 
 		_tcscpy_s(szFileName, 1024, lpszInitFileName);
 	}
 	//
+	CWizStdStringArray arrayExt;
+	::WizSplitTextToArray(lpszFilter, '|', arrayExt);
+	//
 	CString strFilter(lpszFilter);
 	TCHAR szFilter[1024] = {0};
 	_tcscpy_s(szFilter, 1024, strFilter);
@@ -10322,6 +10422,18 @@ BOOL WizGetFileName(CString& strResultFileName, BOOL bOpen, LPCTSTR lpszFilter, 
 	}
 	//
 	strResultFileName = CString(szFileName);
+	//
+	if (WizExtractFileExt(strResultFileName).IsEmpty())
+	{
+		int nFilterIndex = ofn.nFilterIndex * 2 - 1;
+		if (nFilterIndex>= 0 && nFilterIndex < int(arrayExt.size()))
+		{
+			CString strExt = arrayExt[nFilterIndex];
+			strExt.Trim(_T("*"));
+			strResultFileName.Trim(_T("."));
+			strResultFileName += strExt;
+		}
+	}
 	//
 	return TRUE;
 }
@@ -13457,6 +13569,60 @@ BOOL WizClipboardSaveToImageFile(LPCTSTR lpszFileName)
 	return FALSE;
 }
 
+#ifdef __ATLGDI_H__
+
+HBITMAP WizCopyImage(HDC dcImage, int width, int height)
+{
+	CDC dc;
+	HDC hdc = ::GetWindowDC(::GetDesktopWindow());
+	dc.Attach(hdc);
+
+	CDC memDC;
+	memDC.CreateCompatibleDC(dc);
+
+	CBitmap bm;
+
+	CSize sz(width, height);
+	bm.CreateCompatibleBitmap(dc, sz.cx, sz.cy);
+	HBITMAP oldbm = memDC.SelectBitmap(bm);
+	memDC.BitBlt(0, 0, sz.cx, sz.cy, dcImage, 0, 0, SRCCOPY);
+	
+	memDC.SelectBitmap(oldbm);
+	return bm.Detach();  // make sure bitmap not deleted with CBitmap object
+}
+
+HBITMAP WizCloneBitmap(HBITMAP hBmp)
+{
+	CImage img;
+	img.Attach(hBmp);
+	if (img.IsNull())
+		return NULL;
+	//
+	CDCHandle dcImage = img.GetDC();
+	//
+	HBITMAP hNewBmp = WizCopyImage(dcImage, img.GetWidth(), img.GetHeight());
+	//
+	img.ReleaseDC();
+	img.Detach();
+	//
+	return hNewBmp;
+}
+
+
+BOOL WizClipboardSetBitmap(HWND hwnd, HBITMAP hBmp)
+{
+	HBITMAP hNewBmp = WizCloneBitmap(hBmp);
+	//
+	if (!OpenClipboard(::GetDesktopWindow()))
+		return FALSE;
+	EmptyClipboard();
+	SetClipboardData(CF_BITMAP, hNewBmp);
+	CloseClipboard(); 
+	//
+	return TRUE;
+}
+
+#endif //__ATLGDI_H__
 
 HRESULT WizSaveJPG(HBITMAP hBmp, LPCTSTR lpszJpgFileName, int quality = 90)
 {
@@ -14268,3 +14434,37 @@ void WizInitRichEditFont(HWND hwndRichEdit)
 }
 
 #endif
+
+
+CWizDisableControls::CWizDisableControls(HWND hwnd)
+{
+	int i = 0;
+	HWND hwndChild = ::GetWindow(hwnd, GW_CHILD);
+	while (hwndChild)
+	{
+		BOOL bEnabled = ::IsWindowEnabled(hwndChild);
+		if (bEnabled)
+		{
+			m_set.insert(hwndChild);
+			EnableWindow(hwndChild, FALSE);
+		}
+		//
+		hwndChild = GetNextWindow(hwndChild, GW_HWNDNEXT);
+		i++;
+		if (i > 100)
+			break;
+	}
+	//
+	::WizProcessMessages();
+}
+//
+CWizDisableControls::~CWizDisableControls()
+{
+	for (std::set<HWND>::const_iterator it = m_set.begin();
+		it != m_set.end();
+		it++)
+	{
+		EnableWindow(*it, TRUE);
+	}
+}
+

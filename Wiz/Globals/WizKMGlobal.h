@@ -32,10 +32,7 @@ BOOL WizKMSetDataStorePath(LPCTSTR lpszPath);
 //
 CString WizKMGetBackupPath();
 BOOL WizKMSetBackupPath(LPCTSTR lpszPath);
-//
-BOOL WizKMNewDocument(LPCTSTR lpszDatabasePath, LPCTSTR lpszLocation, LPCTSTR lpszHtmlFileName, BOOL bInitEmptyTitle, LPCTSTR lpszDocumentType);
-BOOL WizKMEditDocument(LPCTSTR lpszDatabasePath, LPCTSTR lpszHtmlFileName, LPCTSTR lpszDocumentGUID);
-//
+////
 CString WizKMGetAccountsBasePath();
 
 
@@ -147,6 +144,11 @@ inline CString WizKMGetExplorerExeFileName()
 inline BOOL WizKMTasksExists()
 {
 	static BOOL b = PathFileExists(WizGetAppPath() + _T("WizTasks.exe"));
+	return b;
+}
+inline BOOL WizKMCalendarExists()
+{
+	static BOOL b = PathFileExists(WizGetAppPath() + _T("WizKMCalendar.exe"));
 	return b;
 }
 
@@ -291,7 +293,7 @@ inline BOOL WizKMIsDatabaseAppRunning(LPCTSTR lpszDatabasePath, LPCTSTR lpszAppT
 	//
 	if (HANDLE hMutex =	OpenMutex(SYNCHRONIZE, FALSE, strMutexName))
 	{
-		DEBUG_TOLOG(WizFormatString3(_T("%1 is running, MutexName=%2, Mutex=%3"), lpszAppType, strMutexName, WizIntToHex(int(hMutex), TRUE)));
+		//DEBUG_TOLOG(WizFormatString3(_T("%1 is running, MutexName=%2, Mutex=%3"), lpszAppType, strMutexName, WizIntToHex(int(hMutex), TRUE)));
 		CloseHandle(hMutex);
 		return TRUE;
 	}
@@ -380,6 +382,34 @@ inline BOOL WizKMShellRunDll(LPCTSTR lpszDllFileName, LPCTSTR lpszFunctionName, 
 	//
 	return (int)ShellExecute(NULL, _T("open"), strExeFileName, strCommandLine, NULL, nShowCommand) > 32;
 }
+inline BOOL WizKMShellRunDllAndWait(LPCTSTR lpszDllFileName, LPCTSTR lpszFunctionName, LPCTSTR lpszParams, UINT nShowCommand = SW_SHOW)
+{
+	CString strExeFileName = WizKMGetShellFileName();
+	CString strCommandLine = WizFormatString3(_T("\"%1\", %2 %3"), lpszDllFileName, lpszFunctionName, lpszParams);
+	//
+	DEBUG_TOLOG(strCommandLine);
+	//
+	HANDLE hProcess = WizShellExecuteReturnInstance(NULL, _T("open"), strExeFileName, strCommandLine, NULL, nShowCommand);
+	if (!hProcess)
+		return FALSE;
+	//
+	DWORD dwExitCode = 0;
+	while (1)
+	{
+		dwExitCode = 0;
+		//
+		::GetExitCodeProcess(hProcess, &dwExitCode);
+		if (STILL_ACTIVE != dwExitCode)
+		{
+			break;
+		}
+		//
+		WizProcessMessages();
+		Sleep(100);
+	}
+	//
+	return TRUE;
+}
 
 inline BOOL WizKMShellSync(LPCTSTR lpszDatabasePath, BOOL bBackground)
 {
@@ -389,6 +419,17 @@ inline BOOL WizKMShellSync(LPCTSTR lpszDatabasePath, BOOL bBackground)
 	CString strParams = WizFormatString2(_T("/DatabasePath=%1 /Background=%2"), lpszDatabasePath, bBackground ? _T("1") : _T("0"));
 	//
 	return WizKMShellRunDll(WizGetAppPath() + _T("WizKMControls.dll"), _T("WizKMSync"), strParams, SW_SHOW);
+}
+
+
+inline BOOL WizKMShellSyncAndWait(LPCTSTR lpszDatabasePath, BOOL bBackground)
+{
+	if (WizKMIsSyncing(lpszDatabasePath))
+		return FALSE;
+	//
+	CString strParams = WizFormatString2(_T("/DatabasePath=%1 /Background=%2"), lpszDatabasePath, bBackground ? _T("1") : _T("0"));
+	//
+	return WizKMShellRunDllAndWait(WizGetAppPath() + _T("WizKMControls.dll"), _T("WizKMSync"), strParams, SW_SHOW);
 }
 
 
@@ -630,6 +671,14 @@ inline CComPtr<T> WizKMCreateObject(LPCTSTR lpszDllFileName, CLSID clsid)
 	return WizCreateObjectAppPath<T>(lpszDllFileName, clsid); 
 }
 
+
+template <class T>
+inline CComPtr<T> WizKMCreateObjectFullPath(LPCTSTR lpszDllFileName, CLSID clsid)
+{
+	return WizCreateObject<T>(lpszDllFileName, clsid); 
+}
+
+
 #ifdef __WizKMCore_i_h__
 
 #define WIZKMCORE_DLL_NAME		_T("WizKMCore.dll")
@@ -725,6 +774,7 @@ inline const WIZCOMOBJECTDATA* WizKMGetComObjectDataArray()
 		{_T("WizKMControls.WizCommonUI"),					_T("{5EABDAD8-A056-4445-AC98-E66885B0935F}"),	_T("WizKMControls.dll")},
 		{_T("WizKMControls.WizProgressWindow"),				_T("{E132C3B7-DA0C-4946-9332-D3D1822FC52C}"),	_T("WizKMControls.dll")},
 		{_T("WizKMControls.WizSyncProgressDlg"),			_T("{CDEF75C2-9494-4336-AF33-66980EB65E29}"),	_T("WizKMControls.dll")},
+		{_T("WizKMControls.WizStatusWindow"),				_T("{1F56B16F-6027-4F13-8277-2019548AC282}"),	_T("WizKMControls.dll")},
 
 		{_T("WizKMCore.WizDatabase"),						_T("{AB45C39E-7793-4DCE-8C3E-3DA52B07AD68}"),	_T("WizKMCore.dll")},
 		{_T("WizKMCore.WizDeletedGUID"),					_T("{CDC8B878-61C3-4ECA-AC3B-7B7D8091A89B}"),	_T("WizKMCore.dll")},
@@ -1218,6 +1268,8 @@ inline BOOL WizKMRegularTagsText(CString& strText)
 
 #ifdef __WizKMCore_i_h__
 CString WizKMServerGetToken(IWizDatabase* pDatabase);
+CString WizKMServerGetToken2(BOOL bUseWizServer, LPCWSTR lpszUserName, LPCWSTR lpszPassword);
+//
 BOOL WizKMServerGetCert(IWizDatabase* pDatabase, CString& strN, CString& stre, CString& strd, CString& strHint, CString& strError);
 BOOL WizKMServerSetCert(IWizDatabase* pDatabase, LPCTSTR lpszN, LPCTSTR lpsze, LPCTSTR lpszd, LPCTSTR lpszHint, CString& strError);
 void WizKMWebSiteVisitWithToken(LPCTSTR lpszCommand, IWizDatabase* pDatabase);
@@ -1382,6 +1434,9 @@ public:
 };
 
 
+#ifdef __ATLAPP_H__
+
+
 template <class T>
 class CWizKMControlEventsListenerWindow
 {
@@ -1411,4 +1466,7 @@ public:
 		return S_FALSE;
 	}
 };
+
+
+#endif
 

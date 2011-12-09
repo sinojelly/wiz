@@ -172,16 +172,37 @@ BOOL CTodoDlg::OnModifyDocument(LPCTSTR lpszGUID)
 	if (!m_spDocument)
 		return FALSE;
 	//
-	if (0 != CWizKMDatabase::GetObjectGUID(m_spDocument.p).CompareNoCase(lpszGUID))
-		return FALSE;
-	//
-	////避免保存的时候，消息重入，导致死循环////
-	if (IsModified())
-		return FALSE;
-	//
-	Refresh();
-	//
-	return TRUE;
+	if (0 == CWizKMDatabase::GetObjectGUID(m_spDocument.p).CompareNoCase(lpszGUID))
+	{
+		//
+		////避免保存的时候，消息重入，导致死循环////
+		if (IsModified())
+			return FALSE;
+		//
+		Refresh();
+		//
+		return TRUE;
+	}
+	else
+	{
+		bool isDefault = CWizKMDatabase::GetDocumentParam(m_spDocument, _T("DefaultTodoList")) == _T("1") ? true : false;
+		if (!isDefault)
+			return FALSE;
+		//
+		if (!m_pDatabase)
+			return FALSE;
+		//
+		CComPtr<IWizDocument> spDocument = m_pDatabase->GetDocumentByGUID(lpszGUID);
+		if (!spDocument)
+			return FALSE;
+		//
+		CString strType = CWizKMDatabase::GetDocumentType(spDocument);
+		if (0 != strType.CompareNoCase(_T("event")))
+			return FALSE;
+		//
+		Refresh();
+		return TRUE;
+	}
 }
 
 void CTodoDlg::InitClient()

@@ -1,5 +1,8 @@
 #pragma once
 
+#ifndef _WIZMISC_H_
+#define _WIZMISC_H_
+
 #ifndef __ATLCOMTIME_H__
 #include <atlcomtime.h>
 #endif
@@ -118,8 +121,9 @@ HMENU WizMenuGetSubMenuByNumber(HMENU hMenu, UINT nSubMenuNumber);
 void WizMenuRemoveMultiSeparator(HMENU hMenu);
 void WizMenuRemoveExtraSeparator(HMENU hMenu);
 BOOL WizMenuIsSeparator(HMENU hMenu, int nIndex);
-
-
+void WizMenuChnageMenuItemText(HMENU hMenu, UINT nID, LPCTSTR lpszText);
+void WizMenuDeleteAllChild(HMENU hMenu);
+void WizMenuDeleteEx(HMENU hMenu, UINT nCommandBegin, UINT nCommandEnd);
 
 BOOL WizEnsurePathExists(LPCTSTR lpszPath);
 BOOL WizEnsurePathExistsEx(LPCTSTR lpszPath);
@@ -826,7 +830,7 @@ BOOL WizStreamLoadUnicodeAsFile(IStream* pStream, CStringW& strText, BOOL bForce
 BOOL WizStreamCopy(IStream* pStreamFrom, IStream* pStreamTo);
 size_t WizStreamAppendFile(IStream* pStream, LPCTSTR lpszFileName);
 size_t WizStreamAppendStream(IStream* pStream, IStream* pStreamAppend);
-BOOL WizStreamCopyEx(IStream* pStreamFrom, IStream* pStreamTo, size_t nSize);
+//BOOL WizStreamCopyEx(IStream* pStreamFrom, IStream* pStreamTo, size_t nSize);
 BOOL WizStreamSafeCopy(IStream* pStreamFrom, IStream* pStreamTo);
 
 ULONG WizStreamCopyEx(IStream* pStream, IStream* pStreamDest, ULONG nNeedRead);
@@ -899,6 +903,10 @@ public:
 
 
 
+CString& WizGetToolsDllPath();
+void WizSetToolsDllPath(LPCTSTR lpszPath);
+CString WizGetToolsDllFileName();
+//
 BOOL WizSimpleEncryptStringToFile(const char* lpszPassword, LPCWSTR lpszText, LPCWSTR lpszFileName);
 BOOL WizSimpleDecryptStringFromFile(const char* lpszPassword, LPCWSTR lpszFileName, CString& strText);
 BOOL WizSimpleEncryptTextFileToFile(const char* lpszPassword, LPCWSTR lpszTextFileName, LPCWSTR lpszFileName);
@@ -1276,6 +1284,9 @@ struct WIZCLIPBOARDINFO;
 BOOL WizClipboardHGlobalSaveToImageFile(HANDLE hData, LPCTSTR lpszFileName);
 BOOL WizClipboardSaveToImageFile(LPCTSTR lpszFileName);
 CString WizClipboardBitmapToFileName();
+//
+BOOL WizClipboardSetBitmap(HWND hwnd, HBITMAP hBmp);
+HBITMAP WizCloneBitmap(HBITMAP hBmp);
 
 BOOL WizGetClipboardInfo(WIZCLIPBOARDINFO& info, HWND hwnd = NULL);
 BOOL WizHTMLGetBodyFromClipboardText(const CString& strText, CString& strHTML, CString& strURL);
@@ -1458,43 +1469,6 @@ inline BOOL WizArrayToCollectionDispatch(const std::vector<CComPtr<TElementInter
 	return SUCCEEDED(hr);
 }
 
-template <class TObject>
-inline TObject* WizDispatchToObject(IDispatch* pDisp)
-{
-	return dynamic_cast<TObject*>(pDisp);
-}
-
-template <class TObject, class TData>
-inline TData* WizDispatchToData(IDispatch* pDisp)
-{
-	TObject* pObj = WizDispatchToObject<TObject>(pDisp);
-	if (!pObj)
-		return NULL;
-	//
-	return &pObj->m_data;
-}
-
-
-template <class TCollectionInterface, class TElementInterface, class TObject, class TData>
-inline BOOL WizCollectionToDataArray(IDispatch* pCollectionDisp, std::vector<TData>& arrayData)
-{
-	std::vector<CComPtr<TElementInterface> > arrayElem;
-	if (!WizCollectionDispatchToArray<TCollectionInterface, TElementInterface>(pCollectionDisp, arrayElem))
-		return FALSE;
-	//
-	for (std::vector<CComPtr<TElementInterface> >::const_iterator it = arrayElem.begin(); it != arrayElem.end(); it++)
-	{
-		CComPtr<TElementInterface> spElem = *it;
-		//
-		TObject* pObj = dynamic_cast<TObject* >(spElem.p);
-		if (!pObj)
-			return FALSE;
-		//
-		arrayData.push_back(pObj->m_data);
-	}
-	//
-	return TRUE;
-}
 
 
 template <class T>
@@ -1667,3 +1641,14 @@ int WizFontHeightToCharFormatHeight(int nFontHeight);
 void WizInitRichEditFont(HWND hwndRichEdit);
 #endif
 
+
+class CWizDisableControls
+{
+public:
+	CWizDisableControls(HWND hwnd);
+	~CWizDisableControls();
+private:
+	std::set<HWND> m_set;
+};
+
+#endif //_WIZMISC_H_

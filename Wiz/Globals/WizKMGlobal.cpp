@@ -57,10 +57,20 @@ CString WizKMGetDataStoreSubPath()
 
 CString WizKMGetDataStorePathFromReg()
 {
-	CString strPathFromReg = WizRegReadStringDef(HKEY_CURRENT_USER, WIZKM_REG_KEY_ROOT, _T("DataStore"), NULL);
-	if (!strPathFromReg.IsEmpty())
-		return strPathFromReg;
+	{
+		CString strPathFromReg = WizRegReadStringDef(HKEY_CURRENT_USER, WIZKM_REG_KEY_ROOT, _T("DataStore"), NULL);
+		if (!strPathFromReg.IsEmpty())
+			return strPathFromReg;
+	}
 	//
+	{
+		CString strPathFromRegOld = WizRegReadStringDef(HKEY_CURRENT_USER, _T("Software\\WizBrother\\Wiz"), _T("DataStore"), NULL);
+		if (!strPathFromRegOld.IsEmpty())
+		{
+			WizRegWriteString(HKEY_CURRENT_USER, WIZKM_REG_KEY_ROOT, _T("DataStore"), strPathFromRegOld);
+			return strPathFromRegOld;
+		}
+	}
 	//strPathFromReg = WizGetMyDocumentsPath() + g_lpszDataStoreSubPath;
 	//if (PathFileExists(strPathFromReg))
 	//	return strPathFromReg;
@@ -102,6 +112,15 @@ CString WizKMGetDataStorePath()
 	CString strPathFromReg = WizKMGetDataStorePathFromReg();
 	CString strPathFromApp = WizKMGetDataStorePathFromApp();
 	//
+	if (!strPathFromReg.IsEmpty() && !PathFileExists(strPathFromReg))
+	{
+		strPathFromReg.Empty();
+	}
+	if (!strPathFromApp.IsEmpty() && !PathFileExists(strPathFromApp))
+	{
+		strPathFromApp.Empty();
+	}
+	//
 	CString strPath;
 	//
 	if (!strPathFromReg.IsEmpty()
@@ -141,7 +160,11 @@ CString WizKMGetBackupPath()
 {
 	CString strPath = WizRegReadStringDef(HKEY_CURRENT_USER, WIZKM_REG_KEY_ROOT, _T("Backup"), NULL);
 	if (strPath.IsEmpty())
+	{
+		strPath = WizKMGetDataStorePath() + _T("Backup\\");
 		return strPath;
+	}
+
 	//
 	WizPathAddBackslash(strPath);
 	//
@@ -298,10 +321,7 @@ HICON WizKMLoadSkinsIcon(LPCTSTR lpszIconFileName, int nWidth /*= 16*/, int nHei
 
 CString WizKMGetShellFileName()
 {
-	CString strFileName = WizGetAppPath() + _T("Wiz.exe");
-	if (PathFileExists(strFileName))
-		return strFileName;
-	return WizGetAppPath() + _T("WizShell.exe");
+	return WizGetAppPath() + _T("Wiz.exe");
 }
 
 CString WizKMGetDefaultHtmlEditorFileName()
@@ -326,27 +346,6 @@ BOOL WizKMNewDocument(LPCTSTR lpszDatabasePath, LPCTSTR lpszLocation, LPCTSTR lp
 	{
 		strParams = CString(_T("/InitEmptyTitle=1 ")) + strParams;
 	}
-#ifdef _DEBUG
-	TOLOG(strParams);
-#endif
-	//
-	ShellExecute(NULL, _T("open"), strExeFileName, strParams, NULL, SW_SHOW);
-	//
-	return TRUE;
-}
-BOOL WizKMEditDocument(LPCTSTR lpszDatabasePath, LPCTSTR lpszHtmlFileName, LPCTSTR lpszDocumentGUID)
-{
-	CString strExeFileName = WizKMGetDefaultHtmlEditorFileName();
-	CString strTempPath = WizExtractFilePath(lpszHtmlFileName);
-	//
-	CString strParams;
-	strParams = WizFormatString5(_T("/WizCommandLine=1 /WizKMEditDocument=1 /SaveAsNoChangeFile=1 /NoFileNameInTitle=1 /NoEmptyTitle=1 /NoFileNew=1 /NoFileOpen=1 /DonotAddToRecentList=1 /WizKMDatabasePath=%1 /WizKMDocumentGUID=%2 /TempPath=%3 /LogFileName=%4 /FileName=%5"), 
-		lpszDatabasePath, 
-		lpszDocumentGUID, 
-		strTempPath, 
-		WizKMGetLogFileName(), 
-		lpszHtmlFileName);
-	//
 #ifdef _DEBUG
 	TOLOG(strParams);
 #endif
@@ -444,6 +443,41 @@ CString WizKMServerGetToken(IWizDatabase* pDatabase)
 		CComBSTR bstrToken;
 		CComBSTR bstrError;
 		hr = fun(pDatabase, &bstrToken, &bstrError);
+		//
+		strToken = CString(bstrToken);
+		strError = CString(bstrError);
+	}
+	//
+	FreeLibrary(hModule);
+	//
+	if (FAILED(hr))
+	{
+		return CString();
+	}
+	//
+	return strToken;
+}
+
+
+
+CString WizKMServerGetToken2(BOOL bUseWizServer, LPCWSTR lpszUserName, LPCWSTR lpszPassword)
+{
+	HMODULE hModule = LoadLibrary(WizGetAppPath() + _T("WizKMControls.dll"));
+	if (!hModule)
+		return CString();
+	//
+	typedef HRESULT WINAPI Type_WizKMGetTokenFromServer2(BOOL bUseWizServer, LPCWSTR lpszUserName, LPCWSTR lpszPassword, BSTR* pbstrToken, BSTR* pbstrErrorMessage);
+	//
+	HRESULT hr = E_FAIL;
+	CString strToken;
+	CString strError;
+	//
+	Type_WizKMGetTokenFromServer2* fun = (Type_WizKMGetTokenFromServer2 *)GetProcAddress(hModule, "WizKMGetTokenFromServer2");
+	if (fun)
+	{
+		CComBSTR bstrToken;
+		CComBSTR bstrError;
+		hr = fun(bUseWizServer, lpszUserName, lpszPassword, &bstrToken, &bstrError);
 		//
 		strToken = CString(bstrToken);
 		strError = CString(bstrError);
@@ -624,6 +658,10 @@ CString WizKMGetShellImportFileParams(LPCTSTR lpszParams)
 HANDLE WizKMImportFileInShell(LPCTSTR lpszImportFileParams)
 {
 	CString strShellParams = WizKMGetShellImportFileParams(lpszImportFileParams);
+	//
+#ifdef _DEBUG
+	TOLOG(strShellParams);
+#endif
 	//
 	HANDLE hProcess = WizCreateProcess(WizKMGetShellFileName(), strShellParams);
 	if (!hProcess)

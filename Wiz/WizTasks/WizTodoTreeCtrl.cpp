@@ -184,5 +184,15 @@ void CWizTodoTreeCtrl::OnTodoLinkClicked(HTREEITEM hItem)
 	if (!spDocument)
 		return;
 	//
-	WizGetMainDlg()->ViewDocument(spDocument);
+	CString strType = CWizKMDatabase::GetDocumentType(spDocument);
+	if (0 == strType.CompareNoCase(_T("event")))
+	{
+		CComPtr<IWizCommonUI> spCommonUI = ::WizKMCreateCommonUI();
+		VARIANT_BOOL vbRet = VARIANT_FALSE;
+		spCommonUI->EditCalendarEvent(spDocument, &vbRet);
+	}
+	else
+	{
+		WizGetMainDlg()->ViewDocument(spDocument);
+	}
 }
